@@ -1,5 +1,7 @@
 node_modules/
 
+.env
+
 software-project-management-client/node_modules/
 software-project-management-client/.env
 software-project-management-client/.vscode
