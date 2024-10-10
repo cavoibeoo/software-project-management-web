@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 
-const RoleSchema = mongoose.Schema(
+const ProjectRoleSchema = mongoose.Schema(
     {
         name: {
             type: String,
@@ -32,5 +32,5 @@ const RoleSchema = mongoose.Schema(
     { Timestamp: true }
 );
 
-const Role = mongoose.model("Role", RoleSchema);
-export default Role;
+const ProjectRole = mongoose.model("ProjectRole", ProjectRoleSchema);
+export default ProjectRole;
