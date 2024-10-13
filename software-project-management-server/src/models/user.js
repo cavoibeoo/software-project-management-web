@@ -1,6 +1,7 @@
 "use strict";
 
 import mongoose from "mongoose";
+import { token } from "morgan";
 
 const UserSchema = mongoose.Schema(
     {
@@ -34,6 +35,13 @@ const UserSchema = mongoose.Schema(
             enum: ["admin", "user"],
             default: "user",
         },
+        // tokens: {
+        //     refreshToken: {
+        //         token: String,
+        //         expires: Date,
+        //     },
+        //     accessToken: {},
+        // },
     },
     { Timestamp: true }
 );

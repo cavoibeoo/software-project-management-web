@@ -6,7 +6,7 @@ import db from "./mongodb.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import routes from "./src/routes/index.js";
+import routes from "./routes/index.js";
 import chalk from "chalk";
 
 const app = express();

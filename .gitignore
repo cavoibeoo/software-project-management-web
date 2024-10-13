@@ -9,3 +9,4 @@ software-project-management-client/.vscode
 software-project-management-server/node_modules/
 software-project-management-server/.env
 software-project-management-server/.vscode
+software-project-management-server/build
