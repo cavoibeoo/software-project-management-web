@@ -5,22 +5,42 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start": "nodemon index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "clean": "rmdir /S /Q build && mkdir build",
+        "build-babel": "babel ./src -d ./build/src",
+        "build": "npm run clean && npm run build-babel",
+        "production": "npm run build && cross-env BUILD_MODE=production node ./build/src/server.js",
+        "dev": "cross-env BUILD_MODE=dev nodemon --exec babel-node ./src/server.js"
     },
     "author": "cavoibeoo",
     "license": "ISC",
     "dependencies": {
+        "@babel/runtime": "^7.25.7",
+        "bcrypt": "^5.1.1",
         "chalk": "^5.3.0",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
+        "cross-env": "^7.0.3",
         "dotenv": "^16.4.5",
         "express": "^4.21.0",
+        "http-status-codes": "^2.3.0",
+        "joi": "^17.13.3",
+        "jsonwebtoken": "^9.0.2",
         "mongodb": "^6.9.0",
         "mongodb-test": "file:",
         "mongoose": "^8.6.3",
         "morgan": "^1.10.0",
         "nodemon": "^3.1.7",
         "software-project-management-server": "file:"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.25.7",
+        "@babel/core": "^7.25.8",
+        "@babel/eslint-parser": "^7.25.8",
+        "@babel/node": "^7.25.7",
+        "@babel/plugin-transform-runtime": "^7.25.7",
+        "@babel/preset-env": "^7.25.8",
+        "babel-plugin-module-resolver": "^5.0.2",
+        "eslint": "^9.12.0"
     }
 }
