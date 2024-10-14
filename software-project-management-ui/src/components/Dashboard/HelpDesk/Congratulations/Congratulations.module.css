@@ -1,0 +1,115 @@
+
+.congratulationsCard {
+    margin-bottom: 25px;
+    border-radius: 7px;
+    background-color: #fff;
+    padding: 25px;
+}
+.congratulationsCard .content {
+    position: relative;
+}
+.congratulationsCard .content h5 {
+    color: var(--blackColor);
+    margin-bottom: 3px;
+}
+.congratulationsCard .content img {
+    right: -25px;
+    bottom: -20px;
+    max-width: 152px;
+    position: absolute;
+}
+ 
+/* dark-theme style */
+.dark-theme .congratulationsCard {
+    background-color: var(--darkCardBg);
+}
+
+/* RTL Style */
+[dir="rtl"] .congratulationsCard .content img {
+    right: auto;
+    left: -25px;
+}
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .congratulationsCard .content h5 {
+        margin-bottom: 3px;
+   }
+    .congratulationsCard .content p {
+        margin-bottom: 12px;
+   }
+    .congratulationsCard .content h6 {
+        font-size: 18px;
+   }
+    .congratulationsCard .content .mat-mdc-button {
+        font-size: 13px;
+        margin-top: 15px;
+   }
+    .congratulationsCard .content img {
+        right: -17px;
+        bottom: -17px;
+        max-width: 130px;
+   }
+    .congratulationsCard.component-rtl-enabled .content img {
+        right: auto;
+        left: -17px;
+   }
+}
+/* Min width 576px to Max width 767px */
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .congratulationsCard .content h6 {
+        font-size: 19px;
+   }
+    .congratulationsCard .content img {
+        right: 0;
+        bottom: 0;
+        max-width: 155px;
+   }
+    .congratulationsCard.component-rtl-enabled .content img {
+        right: auto;
+        left: 0;
+   }
+}
+
+/* Min width 992px to Max width 1199px */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .congratulationsCard .content img {
+        right: -20px;
+        bottom: -20px;
+        max-width: 130px;
+   }
+    .congratulationsCard.component-rtl-enabled .content img {
+        right: auto;
+        left: -20px;
+   }
+}
+
+/* Min width 1200px to Max width 1399px */
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+    .congratulationsCard {
+        padding: 20px;
+    }
+    .congratulationsCard .content img {
+        right: -20px;
+        bottom: -20px;
+        max-width: 135px;
+   }
+    .congratulationsCard.component-rtl-enabled .content img {
+        right: auto;
+        left: -20px;
+   }
+}
+
+/* Min width 1600px */
+@media only screen and (min-width: 1600px) {
+    .congratulationsCard .content img {
+        right: 0;
+        bottom: 0;
+   }
+    .congratulationsCard.component-rtl-enabled .content img {
+        right: auto;
+        left: 0;
+   }
+}

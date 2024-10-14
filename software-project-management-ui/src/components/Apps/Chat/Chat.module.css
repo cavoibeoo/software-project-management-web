@@ -1,0 +1,194 @@
+.searchBox {
+     position: relative; 
+}
+.searchBox i {
+     top: 50%;
+     left: 13px;
+     font-size: 20px;
+     position: absolute;
+     transform: translateY(-50%);
+}
+.searchBox .inputSearch {
+     height: 40px;
+     font-size: 12px; 
+     background-color: #f6f7f9;
+     border: 1px solid #F6F7F9;
+     color: var(--blackColor);
+     padding: 5px 10px 5px 38px;
+     border-radius: 7px;
+     display: block;
+     width: 100%; 
+}
+.searchBox .inputSearch:focus {
+     outline: 0;
+}
+ 
+/* chatUsersList */
+.chatUsersList {
+     overflow-y: scroll;
+     height: 812px;
+     padding-right: 10px; 
+}
+.chatUsersList::-webkit-scrollbar {
+     width: 2px;
+     height: 2px;
+}
+.chatUsersList::-webkit-scrollbar-track {
+     border-radius: 50px;
+     background-color: var(--whiteColor);
+}
+.chatUsersList::-webkit-scrollbar-thumb {
+     border-radius: 50px;
+     background: #B5C3D7;
+}
+.chatUsersList .singleUserItem {
+     margin-bottom: 14px;
+     padding-bottom: 14px;
+     border-bottom: 1px solid #eceef2;
+}
+.chatUsersList .singleUserItem:last-child {
+     margin-bottom: 0;
+     padding-bottom: 0; 
+     border-bottom: 0;
+}
+ 
+
+/* chatBody */
+.chatBody {
+     transform: rotate(180deg);
+     margin-right: -25px;
+     overflow-y: scroll;
+     direction: rtl;
+     height: 703px;
+}
+.chatBody::-webkit-scrollbar {
+     width: 2px;
+     height: 2px;
+}
+.chatBody::-webkit-scrollbar-track {
+     border-radius: 50px;
+     background-color: var(--whiteColor);
+}
+.chatBody::-webkit-scrollbar-thumb {
+     border-radius: 50px;
+     background: #B5C3D7;
+}
+.chatBody ul {
+     padding: 0;
+     margin: 0;
+     list-style-type: none;
+     flex-direction: column-reverse;
+     justify-content: flex-end;
+     display: flex;
+     padding-left: 25px;
+     padding-right: 0;
+}
+.chatBody ul li {
+     transform: rotate(180deg);
+     padding-left: 45px;
+     direction: ltr;
+     width: 90%;
+     position: relative;
+     margin-bottom: 12px;
+}
+.chatBody ul li .user {
+     top: 0;
+     left: 0;
+     position: absolute;
+     border-radius: 100px;
+}
+.chatBody ul li .message {
+     text-align: start;
+}
+.chatBody ul li .message p {
+     padding: 10px 15px;
+     display: inline-block;
+     background-color: #F6F7F9;
+     border-radius: 0 7px 7px 7px;
+     margin-bottom: 5px;
+}
+.chatBody ul li .message div {
+     margin-bottom: 5px;
+}
+.chatBody ul li .message div:last-child {
+     margin-bottom: 0;
+}
+.chatBody ul li .time {
+     font-size: 12px;
+     text-align: start;
+     display: block
+}
+ 
+.chatBody ul li.right {
+     text-align: end;
+     margin-left: auto;
+     padding-left: 0;
+     padding-right: 0;
+}
+.chatBody ul li.right .user {
+     left: auto;
+     right: 0;
+}
+.chatBody ul li.right .message {
+     text-align: end;
+}
+.chatBody ul li.right .message p {
+     color: var(--whiteColor);
+     border-radius: 7px 0 7px 7px;
+     background-color: var(--primaryColor);
+}
+.chatBody ul li.right .time {
+     text-align: end;
+}
+
+/* dark-theme style */
+.dark-theme .searchBox .inputSearch {
+     background-color: var(--darkSecondaryColor);
+     border: 1px solid var(--darkSecondaryColor);
+     color: var(--whiteColor);
+}
+
+/* dark-theme style */
+.dark-theme .chatUsersList .singleUserItem { 
+     border-bottom: 1px solid var(--darkSecondaryColor); 
+}
+.dark-theme .chatUsersList .singleUserItem:last-child { 
+     border-bottom: none; 
+}
+.dark-theme .chatBody ul li .message p {
+     background-color: var(--darkSecondaryColor); 
+}
+
+/* RTL Style */
+[dir="rtl"] .searchBox i {
+     left: auto;
+     right: 13px;
+}
+[dir="rtl"] .searchBox .inputSearch {
+     padding: 5px 38px 5px 10px;
+}
+
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+   /* chatUsersList */
+     .chatUsersList { 
+          height: 400px; 
+     }
+}
+/* Min width 576px to Max width 767px */
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+}
+
+/* Min width 992px to Max width 1199px */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+/* Min width 1200px to Max width 1399px */
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+
+} 

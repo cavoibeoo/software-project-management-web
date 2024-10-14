@@ -1,0 +1,171 @@
+.comingSoonTimer {
+	margin-right: -25px;
+	padding: 180px 50px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	text-align: center;
+	border-radius: 7px;
+	position: relative;
+	z-index: 1;
+}
+.comingSoonTimer::before {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: -1;
+	content: "";
+	opacity: 0.7;
+	border-radius: 7px;
+	position: absolute;
+	background: #000;
+}
+.comingSoonTimer h4 {
+	letter-spacing: 4.5px;
+	margin-bottom: 25px;
+	color: #fff;
+	font-weight: 400;
+	font-size: 21px;
+}
+.comingSoonTimer .countdownContainer .countdownValue {
+	margin-bottom: 5px;
+	font-size: 100px;
+	font-weight: 700;
+	line-height: 1;
+}
+.comingSoonTimer .countdownContainer .countdownLabel {
+	font-size: 16px;
+	color: #f5f2f5;
+}
+.comingSoonTimer .countdownContainer .countdownItem {
+	margin-top: 30px;
+	margin-left: 30px;
+	margin-right: 30px;
+	position: relative;
+	display: inline-block;
+}
+.comingSoonTimer .countdownContainer .countdownItem .countdownValue {
+	margin-bottom: 10px;
+	font-size: 42px;
+}
+.comingSoonTimer .countdownContainer .countdownItem .countdownLabel {
+	font-size: 14px;
+}
+.comingSoonTimer .countdownContainer .countdownItem::before {
+	top: 50%;
+	right: -33px;
+	content: ":";
+	line-height: 1;
+	font-size: 30px;
+	margin-top: -15px;
+	position: absolute;
+	color: var(--whiteColor);
+	transform: translateY(-50%);
+}
+.comingSoonTimer .countdownContainer .countdownItem:first-child {
+	margin-left: 0;
+}
+.comingSoonTimer .countdownContainer .countdownItem:last-child {
+	margin-right: 0;
+}
+.comingSoonTimer .countdownContainer .countdownItem:last-child::before {
+	display: none;
+}
+
+.sine-form.component-rtl-enabled .comingSoonTimer {
+	margin-right: 0;
+	margin-left: -25px;
+}
+.sine-form.component-rtl-enabled
+	.comingSoonTimer
+	.countdownContainer
+	.countdownItem::before {
+	left: -33px;
+	right: auto;
+}
+.sine-form.component-rtl-enabled
+	.comingSoonTimer
+	.countdownContainer
+	.countdownItem:first-child {
+	margin-left: 30px;
+	margin-right: 0;
+}
+.sine-form.component-rtl-enabled
+	.comingSoonTimer
+	.countdownContainer
+	.countdownItem:last-child {
+	margin-right: 30px;
+	margin-left: 0;
+}
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+	.comingSoonTimer {
+		padding: 60px 17px;
+		margin-right: 0;
+		margin-bottom: 25px;
+	}
+	.comingSoonTimer h4 {
+		letter-spacing: 1.5px;
+		margin-bottom: 17px;
+	}
+	.comingSoonTimer .countdownContainer .countdownValue {
+		font-size: 50px;
+	}
+	.comingSoonTimer .countdownContainer .countdownLabel {
+		font-size: 14px;
+	}
+	.comingSoonTimer .countdownContainer .countdownItem {
+		margin-top: 20px;
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+	.comingSoonTimer .countdownContainer .countdownItem .countdownValue {
+		margin-bottom: 8px;
+		font-size: 30px;
+	}
+	.comingSoonTimer .countdownContainer .countdownItem .countdownLabel {
+		font-size: 13px;
+	}
+	.comingSoonTimer .countdownContainer .countdownItem::before {
+		right: -24px;
+		font-size: 25px;
+		margin-top: -12px;
+	}
+}
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+	.coming-soon-content .title {
+		margin-top: 20px;
+		margin-bottom: 17px;
+	}
+}
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+	.comingSoonTimer {
+		padding: 100px 30px;
+		margin-right: 0;
+		margin-bottom: 25px;
+	}
+}
+/* Min width 992px to Max width 1199px */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+	.comingSoonTimer {
+		margin-right: 0;
+		padding: 150px 30px;
+	}
+	.comingSoonTimer h4 {
+		letter-spacing: 2.5px;
+	}
+
+	.sine-form.component-rtl-enabled .comingSoonTimer {
+		margin-left: 0;
+	}
+}
+/* Min width 1200px to Max width 1399px */
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+	.comingSoonTimer {
+		margin-right: 0;
+	}
+}

@@ -1,0 +1,253 @@
+:root {
+  --darkBodyBg: #0a0e19;
+  --darkCardBg: #0c1427;
+  --darkBorder: #172036;
+  --darkBodyColor: #8695AA;
+  --darkSecondaryColor: #15203c;
+}
+
+.dark-theme {
+  background-color: var(--darkBodyBg);
+}
+.dark-theme body {
+  background-color: var(--darkBodyBg);
+  color: var(--darkBodyColor) !important;
+}
+.dark-theme h1, .dark-theme h2, .dark-theme h3, .dark-theme h4, .dark-theme h5, .dark-theme h6 {
+  color: var(--whiteColor) !important;
+}
+.dark-theme ::-moz-placeholder {
+  color: var(--darkBodyColor);
+}
+.dark-theme button, .dark-theme a, .dark-theme p, .dark-theme q, .dark-theme tspan, .dark-theme li, .dark-theme tbody, .dark-theme tfoot, .dark-theme thead, .dark-theme th, .dark-theme td, .dark-theme canvas, .dark-theme ::placeholder, .dark-theme abbr, .dark-theme address, .dark-theme blockquote, .dark-theme caption, .dark-theme cite, .dark-theme code, .dark-theme dd, .dark-theme dl, .dark-theme mark, .dark-theme option, .dark-theme pre, .dark-theme time, .dark-theme del, .dark-theme .MuiTypography-p, .dark-theme .MuiDataGrid-cellContent, .dark-theme .MuiTabPanel-root, .dark-theme .MuiTypography-body1, .dark-theme .MuiTypography-body2, .dark-theme .MuiStepLabel-label, .dark-theme .MuiTypography-caption {
+  color: var(--darkBodyColor);
+}
+.dark-theme .bg-white {
+  background-color: #0C1427 !important;
+}
+.dark-theme .text-black {
+  color: var(--whiteColor) !important;
+}
+.dark-theme .text-body {
+  color: var(--darkBodyColor) !important;
+}
+.dark-theme .bg-black {
+  background-color: var(--whiteColor) !important;
+}
+.dark-theme .bg-gray {
+  background-color: var(--darkSecondaryColor) !important;
+}
+.dark-theme .bg-f6f7f9 {
+  background-color: var(--darkSecondaryColor) !important;
+}
+.dark-theme .bg-primary-50 {
+  background-color: var(--darkSecondaryColor) !important;
+}
+.dark-theme .bg-ecf0ff {
+  background-color: var(--darkSecondaryColor) !important;
+}
+.dark-theme .bg-orange-50, .dark-theme .bg-success-50, .dark-theme .bg-purple-50, .dark-theme .bg-purple-100, .dark-theme .bg-secondary-100, .dark-theme .bg-success-100, .dark-theme .bg-orange-100, .dark-theme .bg-primary-100 {
+  background-color: var(--darkSecondaryColor) !important;
+}
+.dark-theme .border {
+  border: 1px solid var(--darkBorder) !important;
+}
+.dark-theme .border-bottom {
+  border-bottom: 1px solid var(--darkBorder) !important;
+}
+.dark-theme .border-top {
+  border-top: 1px solid var(--darkBorder) !important;
+}
+.dark-theme .border-right {
+  border-right: 1px solid var(--darkBorder) !important;
+}
+.dark-theme .border-left {
+  border-left: 1px solid var(--darkBorder) !important;
+}
+.dark-theme .MuiFormControl-root .MuiInputBase-root {
+  border: 1px solid var(--darkBorder);
+  background-color: transparent;
+}
+.dark-theme .MuiFormControl-root .MuiInputBase-root .MuiInputBase-input {
+  color: #fff;
+}
+.dark-theme .MuiFormControl-root .MuiFormLabel-root {
+  color: var(--darkBodyColor);
+}
+.dark-theme .MuiFormControl-root .MuiOutlinedInput-notchedOutline {
+  border: 1px solid var(--darkBorder) !important;
+}
+.dark-theme .MuiFormControl-root .MuiOutlinedInput-notchedOutline:hover {
+  border: 1px solid #fff !important;
+}
+.dark-theme .mantine-RichTextEditor-root {
+  background-color: var(--darkCardBg);
+  border: 1px solid var(--darkBorder);
+}
+.dark-theme .mantine-RichTextEditor-root .mantine-RichTextEditor-toolbar {
+  background-color: var(--darkCardBg);
+  border-bottom: 1px solid var(--darkBorder);
+}
+.dark-theme .mantine-RichTextEditor-root .mantine-UnstyledButton-root {
+  background-color: var(--darkCardBg);
+}
+.dark-theme .mui-araeqv {
+  background-color: var(--darkCardBg);
+  border: 1px solid var(--darkBorder);
+  color: #fff;
+}
+.dark-theme textarea {
+  background-color: var(--darkCardBg);
+  border: 1px solid var(--darkBorder);
+  color: #fff;
+}
+.dark-theme .MuiSelect-icon {
+  color: var(--darkBodyColor);
+}
+.dark-theme .dark-check {
+  color: var(--darkBodyColor);
+}
+.dark-theme .dark-radio svg {
+  color: var(--darkBodyColor);
+}
+.dark-theme .MuiRating-root svg {
+  color: var(--darkBodyColor);
+}
+.dark-theme .MuiDivider-wrapper {
+  color: #fff;
+}
+.dark-theme table svg {
+  color: var(--darkBodyColor);
+}
+.dark-theme tfoot td svg {
+  color: var(--darkBodyColor);
+}
+.dark-theme .MuiDataGrid-root {
+  border: 1px solid var(--darkBorder);
+}
+.dark-theme .rmui-card, .dark-theme .MuiCard-root {
+  background-color: var(--darkCardBg) !important;
+}
+.dark-theme .rmui-table, .dark-theme .MuiTableContainer-root {
+  background-color: var(--darkCardBg) !important;
+}
+.dark-theme .MuiPopover-paper, .dark-theme .MuiPopover-paper:before {
+  background-color: var(--darkBodyBg);
+}
+.dark-theme .MuiDivider-root {
+  border-color: var(--darkBorder);
+}
+.dark-theme .apexcharts-canvas .apexcharts-gridline {
+  stroke: var(--darkBorder);
+}
+.dark-theme .apexcharts-canvas .apexcharts-tooltip.apexcharts-theme-light {
+  background: var(--darkBorder);
+  box-shadow: unset;
+}
+.dark-theme .apexcharts-canvas .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
+  background: #0C1427;
+  color: var(--whiteColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-tooltip.apexcharts-theme-dark .apexcharts-tooltip-series-group {
+  background-color: var(--blackColor) !important;
+}
+.dark-theme .apexcharts-canvas .apexcharts-tooltip-text-y-label, .dark-theme .apexcharts-canvas .apexcharts-tooltip-text-goals-value, .dark-theme .apexcharts-canvas .apexcharts-tooltip-text-y-value, .dark-theme .apexcharts-canvas .apexcharts-tooltip-text-z-value {
+  color: var(--whiteColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-xaxistooltip {
+  color: var(--whiteColor);
+  background: var(--darkSecondaryColor);
+  box-shadow: unset;
+}
+.dark-theme .apexcharts-canvas .apexcharts-menu {
+  background: var(--darkBorder);
+  box-shadow: unset;
+}
+.dark-theme .apexcharts-canvas .apexcharts-menu .apexcharts-menu-item:hover {
+  background: #0A0E19;
+}
+.dark-theme .apexcharts-canvas .apexcharts-xcrosshairs, .dark-theme .apexcharts-canvas .apexcharts-ycrosshairs {
+  fill: var(--borderColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-toolbar .apexcharts-menu-icon svg {
+  fill: var(--whiteColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-toolbar .apexcharts-menu-icon:hover svg {
+  fill: var(--primaryColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-legend-text, .dark-theme .apexcharts-canvas .apexcharts-title-text {
+  color: var(--darkBodyColor) !important;
+}
+.dark-theme .apexcharts-canvas .apexcharts-text {
+  fill: var(--darkBodyColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-text.apexcharts-datalabel-value {
+  fill: var(--whiteColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-text.apexcharts-point-annotation-label {
+  fill: var(--whiteColor);
+}
+.dark-theme .apexcharts-canvas .apexcharts-pie-area {
+  stroke: #0C1427;
+}
+.dark-theme .apexcharts-canvas .apexcharts-yaxis line, .dark-theme .apexcharts-canvas .apexcharts-grid-borders line {
+  stroke: var(--darkBorder);
+}
+.dark-theme .apexcharts-canvas .apexcharts-xaxis-tick {
+  stroke: var(--darkBorder);
+}
+.dark-theme .apexcharts-canvas .apexcharts-track .apexcharts-radialbar-area {
+  stroke: var(--darkBorder);
+}
+.dark-theme .apexcharts-canvas .apexcharts-radar-series.apexcharts-plot-series line, .dark-theme .apexcharts-canvas .apexcharts-radar-series.apexcharts-plot-series polygon {
+  fill: #0C1427;
+  stroke: var(--darkBorder);
+}
+.dark-theme .apexcharts-canvas .apexcharts-radar-series.apexcharts-plot-series polygon:nth-child(odd) {
+  fill: var(--darkBorder);
+}
+.dark-theme .apexcharts-canvas .apexcharts-pie line, .dark-theme .apexcharts-canvas .apexcharts-pie circle {
+  stroke: var(--darkBorder);
+}
+.dark-theme .rmu-modal .MuiDialog-container .MuiPaper-root, .dark-theme .MuiModal-root .MuiDialog-container .MuiPaper-root {
+  background-color: var(--darkBodyBg);
+}
+.dark-theme .rmu-modal .MuiDialog-container .MuiPaper-root .rmu-modal-header, .dark-theme .MuiModal-root .MuiDialog-container .MuiPaper-root .rmu-modal-header {
+  background-color: var(--darkSecondaryColor);
+}
+.dark-theme .rmu-modal .MuiDialog-container .MuiPaper-root .rmu-modal-content, .dark-theme .MuiModal-root .MuiDialog-container .MuiPaper-root .rmu-modal-content {
+  background-color: var(--darkBodyBg);
+}
+.dark-theme .full-calendar-box .fc table {
+  border-color: var(--darkBorder);
+}
+.dark-theme .full-calendar-box .fc table thead tr th .fc-scrollgrid-sync-inner {
+  background-color: var(--darkSecondaryColor);
+}
+.dark-theme .full-calendar-box .fc-theme-standard td, .dark-theme .full-calendar-box .fc-theme-standard th {
+  border: 1px solid var(--darkBorder);
+}
+.dark-theme .rmui-chat-sidebar-tab button {
+  color: var(--darkBodyColor) !important;
+}
+.dark-theme .pd-description ul {
+  border: 1px solid var(--darkBorder);
+}
+.dark-theme .pd-description ul li {
+  border-bottom: 1px solid var(--darkBorder);
+}
+.dark-theme .pd-description ul li:last-child {
+  border-bottom: none;
+}
+.dark-theme .auth-main-wrapper .logo img {
+  display: none;
+}
+.dark-theme .auth-main-wrapper .logo img.d-none {
+  display: block;
+}
+.dark-theme .MuiAccordion-root svg {
+  color: var(--darkBodyColor) !important;
+}
+.dark-theme .footer-area {
+  background-color: var(--darkCardBg);
+}/*# sourceMappingURL=dark.css.map */
