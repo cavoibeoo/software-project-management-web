@@ -325,13 +325,14 @@
 }
 
 .sine-badge {
-	background-color: #ecf0ff;
-	color: var(--primaryColor);
+	background-color: #f3f0ff;
+	color: #5e4db2;
 	display: inline-block;
 	border-radius: 4px;
 	padding: 3px 8px;
-	font-weight: 500;
+	font-weight: 505;
 	font-size: 12px;
+	margin-left: 4px;
 }
 .sine-badge.pending,
 .sine-badge.Pending {
@@ -1114,7 +1115,10 @@ table tfoot p {
 
 .breadcrumb-card {
 	margin-bottom: 25px;
+	border-bottom-width: 1px;
+	border-color: #040d1d24;
 	display: flex;
+	border-style: none none solid;
 	align-items: center;
 	justify-content: space-between;
 }
@@ -1364,3 +1368,8 @@ table tfoot tr p {
 .full-calendar-box .fc-theme-standard th {
 	border: 1px solid var(--borderColor);
 } /*# sourceMappingURL=globals.css.map */
+
+.sidebar-menu-link.active {
+	color: var(--primaryColor);
+	background-color: #f6f7f9;
+}
