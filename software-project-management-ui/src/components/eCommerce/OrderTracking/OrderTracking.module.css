@@ -1,0 +1,72 @@
+.orderTrackingCard {
+    padding: 25px;
+    margin-bottom: 25px;
+}
+.orderTrackingCard .numbers {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+}
+.orderTrackingCard .numbers .box div {
+    width: 50px;
+    height: 50px;
+    line-height: 48px;
+    background-color: var(--whiteColor);
+    border: 1px dashed var(--primaryColor);
+    font-weight: 600;
+}
+.orderTrackingCard .numbers .box.active div {
+    color: var(--whiteColor) !important;
+    background-color: var(--primaryColor);
+}
+.orderTrackingCard .numbers::before {
+    left: 0;
+    right: 0;
+    top: 25px;
+    content: '';
+    z-index: -1;
+    position: absolute;
+    border-left: 0px dashed var(--primaryColor);
+    border-top: 1px dashed var(--primaryColor);
+}
+
+/* dark-theme style */
+.dark-theme .orderTrackingCard .numbers .box div {
+    background-color: var(--darkSecondaryColor);
+    border: 1px solid var(--darkSecondaryColor);
+    color: var(--whiteColor);
+}
+.dark-theme .orderTrackingCard .numbers .box.active div {
+    color: var(--whiteColor) !important;
+    background-color: var(--primaryColor);
+}
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .orderTrackingCard .numbers {
+        margin-top: 25px;
+        margin-bottom: 25px;
+        display: block;
+    }
+    .orderTrackingCard .numbers .box {
+        display: inline-block;
+        margin-bottom: 15px;
+        margin-right: 15px;
+    }
+    .orderTrackingCard .numbers::before {
+        display: none;
+    }
+}
+/* Min width 576px to Max width 767px */
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .orderTrackingCard .numbers {
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+}
+ 

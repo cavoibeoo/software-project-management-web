@@ -1,0 +1,75 @@
+.control-panel-modal {
+  position: fixed;
+  right: -100%;
+  top: 0;
+  z-index: 999999;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: var(--transition);
+}
+.control-panel-modal.show {
+  right: 0;
+}
+.control-panel-modal .control-panel-dialog {
+  width: 320px;
+  background: #fff;
+  height: 100%;
+  margin-left: auto;
+  z-index: 999999;
+  position: relative;
+}
+.control-panel-modal .control-panel-dialog .control-panel-content {
+  overflow-y: auto;
+  height: 100%;
+  padding-bottom: 150px;
+}
+.control-panel-modal .control-panel-dialog .control-panel-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #f5f5f5;
+  padding: 16px 24px;
+  width: 100%;
+}
+.control-panel-modal .close-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: zoom-out;
+}
+
+/* dark-theme style */
+.dark-theme .control-panel-modal .control-panel-dialog {
+  background-color: var(--darkBodyBg);
+  border: 1px solid var(--darkBorder);
+}
+.dark-theme .control-panel-modal .control-panel-dialog .control-panel-footer {
+  background-color: var(--darkSecondaryColor);
+}
+
+.top-navbar-dark.dark-theme .control-panel-modal .control-panel-dialog {
+  background-color: #fff;
+  border: 1px solid #fff;
+}
+.top-navbar-dark.dark-theme .control-panel-modal .control-panel-dialog .text-black {
+  color: var(--blackColor) !important;
+  border-bottom: 1px solid #edeff5 !important;
+}
+.top-navbar-dark.dark-theme .control-panel-modal .control-panel-dialog .control-panel-footer {
+  background-color: #f5f5f5;
+}
+
+[dir=rtl] .control-panel-modal {
+  right: auto;
+  left: -100%;
+}
+[dir=rtl] .control-panel-modal.show {
+  left: 0;
+}
+[dir=rtl] .control-panel-modal .control-panel-dialog {
+  margin-left: 0;
+  margin-right: auto;
+}/*# sourceMappingURL=control-panel.css.map */

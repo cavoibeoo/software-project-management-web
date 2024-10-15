@@ -1,0 +1,34 @@
+.langList {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+.langList li {
+  border-top: 1px dashed #eceef2;
+  display: block;
+}
+.langList li button {
+  padding: 12px 20px;
+  width: 100%;
+  justify-content: flex-start;
+  color: var(--blackColor);
+  text-transform: capitalize;
+  font-size: 14px;
+}
+.langList li button img {
+  margin-right: 10px;
+}
+
+/* dark-theme style */
+.dark-theme .langList li {
+  border-top: 1px dashed var(--darkBorder);
+}
+.dark-theme .langList li button { 
+  color: var(--whiteColor);
+}
+
+/* RTL Style */
+[dir="rtl"] .langList li button img {
+  margin-right: 0;
+  margin-left: 10px;
+}

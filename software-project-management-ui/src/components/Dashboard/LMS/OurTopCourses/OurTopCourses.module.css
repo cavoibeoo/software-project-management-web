@@ -1,0 +1,149 @@
+.ourTopCoursesCard {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--secondaryColor) !important;
+    padding: 25px;
+    border-radius: 7px;
+}
+.ourTopCoursesCard .heading {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--whiteColor);
+}
+.ourTopCoursesCard .sliderContent {
+    position: relative;
+}
+.ourTopCoursesCard .sliderContent .image {
+    width: 120px;
+}
+.ourTopCoursesCard .sliderContent .image img {
+    display: inline-block;
+    width: auto;
+}
+.ourTopCoursesCard .sliderContent .content {
+    margin-left: 15px;
+}
+.ourTopCoursesCard .sliderContent .content .price {
+    font-size: 20px;
+    margin-top: 4px;
+    font-weight: 600;
+    color: #fff;
+}
+.ourTopCoursesCard .sliderContent .info {
+    margin-top: 15px;
+}
+.ourTopCoursesCard .sliderContent .info span {
+    font-size: 16px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    display: block;
+}
+.ourTopCoursesCard .sliderContent .info ul {
+    color: #fff;
+    margin: 0;
+    list-style-type: none;
+    padding: 0;
+}
+.ourTopCoursesCard .sliderContent .info ul li {
+    margin-right: 17px;
+    display: inline-block;
+    position: relative;
+    color: #fff;
+}
+.ourTopCoursesCard .sliderContent .info ul li::before {
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    content: '';
+    right: -11px;
+    margin-top: 1px;
+    position: absolute;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    background: var(--whiteColor);
+}
+.ourTopCoursesCard .sliderContent .info ul li:last-child {
+    margin-right: 0;
+}
+.ourTopCoursesCard .sliderContent .info ul li:last-child::before {
+    display: none;
+}
+.ourTopCoursesCard::before {
+    top: -80px;
+    z-index: -1;
+    content: '';
+    right: -80px;
+    width: 169px;
+    height: 169px;
+    position: absolute;
+    border-radius: 50%;
+    background: #1f64f1;
+}
+.ourTopCoursesCard::after {
+    left: auto;
+    top: -75px;
+    content: '';
+    z-index: -2;
+    right: -75px;
+    width: 169px;
+    height: 169px;
+    position: absolute;
+    border-radius: 50%;
+    background: #5da8ff;
+}
+
+/* RTL Style */
+[dir="rtl"] .ourTopCoursesCard .sliderContent .content {
+    margin-left: 0;
+    margin-right: 15px;
+}
+[dir="rtl"] .ourTopCoursesCard .sliderContent .info ul li {
+    margin-right: 0;
+    margin-left: 17px;
+}
+[dir="rtl"] .ourTopCoursesCard .sliderContent .info ul li::before {
+    right: auto;
+    left: -11px;
+}
+[dir="rtl"] .ourTopCoursesCard .sliderContent .info ul li:last-child {
+    margin-left: 0;
+}
+ 
+  
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .ourTopCoursesCard .heading {
+        margin-bottom: 17px;
+   }
+    .ourTopCoursesCard .sliderContent .image {
+        width: 100px;
+   }
+    .ourTopCoursesCard .sliderContent .content .price {
+        font-size: 18px;
+   }
+    .ourTopCoursesCard .sliderContent .info span {
+        font-size: 14px;
+   }
+    ::ng-deep .ourTopCoursesCard .sliderContent .owl-theme .owl-dots {
+        bottom: 10px;
+   }
+}
+
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+    .ourTopCoursesCard .heading {
+        margin-bottom: 20px;
+   }
+}
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .ourTopCoursesCard .sliderContent .content .price {
+        font-size: 19px;
+   }
+    .ourTopCoursesCard .sliderContent .info span {
+        font-size: 15px;
+   }
+}
+ 

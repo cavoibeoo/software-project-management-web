@@ -1,0 +1,90 @@
+.sidebarMenu {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebarMenu li {
+  margin-bottom: 15px;
+  position: relative;
+}
+.sidebarMenu li a {
+  padding-left: 30px;
+  color: #526077;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.sidebarMenu li a:hover {
+  color: var(--primaryColor) !important;
+}
+.sidebarMenu li a i {
+  transform: translateY(-50%);
+  position: absolute;
+  font-size: 18px;
+  top: 50%;
+  left: 0;
+}
+.sidebarMenu li a span {
+  font-size: 12px;
+  font-weight: normal;
+  display: block;
+}
+.sidebarMenu li a:hover {
+  color: var(--blackColor);
+}
+.sidebarMenu li a.active {
+  font-weight: 600;
+  color: var(--primaryColor);
+}
+.sidebarMenu li:last-child {
+  margin-bottom: 0;
+}
+
+/* dark-theme style */
+.dark-theme .sidebarMenu li a {
+  color: var(--darkBodyColor) !important;
+}
+.dark-theme .sidebarMenu li a.active, .dark-theme .sidebarMenu li a:hover {
+  color: var(--primaryColor) !important;
+}
+
+/* RTL Style */
+[dir="rtl"] .sidebarMenu li a {
+  padding-left: 0;
+  padding-right: 30px;
+}
+[dir="rtl"] .sidebarMenu li a i {
+  left: auto;
+  right: 0;
+}
+
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+ 
+  .sidebarMenu {
+    margin-top: 17px;
+    margin-bottom: 20px;
+  }
+  .sidebarMenu li {
+    margin-bottom: 16px;
+  }
+  .sidebarMenu li a {
+    padding-left: 26px;
+  }
+  .sidebarMenu li a i {
+    font-size: 16px;
+  }
+}
+
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+  .sidebarMenu {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}

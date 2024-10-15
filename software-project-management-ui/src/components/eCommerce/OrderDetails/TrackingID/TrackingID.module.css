@@ -1,0 +1,81 @@
+.trackingIdCard {
+  margin-bottom: 25px;
+  border-radius: 7px;
+  background-color: var(--primaryColor);
+  padding: 25px;
+}
+.trackingIdCard .title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
+} 
+.trackingIdCard .numbers {
+  z-index: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.trackingIdCard .numbers .box div {
+  width: 50px;
+  height: 50px;
+  line-height: 48px;
+  border: 1px dashed var(--whiteColor);
+}
+.trackingIdCard .numbers .box span {
+  margin-top: 12px;
+  display: block;
+  font-weight: 600;
+}
+.trackingIdCard .numbers .box.active div {
+  background-color: var(--infoColor) !important;
+}
+.trackingIdCard .numbers .box:last-child {
+  text-align: end;
+}
+.trackingIdCard .numbers .box:last-child div {
+  margin-left: auto;
+}
+.trackingIdCard .numbers::before {
+  left: 0;
+  right: 0;
+  top: 25px;
+  content: '';
+  z-index: -1;
+  position: absolute;
+  border-top: 1px dashed var(--whiteColor);
+}
+
+ 
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .trackingIdCard  .numbers .box {
+        display: inline-block;
+        margin-right: 20px; 
+    }
+    .trackingIdCard  .numbers .box div {
+        width: 45px;
+        height: 45px;
+        line-height: 43px;
+    }
+    .trackingIdCard  .numbers .box span {
+        margin-top: 12px;
+        font-size: 12px;
+    }
+    .trackingIdCard  .numbers .box:last-child {
+        margin-right: 0;
+        text-align: start;
+    }
+    .trackingIdCard  .numbers .box:last-child div {
+        margin-left: 0;
+    }
+    .trackingIdCard  .numbers::before {
+        display: none;
+    }
+  
+}
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+ 
+}
+ 

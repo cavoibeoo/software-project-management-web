@@ -1,0 +1,63 @@
+.header {
+  border-bottom: 1px dashed #eceef2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 20px 10px;
+}
+.header h4 {
+  font-size: 15px;
+  color: var(--blackColor);
+  font-weight: 600;
+}
+.header h4 span {
+  font-size: 14px;
+  color: var(--bodyColor);
+  font-weight: 400;
+}
+.header button {
+  text-transform: capitalize;
+}
+.notificationList {
+  position: relative;
+  border-bottom: 1px dashed #eceef2;
+  padding: 18px 20px 18px 75px;
+}
+.notificationList .icon{
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  text-align: center;
+  transition: var(--transition) !important;
+  color: var(--primaryColor);
+  transform: translateY(-50%);
+  background-color: #4936f50d;
+  width: 44px;
+  height: 44px;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.notificationList:hover .icon{
+  background-color: var(--primaryColor);
+  color: #fff;
+}
+ 
+/* dark-theme style */
+.dark-theme .header {
+  border-bottom: 1px dashed var(--darkBorder);
+}
+.dark-theme .notificationList {
+  border-bottom: 1px dashed var(--darkBorder);
+}
+
+/* RTL Style */
+[dir="rtl"] .notificationList {
+  padding: 18px 75px 18px 20px;
+}
+[dir="rtl"] .notificationList .icon{
+  left: auto;
+  right: 20px;
+}

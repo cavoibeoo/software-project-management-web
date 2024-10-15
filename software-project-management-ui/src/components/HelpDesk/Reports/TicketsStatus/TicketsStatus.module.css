@@ -1,0 +1,234 @@
+.ticketsStatusContent {
+    z-index: 1;
+    position: relative;
+    padding-right: 230px;
+}
+.ticketsStatusContent .info {
+    right: 0;
+    top: 20px;
+    width: 175px;
+    position: absolute;
+}
+.ticketsStatusContent .info h6 {
+    font-size: 18px;
+    margin-bottom: 3px;
+}
+.ticketsStatusContent .info ul {
+    margin-top: 35px;
+    margin-bottom: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.ticketsStatusContent .info ul li {
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+.ticketsStatusContent .info ul li .dot {
+    width: 11px;
+    height: 11px;
+    margin-right: 8px;
+    border-radius: 3px;
+}
+.ticketsStatusContent .info ul li span {
+    font-size: 18px;
+    margin-top: 5px;
+    font-weight: 500;
+}
+.ticketsStatusContent .info ul li:last-child {
+    margin-bottom: 0;
+}
+.ticketsStatusContent::before {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    content: '';
+    z-index: -1;
+    right: 215px;
+    position: absolute;
+    background: #eceef2;
+    margin-top: -55px;
+    margin-bottom: -3px;
+}
+
+/* RTL Style */
+[dir="rtl"] .ticketsStatusContent  {
+    padding-right: 0;
+    padding-left: 230px;
+}
+[dir="rtl"] .ticketsStatusContent  .info {
+    right: auto;
+    left: 0;
+}
+[dir="rtl"] .ticketsStatusContent  .info ul li .dot {
+    margin-right: 0;
+    margin-left: 8px;
+}
+[dir="rtl"] .ticketsStatusContent::before {
+    right: auto;
+    left: 215px;
+}
+
+/* dark-theme style */
+.dark-theme .ticketsStatusContent:before {
+    background-color: var(--darkSecondaryColor); 
+}
+
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .ticketsStatusContent {
+        padding-right: 0;
+    }
+    .ticketsStatusContent .info {
+        top: 0;
+        width: auto;
+        margin-top: 17px;
+        position: relative;
+    }
+    .ticketsStatusContent .info h6 {
+        font-size: 16px;
+    }
+    .ticketsStatusContent .info ul {
+        margin-top: 0;
+        flex-wrap: wrap;
+        display: flex;
+    }
+    .ticketsStatusContent .info ul li {
+        margin-right: 20px;
+        margin-bottom: 0;
+        margin-top: 17px;
+   }
+    .ticketsStatusContent .info ul li span {
+        font-size: 16px;
+   }
+    .ticketsStatusContent::before {
+        display: none;
+   }
+    
+   /* RTL Style */
+    [dir="rtl"] .ticketsStatusContent  {
+        padding-left: 0;
+    }
+    [dir="rtl"] .ticketsStatusContent .info ul li {
+        margin-right: 0;
+        margin-left: 20px;
+    }
+    [dir="rtl"] .ticketsStatusContent::before {
+        display: none;
+    }
+}
+/* Min width 576px to Max width 767px */
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .ticketsStatusContent  {
+        padding-right: 220px;
+   }
+    .ticketsStatusContent .info {
+        top: 20px;
+        width: 170px;
+   }
+    .ticketsStatusContent .info h6 {
+        font-size: 17px;
+   }
+    .ticketsStatusContent .info ul {
+        margin-top: 20px;
+   }
+    .ticketsStatusContent .info ul li {
+        margin-bottom: 17px;
+   }
+    .ticketsStatusContent .info ul li span {
+        font-size: 17px;
+   }
+    .ticketsStatusContent::before {
+        right: 195px;
+        margin-top: -50px;
+   }
+
+    /* RTL Style */
+    [dir="rtl"] .ticketsStatusContent  {
+        padding-right: 0;
+        padding-left: 220px;
+    }
+    [dir="rtl"] .ticketsStatusContent::before {
+        right: auto;
+        left: 195px;
+    }
+}
+
+/* Min width 992px to Max width 1199px */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .ticketsStatusContent  {
+        padding-right: 0;
+   }
+    .ticketsStatusContent .info {
+        top: 0;
+        width: auto;
+        margin-top: 25px;
+        position: relative;
+   }
+    .ticketsStatusContent .info h6 {
+        margin-bottom: 7px;
+   }
+    .ticketsStatusContent .info ul {
+        flex-wrap: wrap;
+        display: flex;
+        margin-top: 0;
+   }
+    .ticketsStatusContent .info ul li {
+        margin-right: 30px;
+        margin-bottom: 0;
+        margin-top: 20px;
+   }
+    .ticketsStatusContent::before {
+        display: none;
+   }
+
+   /* RTL Style */
+    [dir="rtl"] .ticketsStatusContent  {
+        padding-left: 0;
+    }
+    [dir="rtl"] .ticketsStatusContent  .info ul li {
+        margin-right: 0;
+        margin-left: 30px;
+    }
+}
+
+/* Min width 1200px to Max width 1399px */
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+    .ticketsStatusContent  {
+        padding-right: 0;
+   }
+    .ticketsStatusContent .info {
+        top: 0;
+        width: auto;
+        margin-top: 25px;
+        position: relative;
+   }
+    .ticketsStatusContent .info h6 {
+        margin-bottom: 7px;
+   }
+    .ticketsStatusContent .info ul {
+        flex-wrap: wrap;
+        display: flex;
+        margin-top: 0;
+   }
+    .ticketsStatusContent .info ul li {
+        margin-right: 30px;
+        margin-bottom: 0;
+        margin-top: 20px;
+   }
+    .ticketsStatusContent::before {
+        display: none;
+   }
+   
+   /* RTL Style */
+    [dir="rtl"] .ticketsStatusContent  {
+        padding-left: 0;
+    }
+    [dir="rtl"] .ticketsStatusContent  .info ul li {
+        margin-right: 0;
+        margin-left: 30px;
+    }
+}
+/* Min width 1600px */

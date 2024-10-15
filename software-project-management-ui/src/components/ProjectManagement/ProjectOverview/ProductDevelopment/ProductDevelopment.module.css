@@ -1,0 +1,32 @@
+.productDevelopmentCard {
+    margin-bottom: 25px;
+    padding: 25px;
+}
+.productDevelopmentCard p {
+    line-height: 1.6;
+}
+.productDevelopmentCard ul {
+    padding-left: 22px;
+}
+.productDevelopmentCard ul:last-child {
+    margin-bottom: 0;
+}
+.productDevelopmentCard ul li {
+    line-height: 1.7;
+}
+
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+ 
+}
+
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+ 
+}
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  
+} 

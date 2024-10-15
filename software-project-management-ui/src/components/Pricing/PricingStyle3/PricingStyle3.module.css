@@ -1,0 +1,248 @@
+.pricingStyle3Card {
+  padding-top: 55px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 40px;
+  margin-bottom: 25px;
+}
+.pricingStyle3Card .cardContent .singlePricingBox {
+  padding-left: 23px;
+  padding-right: 23px;
+  position: relative; 
+}
+.pricingStyle3Card .cardContent .singlePricingBox .title span {
+  display: inline-block;
+  color: #8695aa;
+  border-radius: 7px;
+  padding: 8.5px 17.3px;
+  border: 1px solid var(--borderColor);
+}
+.pricingStyle3Card .cardContent .singlePricingBox .price {
+  font-size: 36px;
+  letter-spacing: -1px;
+  margin-top: 17px;
+  margin-bottom: 17px;
+  font-weight: 500;
+  line-height: 1;
+}
+.pricingStyle3Card .cardContent .singlePricingBox .price span {
+  font-size: 16px;
+  letter-spacing: normal;
+  font-weight: normal;
+}
+.pricingStyle3Card .cardContent .singlePricingBox .featuresList {
+  margin-top: 28px;
+  margin-bottom: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+  padding-left: 39px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.pricingStyle3Card .cardContent .singlePricingBox .featuresList li i {
+  left: 0;
+  top: 50%;
+  position: absolute;
+  color: var(--successColor);
+  transform: translateY(-50%);
+}
+.pricingStyle3Card .cardContent .singlePricingBox .featuresList li:last-child {
+  margin-bottom: 0;
+}
+.pricingStyle3Card .cardContent .singlePricingBox .popular {
+  top: -20px;
+  right: 10px;
+  position: absolute;
+}
+.pricingStyle3Card .cardContent .singlePricingBox::before {
+  top: 0;
+  bottom: 0;
+  content: '';
+  right: -11px;
+  position: absolute;
+  border-right: 1px dashed var(--borderColor);
+}
+.pricingStyle3Card .cardContent .col-sm-6:last-child .singlePricingBox::before {
+  display: none;
+}
+
+/* RTL Style */
+[dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+  padding-left: 0;
+  padding-right: 39px;
+}
+[dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .featuresList li i {
+  left: auto;
+  right: 0;
+}
+[dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .popular {
+  right: auto;
+  left: 10px;
+}
+[dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox::before {
+  right: auto;
+  left: -11px;
+}
+
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+  .pricingStyle3Card {
+    padding-top: 17px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 25px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .title span {
+    padding: 6px 15px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .price {
+    font-size: 26px;
+    letter-spacing: -0.5px;
+    margin-top: 15px;
+    margin-bottom: 13px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .price span {
+    font-size: 13px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList {
+    margin-top: 20px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 27px;
+    margin-bottom: 15px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList li i {
+    font-size: 20px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .popular {
+    top: -10px;
+    right: 7px;
+    width: 55px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox::before {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    border-right-width: 0;
+    border-bottom: 1px dashed var(--borderColor);
+ }
+  .pricingStyle3Card .cardContent .col-sm-6:last-child .singlePricingBox {
+    margin-bottom: 0 !important;
+    padding-bottom: 0;
+ }
+
+  /* RTL Style */
+  [dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 0;
+    padding-right: 27px;
+  }
+ [dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .popular {
+    right: auto;
+    left: 7px;
+  }
+ [dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox::before {
+    left: 0;
+    right: 0;
+  }
+
+}
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+  .pricingStyle3Card {
+    padding-top: 20px;
+ }
+}
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  .pricingStyle3Card {
+    padding-top: 55px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox {
+    padding-left: 15px;
+    padding-right: 15px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .price {
+    font-size: 30px;
+    letter-spacing: -0.5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .price span {
+    font-size: 14px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList {
+    margin-top: 25px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 35px;
+    margin-bottom: 17px;
+ }
+  .pricingStyle3Card .cardContent .col-sm-6:nth-child(2) .singlePricingBox::before {
+    display: none;
+ }
+
+  /* RTL Style */
+  [dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 0;
+    padding-right: 34px;
+ }
+
+}
+/* Min width 992px to Max width 1199px */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .pricingStyle3Card .cardContent .singlePricingBox {
+    padding-left: 10px;
+    padding-right: 10px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .price {
+    margin-bottom: 15px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .price span {
+    font-size: 15px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList {
+    margin-top: 25px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 35px;
+    margin-bottom: 18px;
+ }
+
+  /* RTL Style */
+  [dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 0;
+    padding-right: 35px;
+ }
+
+}
+/* Min width 1200px to Max width 1399px */
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+  .pricingStyle3Card .cardContent .singlePricingBox {
+    padding-left: 10px;
+    padding-right: 10px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .price {
+    margin-bottom: 15px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList {
+    margin-top: 25px;
+ }
+  .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 35px;
+    margin-bottom: 18px;
+ }
+
+  /* RTL Style */
+  [dir="rtl"] .pricingStyle3Card .cardContent .singlePricingBox .featuresList li {
+    padding-left: 0;
+    padding-right: 35px;
+ }
+}
+/* Min width 1600px */

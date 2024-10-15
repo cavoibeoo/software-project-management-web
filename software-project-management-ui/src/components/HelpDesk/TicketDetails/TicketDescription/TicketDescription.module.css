@@ -1,0 +1,182 @@
+.ticketDetailsCard h1,
+.ticketDetailsCard h2,
+.ticketDetailsCard h3,
+.ticketDetailsCard h4,
+.ticketDetailsCard h5,
+.ticketDetailsCard h6 {
+	font-weight: 700;
+	color: var(--blackColor);
+	margin-top: 0;
+	margin-bottom: 10px;
+}
+.ticketDetailsCard h1 {
+	font-size: 20px;
+}
+.ticketDetailsCard h2 {
+	font-size: 19px;
+}
+.ticketDetailsCard h3 {
+	font-size: 18px;
+}
+.ticketDetailsCard h4 {
+	font-size: 17px;
+}
+.ticketDetailsCard h5 {
+	font-size: 16px;
+}
+.ticketDetailsCard h6 {
+	font-size: 15px;
+}
+.ticketDetailsCard p {
+	margin-top: 0;
+	margin-bottom: 15px;
+	line-height: 1.8;
+}
+.ticketDetailsCard ul,
+.ticketDetailsCard ol {
+	margin-bottom: 20px;
+}
+.ticketDetailsCard ul li,
+.ticketDetailsCard ol li {
+	line-height: 1.8;
+	margin-bottom: 5px;
+}
+.ticketDetailsCard ul li:last-child,
+.ticketDetailsCard ol li:last-child {
+	margin-bottom: 0;
+}
+.ticketDetailsCard code {
+	padding: 20px;
+	display: block;
+	margin-top: 15px;
+	background: #f5f2f0;
+}
+.ticketDetailsCard code .red {
+	color: #905;
+	margin-right: 5px;
+}
+.ticketDetailsCard code .red:last-child {
+	margin-right: 0;
+}
+.ticketDetailsCard code .green {
+	color: #690;
+}
+.ticketDetailsCard code .blue {
+	color: #07a;
+}
+.ticketDetailsCard.component-dark-theme code {
+	background: #15203c;
+}
+.comments-card .comments li {
+	border-bottom: 1px solid var(--borderColor);
+	margin-bottom: 25px;
+	padding-left: 25px;
+	padding-bottom: 25px;
+}
+.comments-card .comments li .info {
+	gap: 15px;
+	margin-bottom: 12px;
+}
+.comments-card .comments li .info img {
+	margin-right: 10px;
+}
+.comments-card .comments li .info .sine-badge {
+	margin-top: 3px;
+}
+.comments-card .comments li h6 {
+	margin-bottom: 12px;
+}
+.comments-card .comments li .screenshots {
+	margin-bottom: -15px;
+}
+.comments-card .comments li .screenshots img {
+	display: inline-block;
+	width: 80px;
+	margin-right: 15px;
+	margin-bottom: 15px;
+}
+.comments-card .comments li .screenshots img:last-child {
+	margin-right: 0;
+}
+.comments-card .comments li:first-child {
+	padding-left: 0;
+	border-color: var(--primaryColor);
+}
+.comments-card .comments li:last-child {
+	padding-bottom: 0;
+	margin-bottom: 0;
+	border-bottom: 0;
+}
+.comments-card form {
+	margin-top: 25px;
+}
+.comments-card.component-rtl-enabled .comments li {
+	padding-left: 0;
+	padding-right: 25px;
+}
+.comments-card.component-rtl-enabled .comments li .info img {
+	margin-left: 10px;
+	margin-right: 0;
+}
+.comments-card.component-rtl-enabled .comments li .screenshots img {
+	margin-right: 0;
+	margin-left: 15px;
+}
+.comments-card.component-rtl-enabled .comments li .screenshots img:last-child {
+	margin-left: 0;
+}
+.comments-card.component-rtl-enabled .comments li:first-child {
+	padding-right: 0;
+}
+.comments-card.component-rtl-enabled form {
+	margin-top: 25px;
+}
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+	.ticketDetailsCard h6:not(:first-child) {
+		margin-bottom: 10px;
+		margin-top: 15px;
+	}
+	.ticketDetailsCard ul {
+		margin-top: 12px;
+		margin-bottom: 15px;
+	}
+	.ticketDetailsCard code {
+		padding: 15px;
+		margin-top: 12px;
+	}
+	.comments-card .comments li {
+		margin-bottom: 17px;
+		padding-left: 17px;
+		padding-bottom: 17px;
+	}
+	.comments-card .comments li .info {
+		gap: 12px;
+		margin-bottom: 10px;
+	}
+	.comments-card .comments li .info img {
+		margin-right: 8px;
+	}
+	.comments-card .comments li h6 {
+		margin-bottom: 12px;
+	}
+	.comments-card .comments li .screenshots img {
+		width: 70px;
+	}
+	.comments-card form {
+		margin-top: 17px;
+	}
+}
+
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+	.comments-card .comments li {
+		margin-bottom: 20px;
+		padding-left: 20px;
+		padding-bottom: 20px;
+	}
+	.comments-card form {
+		margin-top: 20px;
+	}
+}

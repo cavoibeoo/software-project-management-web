@@ -1,0 +1,363 @@
+// Globals variables
+:root {
+  --darkBodyBg: #0a0e19; 
+  --darkCardBg: #0c1427; 
+  --darkBorder: #172036; 
+  --darkBodyColor: #8695AA; 
+  --darkSecondaryColor: #15203c; 
+}
+
+.dark-theme {
+  background-color: var(--darkBodyBg);
+
+  body {
+    background-color: var(--darkBodyBg);
+    color: var(--darkBodyColor) !important;
+  }
+ 
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--whiteColor) !important;
+  }
+ 
+  button, a, p, q, tspan, li, tbody, tfoot, thead, th, td, canvas, ::placeholder, abbr, address, blockquote, caption, cite, code, dd, dl, mark, option, pre, time, del, .MuiTypography-p, .MuiDataGrid-cellContent, .MuiTabPanel-root, .MuiTypography-body1, .MuiTypography-body2, .MuiStepLabel-label, .MuiTypography-caption {
+    color: var(--darkBodyColor);
+  }
+
+  // Color
+  .bg-white {
+    background-color: #0C1427 !important;
+  }
+  .text-black {
+    color: var(--whiteColor) !important;
+  }
+  .text-body {
+    color: var(--darkBodyColor) !important;
+  }
+  .bg-black {
+    background-color: var(--whiteColor) !important;
+  }
+  .bg-gray {
+    background-color: var(--darkSecondaryColor) !important;
+  }
+  .bg-f6f7f9 {
+    background-color: var(--darkSecondaryColor) !important;
+  }
+  .bg-primary-50 {
+    background-color: var(--darkSecondaryColor) !important;
+  }
+  .bg-ecf0ff {
+    background-color: var(--darkSecondaryColor) !important;
+  }
+  .bg-orange-50, .bg-success-50, .bg-purple-50, .bg-purple-100, .bg-secondary-100, .bg-success-100, .bg-orange-100, .bg-primary-100  {
+    background-color: var(--darkSecondaryColor) !important;
+  }
+
+  // Border
+  .border {
+    border: 1px solid var(--darkBorder) !important;
+  }
+  .border-bottom {
+    border-bottom: 1px solid var(--darkBorder) !important;
+  }
+  .border-top {
+    border-top: 1px solid var(--darkBorder) !important;
+  }
+  .border-right {
+    border-right: 1px solid var(--darkBorder) !important;
+  }
+  .border-left {
+    border-left: 1px solid var(--darkBorder) !important;
+  }
+
+  // Input
+  .MuiFormControl-root {
+    .MuiInputBase-root {
+      border: 1px solid var(--darkBorder);
+      background-color: transparent; 
+
+      .MuiInputBase-input {
+        color: #fff;
+      }
+    }
+
+    .MuiFormLabel-root {
+      color: var(--darkBodyColor);
+    }
+    .MuiOutlinedInput-notchedOutline {
+      border: 1px solid var(--darkBorder) !important;
+
+      &:hover {
+        border: 1px solid #fff !important;
+      }
+    }
+  }
+  .mantine-RichTextEditor-root {
+    background-color: var(--darkCardBg);
+    border: 1px solid var(--darkBorder);
+
+    .mantine-RichTextEditor-toolbar {
+      background-color: var(--darkCardBg);
+      border-bottom: 1px solid var(--darkBorder);
+    }
+
+    .mantine-UnstyledButton-root {
+      background-color: var(--darkCardBg);
+    }
+  } 
+  .mui-araeqv {
+    background-color: var(--darkCardBg);
+    border: 1px solid var(--darkBorder);
+    color: #fff;
+  }
+
+  textarea {
+    background-color: var(--darkCardBg);
+    border: 1px solid var(--darkBorder);
+    color: #fff;
+  }
+
+  .MuiSelect-icon {
+    color: var(--darkBodyColor);  
+  }
+
+  .dark-check {
+    color: var(--darkBodyColor); 
+  }
+
+  .dark-radio {
+    svg {
+      color: var(--darkBodyColor); 
+    }
+  }
+
+  .MuiRating-root {
+    svg {
+      color: var(--darkBodyColor); 
+    }
+  }
+
+  .MuiDivider-wrapper {
+    color: #fff;
+  }
+
+  // Table 
+  table {
+    svg {
+      color: var(--darkBodyColor); 
+    }
+  }
+  tfoot {
+    td {
+      svg {
+        color: var(--darkBodyColor); 
+      }
+    }
+  }
+  .MuiDataGrid-root {
+    border: 1px solid var(--darkBorder);
+  }
+ 
+   
+  // rmui-card
+  .rmui-card, .MuiCard-root {
+    background-color: var(--darkCardBg) !important;
+  }
+
+  .rmui-table, .MuiTableContainer-root {
+    background-color: var(--darkCardBg) !important;
+  }
+
+  .MuiPopover-paper, .MuiPopover-paper:before {
+    background-color: var(--darkBodyBg);
+  }
+  
+  .MuiDivider-root {
+    border-color: var(--darkBorder);
+  }
+
+  // apexcharts
+  .apexcharts-canvas {
+    .apexcharts-gridline {
+      stroke: var(--darkBorder);
+    }
+    .apexcharts-tooltip {
+      &.apexcharts-theme-light {
+        background: var(--darkBorder);
+        box-shadow: unset;
+
+        .apexcharts-tooltip-title {
+          background: #0C1427;
+          color: var(--whiteColor);
+        }
+      }
+      &.apexcharts-theme-dark {
+        .apexcharts-tooltip-series-group {
+          background-color: var(--blackColor) !important;
+        }
+      }
+    }
+    .apexcharts-tooltip-text-y-label, .apexcharts-tooltip-text-goals-value, .apexcharts-tooltip-text-y-value, .apexcharts-tooltip-text-z-value {
+      color: var(--whiteColor);
+    }
+    .apexcharts-xaxistooltip {
+      color: var(--whiteColor);
+      background: var(--darkSecondaryColor);
+      box-shadow: unset;
+    }
+    .apexcharts-menu {
+      background: var(--darkBorder);
+      box-shadow: unset;
+
+      .apexcharts-menu-item {
+        &:hover {
+          background: #0A0E19;
+        }
+      }
+    }
+    .apexcharts-xcrosshairs, .apexcharts-ycrosshairs {
+      fill: var(--borderColor);
+    }
+    .apexcharts-toolbar {
+      .apexcharts-menu-icon {
+        svg {
+          fill: var(--whiteColor);
+        }
+        &:hover {
+          svg {
+            fill: var(--primaryColor);
+          }
+        }
+      }
+    }
+    .apexcharts-legend-text, .apexcharts-title-text {
+      color: var(--darkBodyColor) !important;
+    }
+    .apexcharts-text {
+      fill: var(--darkBodyColor);
+
+      &.apexcharts-datalabel-value {
+        fill: var(--whiteColor);
+      }
+      &.apexcharts-point-annotation-label {
+        fill: var(--whiteColor);
+      }
+    }
+    .apexcharts-pie-area {
+      stroke: #0C1427;
+    }
+    .apexcharts-yaxis, .apexcharts-grid-borders {
+      line {
+        stroke: var(--darkBorder);
+      }
+    }
+    .apexcharts-xaxis-tick {
+      stroke: var(--darkBorder);
+    }
+    .apexcharts-track {
+      .apexcharts-radialbar-area {
+        stroke: var(--darkBorder);
+      }
+    }
+    .apexcharts-radar-series {
+      &.apexcharts-plot-series {
+      line, polygon {
+          fill: #0C1427;
+          stroke: var(--darkBorder);
+        }
+        polygon {
+          &:nth-child(odd) {
+            fill: var(--darkBorder);
+          }
+        }
+      }
+    }
+    .apexcharts-pie {
+      line, circle {
+        stroke: var(--darkBorder);
+      }
+    }
+  }
+
+  // Modal
+  .rmu-modal, .MuiModal-root {
+    .MuiDialog-container {
+      .MuiPaper-root {
+        background-color: var(--darkBodyBg);
+
+        .rmu-modal-header {
+          background-color: var(--darkSecondaryColor);
+        }
+
+        .rmu-modal-content {
+          background-color: var(--darkBodyBg);
+        }
+      }
+    }
+  }
+
+  // full-calendar-box
+  .full-calendar-box {
+    .fc {
+      table {
+        border-color: var(--darkBorder);
+
+        thead {
+          tr {
+            th {
+              .fc-scrollgrid-sync-inner {
+                background-color: var(--darkSecondaryColor); 
+              }
+            }
+          }
+        }
+      }
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+      border: 1px solid var(--darkBorder);
+    }
+  }
+
+  .rmui-chat-sidebar-tab {
+    button {
+      color: var(--darkBodyColor) !important;
+    }
+  }
+
+  // pd-description
+  .pd-description {
+    ul {
+      border: 1px solid var(--darkBorder);
+
+      li {
+        border-bottom: 1px solid var(--darkBorder);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+  
+  // auth-main-wrapper
+  .auth-main-wrapper {
+    .logo {
+      img {
+        display: none;
+        
+        &.d-none {
+          display: block
+        }
+      }
+    }
+  }
+
+  .MuiAccordion-root {
+    svg {
+      color: var(--darkBodyColor) !important;
+    }
+  }
+   
+  .footer-area {
+    background-color: var(--darkCardBg);
+  } 
+}
