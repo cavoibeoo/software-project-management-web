@@ -57,7 +57,7 @@ const Features: React.FC = () => {
 								paddingRight: "10px",
 							}}
 						/>
-						<Link href="/apps/to-do-list/" className="fp-banner-button">
+						<Link href="/your-work/" className="fp-banner-button">
 							<i className="material-symbols-outlined">collapse_content</i>
 							Get Sine free
 						</Link>

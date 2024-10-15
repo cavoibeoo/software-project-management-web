@@ -52,7 +52,9 @@ interface LeftSidebarProps {
 	toggleActive: () => void;
 }
 
-const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
+const ProjectLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
+	toggleActive,
+}) => {
 	const pathname = usePathname();
 
 	const [expanded, setExpanded] = React.useState<string | false>("panel1");
@@ -254,4 +256,4 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 	);
 };
 
-export default LeftSidebarMenu;
+export default ProjectLeftSidebarMenu;
