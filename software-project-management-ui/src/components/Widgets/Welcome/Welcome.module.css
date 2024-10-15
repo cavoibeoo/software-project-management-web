@@ -1,0 +1,243 @@
+.welcomeCard {
+    background: linear-gradient(81deg, var(--primaryColor) 3.39%, #9747ff 93.3%);
+    border-radius: 7px;
+    padding: 25px;
+    margin-bottom: 25px;
+    padding-right: 130px;
+    position: relative;
+}
+.welcomeCard .content {
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+.welcomeCard .content h5 {
+    font-size: 18px;
+    margin-bottom: 3px;
+    font-weight: 600;
+    color: #fff;
+}
+.welcomeCard .content h5 span {
+    color: #ffe8d4;
+}
+.welcomeCard .content .extraSpace {
+    margin-top: 35px;
+    margin-bottom: 35px;
+}
+.welcomeCard .content .item .icon {
+    width: 42px;
+    height: 42px;
+    margin-right: 12px;
+}
+.welcomeCard .content .item .title {
+    font-size: 16px;
+    margin-bottom: 2px;
+    font-weight: 600;
+    color: #fff; 
+}
+.welcomeCard .content .item span {
+    color: #d5d9e2;
+}
+.welcomeCard .content .item:last-child {
+    margin-right: 0;
+}
+.welcomeCard .image {
+    top: 50%;
+    right: -35px;
+    max-width: 285px;
+    margin-top: -8px;
+    position: absolute;
+    transform: translateY(-50%);
+}
+
+/* RTL Style */
+[dir="rtl"] .welcomeCard {
+    padding-left: 130px;
+    padding-right: 25px;
+}
+[dir="rtl"] .welcomeCard .content .item {
+    margin-right: 0;
+    margin-left: 27px;
+}
+[dir="rtl"] .welcomeCard .content .item .icon {
+    margin-right: 0;
+    margin-left: 12px;
+}
+[dir="rtl"] .welcomeCard .content .item:last-child {
+    margin-left: 0;
+}
+[dir="rtl"] .welcomeCard .image {
+    right: auto;
+    left: -35px;
+}
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .welcomeCard {
+        padding: 17px;
+   }
+    .welcomeCard .content {
+        padding-top: 0;
+        padding-bottom: 0;
+   }
+    .welcomeCard .content h5 {
+        margin-bottom: 4px;
+   }
+    .welcomeCard .content .extraSpace {
+        margin-top: 15px;
+        margin-bottom: 17px;
+   }
+    .welcomeCard .content .item {
+        margin-bottom: 20px;
+   }
+    .welcomeCard .content .item .icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+   }
+    .welcomeCard .content .item .title {
+        font-size: 14px;
+        margin-bottom: 5px;
+   }
+    .welcomeCard .content .item:last-child {
+        margin-bottom: 0;
+   }
+    .welcomeCard .image {
+        top: 0;
+        right: 0;
+        margin-top: 0;
+        max-width: 100%;
+        position: relative;
+        transform: translateY(0);
+   }
+
+    /* RTL Style */
+    [dir="rtl"] .welcomeCard  {
+        padding-left: 0;
+    }
+    [dir="rtl"] .welcomeCard .content .item {
+        margin-left: 0;
+    }
+    [dir="rtl"] .welcomeCard .content .item .icon {
+        margin-right: 0;
+        margin-left: 10px;
+   }
+    [dir="rtl"] .welcomeCard .image {
+        left: 0;
+    }
+}
+
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+    .welcomeCard {
+        padding-right: 185px;
+   }
+    .welcomeCard .image {
+        top: 50%;
+        right: -20px;
+        max-width: 280px;
+        position: absolute;
+        transform: translateY(-50%);
+   }
+
+   /* RTL Style */
+    [dir="rtl"] .welcomeCard {
+        padding-right: 25px;
+        padding-left: 185px;
+    }
+    [dir="rtl"] .welcomeCard .image {
+        left: -20px;
+        right: auto;
+    }
+}
+
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .welcomeCard {
+        padding: 25px;
+   }
+    .welcomeCard .content {
+        padding-right: 220px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+   }
+    .welcomeCard .content .extraSpace {
+        margin-top: 22px;
+        margin-bottom: 22px;
+   }
+    .welcomeCard .content .item .title {
+        font-size: 15px;
+   }
+
+   /* RTL Style */
+    [dir="rtl"] .welcomeCard {
+        padding-right: 25px;
+        padding-left: 220px;
+    }
+    [dir="rtl"] .welcomeCard .content {
+        padding-right: 25px;
+    }
+    [dir="rtl"] .welcomeCard .content .item {
+        margin-right: 0;
+        margin-left: 25px;
+    }
+}
+
+/* Min width 992px to Max width 1199px */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .welcomeCard {
+        padding-right: 250px;
+   }
+    .welcomeCard .image {
+        right: -25px;
+        max-width: 300px;
+   }
+
+   /* RTL Style */
+    [dir="rtl"] .welcomeCard {
+        padding-right: 25px;
+        padding-left: 250px;
+    }
+   [dir="rtl"] .welcomeCard .image {
+        right: auto;
+        left: -25px;
+    }
+}
+
+
+/* Min width 1200px to Max width 1399px */
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+    .welcomeCard .image {
+        right: -25px;
+        max-width: 300px;
+   }
+
+   /* RTL Style */
+   [dir="rtl"] .welcomeCard .image {
+        right: auto;
+        left: -25px;
+   }
+}
+
+/* Min width 1600px */
+@media only screen and (min-width: 1600px) {
+    .welcomeCard {
+        padding-right: 250px;
+   }
+    .welcomeCard .image {
+        right: 10px;
+    }
+
+    /* RTL Style */
+    [dir="rtl"] .welcomeCard {
+        padding-left: 250px;
+        padding-right: 25px;
+    }
+    [dir="rtl"] .welcomeCard .content .item {
+        margin-right: 0;
+        margin-left: 35px;
+    }
+    [dir="rtl"] .welcomeCard .image {
+        right: auto;
+        left: -15px;
+    }
+}

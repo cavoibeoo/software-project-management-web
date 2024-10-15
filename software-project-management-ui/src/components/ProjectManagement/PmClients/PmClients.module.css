@@ -1,0 +1,136 @@
+
+.clientCard {
+    padding-top: 20px;
+    margin-bottom: 25px;
+    border-radius: 7px;
+    position: relative;
+    padding: 20px 25px 25px;
+}
+.clientCard .cardContent {
+    position: relative;
+}
+.clientCard .cardContent .image {
+    top: -20px;
+    left: -25px;
+    width: 90px;
+    position: absolute;
+    border-radius: 7px 0 7px 0;
+    background-color: #f6f7f9;
+    border-right: 10px solid #f6f7f9;
+    border-bottom: 10px solid #f6f7f9;
+}
+.clientCard .cardContent .image img {
+    margin-bottom: -6px;
+}
+.clientCard .cardContent .content {
+    padding-left: 88px;
+    margin-bottom: 25px;
+}
+.clientCard .cardContent .content .title {
+    font-size: 16px;
+    margin-bottom: 0;
+    font-weight: 500;
+    color: var(--blackColor);
+    display: block;
+}
+.clientCard .cardContent .content .subTitle {
+    display: block;
+}
+.clientCard .cardContent ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+.clientCard .cardContent ul li {
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+.clientCard .cardContent ul li span {
+    margin-right: 7px;
+    font-weight: normal;
+}
+.clientCard .cardContent ul li:last-child {
+    margin-bottom: 0;
+}
+
+/* dark-theme style */
+.dark-theme .clientCard .cardContent .image {
+    background-color: #0a0e19;
+    border-color: #0a0e19;
+}
+.dark-theme .clientCard .cardContent .content .title {
+    color: var(--whiteColor); 
+}
+ 
+.component-rtl-enabled .clientCard .cardContent .image {
+    left: auto;
+    right: -25px;
+    border-radius: 0 7px 0 7px;
+    border-right-width: 0;
+    border-left: 10px solid #f6f7f9;
+}
+.component-rtl-enabled .clientCard .cardContent .content {
+    padding-left: 0;
+    padding-right: 88px;
+}
+.component-rtl-enabled .clientCard .cardContent ul li span {
+    margin-right: 0;
+    margin-left: 7px;
+}
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .clientCard {
+        padding-top: 17px;
+   }
+    .clientCard .cardContent .image {
+        top: -17px;
+        left: -17px;
+   }
+    .clientCard .cardContent .content {
+        padding-left: 88px;
+        margin-bottom: 32px;
+   }
+    .clientCard .cardContent .content .title {
+        font-size: 14px;
+        margin-bottom: 5px;
+   }
+
+    .component-rtl-enabled .clientCard .cardContent .image {
+        left: auto;
+        right: -17px;
+   }
+    .component-rtl-enabled .clientCard .cardContent .content {
+        padding-left: 0;
+        padding-right: 88px;
+   }
+
+}
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+    .clientCard {
+        padding-top: 20px;
+   }
+    .clientCard .cardContent .image {
+        top: -20px;
+        left: -20px;
+   }
+    .component-rtl-enabled .clientCard .cardContent .image {
+        left: auto;
+        right: -20px;
+   }
+}
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .clientCard .cardContent .content {
+        padding-left: 85px;
+        margin-bottom: 28px;
+   }
+    .clientCard .cardContent .content .title {
+        font-size: 15px;
+   }
+    .component-rtl-enabled .clientCard .cardContent .content {
+        padding-left: 0;
+        padding-right: 85px;
+   }
+} 

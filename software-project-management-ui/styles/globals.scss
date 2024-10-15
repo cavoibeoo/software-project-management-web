@@ -1,0 +1,505 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+    --fontFamily: "Inter", sans-serif;
+    --blackColor: #3A4252;
+    --whiteColor: #ffffff;
+    --bodyColor: #64748B;
+    --borderColor: #ECEEF2;
+    --transition: .5s;
+    --fontSize: 14px;
+    --primaryColor: #605DFF;
+    --secondaryColor: #3584FC;
+    --successColor: #25B003;
+    --dangerColor: #FF4023;
+    --warningColor: #ffc107;
+    --infoColor: #0dcaf0;
+    --lightColor: #f8f9fa;
+    --darkColor: #212529;
+    --purpleColor: #AD63F6;
+    --orangeColor: #FD5812;
+}
+
+// Utilities CSS
+@import "../styles/utilities";
+@import "../styles/ui-kit";
+
+body {
+    margin: 0;
+    padding: 0; 
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    color: var(--blackColor);
+}
+p {
+    margin-top: 0;
+}
+a {
+    transition: var(--transition) !important;
+    text-decoration: none;
+}
+.hover-text-color:hover {
+    color: var(--primaryColor) !important;
+}
+.transition {
+	transition: var(--transition) !important;
+}
+ 
+.main-wrapper-content {
+    overflow: hidden;
+    min-height: 100vh;
+    padding-top: 95px;
+    padding-left: 285px;
+    padding-right: 25px;
+    transition: var(--transition);
+
+    &.active {
+        padding-left: 85px;
+    }
+}
+
+// RTL Style
+[dir="rtl"] {
+
+    .main-wrapper-content {
+        padding-left: 25px;
+        padding-right: 285px;
+
+        &.active { 
+            padding-right: 90px;
+        }
+    }
+    
+}
+
+/* Max width 599px */
+@media (max-width: 599px) {
+    .main-wrapper-content {
+        padding-top: 140px !important; 
+    }
+}
+
+/* Max width 1199px */
+@media (max-width: 1199px) {
+    .main-wrapper-content {
+        padding-top: 95px;
+        padding-left: 15px;
+        padding-right: 15px; 
+
+        &.active {
+            padding-left: 15px;
+        }
+    }
+
+    // RTL Style
+    [dir="rtl"] {
+        .main-wrapper-content {
+            padding-left: 15px;
+            padding-right: 15px;
+    
+            &.active { 
+                padding-right: 15px;
+            }
+        }
+    }
+}
+
+.rmui-card, table {
+    tfoot {
+        p {
+            margin-bottom: 0; 
+        }
+    }
+}
+.MuiTablePagination-root {
+    p {
+        margin-bottom: 0; 
+    }
+}
+.rmui-ws-calendar {
+    .MuiPickersCalendarHeader-root {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .MuiDayCalendar-header {
+        justify-content: space-between;
+
+        .MuiTypography-root {
+            color: var(--blackColor);
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+    .MuiDayCalendar-weekContainer {
+        justify-content: space-between;
+
+        .MuiTypography-root { 
+            font-size: 139px; 
+        }
+    }
+
+    .mui-1kjxb89-MuiButtonBase-root-MuiPickersDay-root:not(.Mui-selected) {
+        border: 1px solid var(--primaryColor);
+        background-color: var(--primaryColor);
+        color: #fff;
+    }
+}
+.upcoming-events {
+    .swiper-pagination {
+        top: 0;
+        right: 0;
+        left: auto;
+        text-align: end;
+
+        .swiper-pagination-bullet {
+
+            &.swiper-pagination-bullet-active {
+                background-color: var(--primaryColor);
+            }
+        }
+    }
+}
+
+.top-courses {
+    .swiper-pagination {
+        bottom: 0;
+        left: 0;
+        text-align: start;
+        width: 50%;
+
+        .swiper-pagination-bullet {
+            background-color: #fff;
+            width: 5px;
+            height: 5px;
+            opacity: 1;
+
+            &.swiper-pagination-bullet-active {
+                background-color: #ffaa72; 
+            }
+        }
+    }
+}
+
+// Breadcrumb
+.breadcrumb-card {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h5 {
+        margin-bottom: 0;
+        color: var(--blackColor);
+        line-height: 1.2;
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 0; 
+    }
+
+    .breadcrumb {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+   
+        li {
+            font-size: 13px;
+            margin: {
+                right: 26px;
+            };
+            display: inline-block;
+            position: relative;
+ 
+            a {
+                color: var(--bodyColor);
+                padding-left: 22px;
+                text-decoration: none;
+
+                i {
+                    left: 0;
+                    top: 50%;
+                    font-size: 18px;
+                    margin-top: -1px;
+                    position: absolute;
+                    color: var(--primaryColor);
+                    transform: translateY(-50%);
+                }
+                &:hover {
+                    color: var(--primaryColor);
+                }
+            }
+            &:before {
+                top: 50%;
+                right: -22px;
+                margin-top: .6px;
+                content: "\ea6e";
+                position: absolute;
+                transform: translateY(-50%);
+                font: {
+                    size: 18px;
+                    weight: normal;
+                    family: remixicon;
+                };
+            }
+            &:last-child {
+                margin-right: 0;
+
+                &::before {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+// RTL Style
+[dir="rtl"] {
+    .breadcrumb-card {
+        .breadcrumb {
+            li {
+                margin-right: 0;
+                margin-left: 26px;
+
+                a {
+                    padding-left: 0;
+                    padding-right: 22px;
+    
+                    i {
+                        left: auto;
+                        right: 0;
+                    }
+                }
+                &:before {
+                    right: auto;
+                    left: -22px;
+                }
+
+                &:last-child {
+                    margin-left: 0;
+                }
+            }
+        }
+    }
+}
+
+
+/* Max width 767px */
+@media only screen and (max-width : 575px) {
+    .breadcrumb-card { 
+        display: block; 
+
+        h5 {
+            margin-bottom: 5px;
+        }
+    }
+}
+
+// rmui-email-table
+.rmui-email-table {
+    tbody {
+        tr {
+            td {
+                &:first-child {
+                    padding-left: 0;
+                }
+                &:last-child {
+                    padding-right: 0;
+                }
+            }
+        }
+    }
+    tfoot {
+        .MuiTablePagination-selectLabel {
+            display: none;
+        }
+        .MuiInputBase-root {
+            display: none;
+        }
+    }
+}
+
+// email-content-details
+.email-content-details {
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 500;
+        margin-bottom: 15px;
+        color: var(--blackColor);
+    }
+    h1 {
+        font-size: 17px;
+    }
+    h2 {
+        font-size: 16px;
+    }
+    h3 {
+        font-size: 15px;
+    }
+    h4 {
+        font-size: 14px;
+    }
+    h5 {
+        font-size: 13px;
+    }
+    h5 {
+        font-size: 12px;
+    }
+    h6 {
+        font-size: 12px;
+    }
+    p {
+        margin-bottom: 15px;
+    }
+}
+
+// share-to-socials
+.share-to-socials {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+ 
+    a {
+        i {
+            padding: 0;
+            width: 23.844px;
+            font-size: 13px;
+            min-width: auto;
+            height: 23.844px;
+            text-align: center;
+            border-radius: 50%;
+            line-height: 23.844px;
+            display: inline-block;
+            color: var(--blackColor);
+            background-color: #eceef2; 
+        }
+    }
+}
+
+// pd-description
+.pd-description {
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--blackColor);
+    }
+    h1 {
+        font-size: 17px;
+    }
+    h2 {
+        font-size: 16px;
+    }
+    h3 {
+        font-size: 15px;
+    }
+    h4 {
+        font-size: 14px;
+    }
+    h5 {
+        font-size: 13px;
+    }
+    h5 {
+        font-size: 12px;
+    }
+    h6 {
+        font-size: 12px;
+    }
+    p {
+        margin-bottom: 15px;
+        line-height: 1.8;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    ul {
+        padding: 0;
+        margin: 0 0 20px;
+        border: 1px solid #eceef2;
+
+        &:last-child {
+            margin: 0;
+        }
+
+        li {
+            list-style-type: none;
+            border-bottom: 1px solid #eceef2;
+            padding: 13px 20px;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+.rating-item {
+    margin-bottom: 10px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// followers-table
+.followers-table {
+    tfoot {
+        .MuiToolbar-root {
+            .MuiTablePagination-selectLabel, .MuiInputBase-root {
+                display: none;
+            }
+        }
+    }
+}
+
+// table
+table {
+    tfoot {
+        tr {
+            p {
+                margin: 0;
+            }
+        }
+    }
+}
+
+// auth-main-wrapper
+.main-wrapper-content:has(div.auth-main-wrapper) { 
+    padding: 0 !important;
+}
+
+// fp-wrapper
+.main-wrapper-content:has(div.fp-wrapper) { 
+    padding: 0 !important;
+}
+
+// full-calendar-box
+.full-calendar-box {
+    .fc {
+        .fc-toolbar-title {
+            font-size: 18px;
+        }
+        .fc-button-primary {
+            text-transform: capitalize;
+        }
+        table {
+            border-color: var(--borderColor);
+
+            thead {
+                tr {
+                    th {
+                        
+                        .fc-scrollgrid-sync-inner {
+                            background-color: #ecf0ff;
+                            padding: 15px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+        border: 1px solid var(--borderColor);
+    }
+}

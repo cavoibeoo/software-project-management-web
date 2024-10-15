@@ -1,0 +1,92 @@
+ 
+.customerSatisfactionContent  {
+    position: relative;
+    max-width: 315px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.customerSatisfactionContent .chart {
+    left: -80px;
+    position: relative;
+    margin-top: -5px;
+    margin-bottom: -10px;
+}
+.customerSatisfactionContent .chart .text {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translateY(-50%) translateX(-50%);
+}
+.customerSatisfactionContent .chart .text span {
+    color: #fff;
+    display: block;
+}
+.customerSatisfactionContent .chart .text h6 {
+    font-size: 20px;
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-weight: 600; 
+    color: #fff;
+    line-height: 1;
+}
+.customerSatisfactionContent .image {
+    right: 0;
+    top: 50%;
+    max-width: 120px;
+    position: absolute;
+    transform: translateY(-50%);
+}
+
+::ng-deep .customerSatisfactionContent.component-dark-theme apx-chart .apexcharts-pie-area {
+    stroke: var(--primaryColor);
+}
+
+
+/* Max width 767px */
+@media only screen and (max-width: 767px) {
+    .customerSatisfactionContent .mat-mdc-card-header {
+        margin-bottom: 17px;
+   }
+    .customerSatisfactionContent  {
+        max-width: 100%;
+   }
+    .customerSatisfactionContent .chart {
+        left: 0;
+   }
+    .customerSatisfactionContent .chart .text h6 {
+        font-size: 18px;
+   }
+    .customerSatisfactionContent .image {
+        top: 0;
+        margin-top: 17px;
+        position: relative;
+        transform: translateY(0);
+   }
+}
+/* Min width 576px to Max width 767px */
+@media only screen and (min-width: 576px) and (max-width: 767px) {
+    .customerSatisfactionContent .mat-mdc-card-header {
+        margin-bottom: 20px;
+   }
+    .customerSatisfactionContent  {
+        max-width: 315px;
+   }
+    .customerSatisfactionContent .chart {
+        left: -80px;
+   }
+    .customerSatisfactionContent .image {
+        top: 50%;
+        margin-top: 0;
+        position: absolute;
+        transform: translateY(-50%);
+   }
+}
+/* Min width 768px to Max width 991px */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .customerSatisfactionContent .chart .text h6 {
+        font-size: 19px;
+   }
+}
+/* Min width 992px to Max width 1199px */
+/* Min width 1200px to Max width 1399px */
+/* Min width 1600px */
