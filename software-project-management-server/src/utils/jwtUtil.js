@@ -23,7 +23,7 @@ const generateAccessToken = async (user) => {
 
 const generateRefreshToken = async (user) => {
     try {
-        return generateToken(user, config.refreshTokenPrivateKey, config.accessTokenExp);
+        return generateToken(user, config.refreshTokenPrivateKey, config.refreshTokenExp);
     } catch (err) {
         throw err;
     }
@@ -39,7 +39,7 @@ const verifyRefreshToken = async (token) => {
 
 const verifyAccessToken = async (token) => {
     try {
-        return jwt.verify(token, config.refreshTokenPrivateKey);
+        return jwt.verify(token, config.accessTokenPrivateKey);
     } catch (err) {
         return false;
     }
