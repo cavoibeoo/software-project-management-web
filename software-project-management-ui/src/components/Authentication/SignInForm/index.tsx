@@ -11,8 +11,29 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const SignInForm: React.FC = () => {
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget as HTMLFormElement);
+
+		try {
+			const response = await axios.post(
+				"http://localhost:3001/api/auth/login",
+				{
+					email: formData.get("email"),
+					password: formData.get("password"),
+				}
+			);
+			window.location.href = "/your-work";
+			console.log(response.data);
+		} catch (error) {
+			console.error("Error signing in:", error);
+		}
+	};
+
 	return (
 		<>
 			<Box
@@ -171,7 +192,7 @@ const SignInForm: React.FC = () => {
 									</Button>
 								</Box>
 
-								<Box component="form">
+								<Box component="form" onSubmit={handleSubmit}>
 									<Box mb="15px">
 										<FormControl fullWidth>
 											<Typography

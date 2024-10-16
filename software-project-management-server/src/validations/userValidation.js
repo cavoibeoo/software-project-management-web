@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const userCreateSchema = Joi.object({
+const userCreate = Joi.object({
     name: Joi.string().required().max(50).trim().strict(),
     email: Joi.string().email().required().max(50).trim().strict(),
     password: Joi.string()
@@ -19,9 +19,13 @@ const userCreateSchema = Joi.object({
     isDeleted: Joi.boolean(),
 });
 
-const userLoginSchema = Joi.object({
+const userLogin = Joi.object({
     email: Joi.string().email().required().max(50).email().trim().strict(),
     password: Joi.string().max(50).required().min(6).max(50).trim().strict(),
 });
 
-export { userCreateSchema, userLoginSchema };
+const userRefresh = Joi.object({
+    refreshToken: Joi.string().required().trim().strict(),
+});
+
+export { userCreate, userLogin, userRefresh };
