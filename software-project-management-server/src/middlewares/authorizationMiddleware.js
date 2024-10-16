@@ -5,7 +5,7 @@ import { StatusCodes } from "http-status-codes";
 const auth = (roles) => {
     return async (req, res, next) => {
         try {
-            console.log(roles);
+            // console.log(roles);
             roles.push("user"); // Allow 'user' by default
             if (req.user && req.user.role && req.user.role.includes(...roles)) {
                 next(); // If authorized, proceed to next middleware or controller
