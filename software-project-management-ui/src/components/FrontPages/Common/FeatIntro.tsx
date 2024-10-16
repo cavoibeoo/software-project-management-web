@@ -67,7 +67,6 @@ const FeatIntro: React.FC = () => {
 							<Box
 								sx={{
 									maxWidth: {
-										xs: "100%",
 										sm: "700px",
 										md: "720px",
 										lg: "1140px",

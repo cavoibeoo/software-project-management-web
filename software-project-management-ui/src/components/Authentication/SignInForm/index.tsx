@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 const SignInForm: React.FC = () => {
 	const handleSubmit = async (event: React.FormEvent) => {
@@ -28,9 +28,21 @@ const SignInForm: React.FC = () => {
 				}
 			);
 			window.location.href = "/your-work";
+			toast.success("Sucessful signing in!");
 			console.log(response.data);
 		} catch (error) {
-			console.error("Error signing in:", error);
+			if (axios.isAxiosError(error) && error.response) {
+				const statusCode = error.response.status;
+				if (statusCode === 400) {
+					toast.error("User not existed!");
+				} else if (statusCode === 401) {
+					toast.error("Invalid Password!");
+				} else if (statusCode === 422) {
+					toast.error("Please Input with correct form!");
+				}
+			} else {
+				toast.error("Đăng Nhập Không Thành Công!");
+			}
 		}
 	};
 
@@ -213,6 +225,7 @@ const SignInForm: React.FC = () => {
 												variant="filled"
 												id="email"
 												name="email"
+												inputProps={{ maxLength: 50 }}
 												sx={{
 													"& .MuiInputBase-root": {
 														border: "1px solid #D5D9E2",
@@ -226,7 +239,33 @@ const SignInForm: React.FC = () => {
 														border: "none",
 													},
 												}}
+												onBlur={(e) => {
+													const email = e.target.value;
+													const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+													if (!emailPattern.test(email)) {
+														const emailErrorElement =
+															document.getElementById("emailError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText =
+																"Email không hợp lệ!";
+														}
+													} else {
+														const emailErrorElement =
+															document.getElementById("emailError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText = "";
+														}
+													}
+												}}
 											/>
+											<Typography
+												id="emailError"
+												sx={{
+													color: "red",
+													fontSize: "12px",
+													marginTop: "5px !important",
+												}}
+											></Typography>
 										</FormControl>
 									</Box>
 
@@ -251,6 +290,7 @@ const SignInForm: React.FC = () => {
 												type="password"
 												id="password"
 												name="password"
+												inputProps={{ maxLength: 50 }}
 												sx={{
 													"& .MuiInputBase-root": {
 														border: "1px solid #D5D9E2",
@@ -264,7 +304,33 @@ const SignInForm: React.FC = () => {
 														border: "none",
 													},
 												}}
+												onBlur={(e) => {
+													const email = e.target.value;
+													const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+													if (!emailPattern.test(email)) {
+														const emailErrorElement =
+															document.getElementById("passwordError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText =
+																"Password need more than 6!";
+														}
+													} else {
+														const emailErrorElement =
+															document.getElementById("passwordError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText = "";
+														}
+													}
+												}}
 											/>
+											<Typography
+												id="passwordError"
+												sx={{
+													color: "red",
+													fontSize: "12px",
+													marginTop: "5px !important",
+												}}
+											></Typography>
 										</FormControl>
 									</Box>
 
