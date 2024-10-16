@@ -1,19 +1,17 @@
 "use strict";
 
 import User from "./../models/user.js";
-import db from "../mongodb.js";
+import { GET_DB } from "../config/mongodb.js";
 import bcrypt from "bcrypt";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
-import config from "../config.js";
+import config from "../config/environment.js";
 import * as jwtUtil from "../utils/jwtUtil.js";
 import { refreshToken } from "../controllers/authController.js";
 
-let collection = await db.collection("users");
-
 const registerService = async (data) => {
     try {
-        if (await findByEmail(data.email)) {
+        if (await GET_DB().collection("users").findOne({ email: data.email })) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "User already existed");
         }
 
