@@ -11,8 +11,31 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const SignUpForm: React.FC = () => {
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget as HTMLFormElement);
+
+		try {
+			const response = await axios.post(
+				"http://localhost:3001/api/auth/register",
+				{
+					name: formData.get("fullName"),
+					email: formData.get("email"),
+					password: formData.get("password"),
+				}
+			);
+			window.location.href = "/your-work";
+			toast.success("Sucessful signing in!");
+			console.log(response.data);
+		} catch (error) {
+			toast.error("Error signing in!");
+		}
+	};
+
 	return (
 		<>
 			<Box
@@ -162,7 +185,7 @@ const SignUpForm: React.FC = () => {
 									</Button>
 								</Box>
 
-								<Box component="form">
+								<Box component="form" onSubmit={handleSubmit}>
 									<Box mb="15px">
 										<FormControl fullWidth>
 											<Typography
@@ -233,7 +256,33 @@ const SignUpForm: React.FC = () => {
 														border: "none",
 													},
 												}}
+												onBlur={(e) => {
+													const email = e.target.value;
+													const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+													if (!emailPattern.test(email)) {
+														const emailErrorElement =
+															document.getElementById("emailError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText =
+																"Email không hợp lệ!";
+														}
+													} else {
+														const emailErrorElement =
+															document.getElementById("emailError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText = "";
+														}
+													}
+												}}
 											/>
+											<Typography
+												id="emailError"
+												sx={{
+													color: "red",
+													fontSize: "12px",
+													marginTop: "5px !important",
+												}}
+											></Typography>
 										</FormControl>
 									</Box>
 
@@ -258,6 +307,43 @@ const SignUpForm: React.FC = () => {
 												type="password"
 												id="password"
 												name="password"
+												sx={{
+													"& .MuiInputBase-root": {
+														border: "1px solid #D5D9E2",
+														backgroundColor: "#fff",
+														borderRadius: "7px",
+													},
+													"& .MuiInputBase-root::before": {
+														border: "none",
+													},
+													"& .MuiInputBase-root:hover::before": {
+														border: "none",
+													},
+												}}
+											/>
+										</FormControl>
+									</Box>
+									<Box mb="15px">
+										<FormControl fullWidth>
+											<Typography
+												component="label"
+												sx={{
+													fontWeight: "500",
+													fontSize: "14px",
+													mb: "10px",
+													display: "block",
+												}}
+												className="text-black"
+											>
+												Confirm Password
+											</Typography>
+
+											<TextField
+												label="Confirm Password"
+												variant="filled"
+												type="confirmPassword"
+												id="password"
+												name="confirmPassword"
 												sx={{
 													"& .MuiInputBase-root": {
 														border: "1px solid #D5D9E2",

@@ -3,6 +3,7 @@
 import React, { useState, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import LeftSidebarMenu from "@/components/Layout/LeftSidebarMenu";
+import ProjectLeftSidebarMenu from "@/components/Layout/ProjectLeftSidebarMenu";
 import TopNavbar from "./../components/Layout/TopNavbar/index";
 import Footer from "@/components/Layout/Footer";
 import ControlPanel from "@/components/Layout/ControlPanel";
@@ -33,7 +34,10 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 		"/front-pages/team/",
 		"/front-pages/faq/",
 		"/front-pages/contact/",
+		"/your-work/",
 	].includes(pathname);
+
+	const isProjectPage = ["/your-work/"].includes(pathname);
 
 	return (
 		<>
@@ -43,6 +47,12 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 						<TopNavbar toggleActive={toggleActive} />
 
 						<LeftSidebarMenu toggleActive={toggleActive} />
+					</>
+				)}
+				{isProjectPage && (
+					<>
+						<TopNavbar toggleActive={toggleActive} />
+						<ProjectLeftSidebarMenu toggleActive={toggleActive} />
 					</>
 				)}
 
