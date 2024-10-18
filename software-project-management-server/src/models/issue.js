@@ -4,43 +4,52 @@ import mongoose from "mongoose";
 
 const IssueSchema = mongoose.Schema(
     {
-        name: {
+        project: {
             type: String,
             required: true,
         },
-        key: {
-            type: String,
-            required: true,
+        count: Number,
+        page: Number,
+        issues: {
+            name: { type: String, required: true },
+            key: { type: String, required: true },
+            description: String,
+            issueType: {
+                //ref IssueType
+                type: String,
+                required: true,
+            },
+            fields: [
+                {
+                    name: {
+                        type: String,
+                        required: true,
+                    },
+                    value: {
+                        type: any,
+                    },
+                },
+            ],
+            workFlow: {
+                // ref Workflow
+                type: String,
+            },
+            parent: {
+                // ref parent issue
+                type: String,
+            },
+            sprint: {
+                // ref Sprint
+                type: String,
+            },
         },
-        description: {
-            type: String,
-        },
-        issueType: {
-            //ref IssueType
-            type: String,
-        },
-        fields: [
+        comments: [
             {
-                name: {
-                    type: String,
-                },
-                value: {
-                    type: any,
-                },
+                comment: String,
+                user: String,
+                createdAt: Date,
             },
         ],
-        workFlow: {
-            // ref Workflow
-            type: String,
-        },
-        parent: {
-            // ref parent issue
-            type: String,
-        },
-        sprint: {
-            // ref Sprint
-            type: String,
-        },
     },
     { Timestamp: true }
 );
