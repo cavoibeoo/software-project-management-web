@@ -13,12 +13,17 @@ import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 
 const SignUpForm: React.FC = () => {
-	const handleSubmit = async (event: React.FormEvent) => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm();
+	const handleSubmit2 = async (event: React.FormEvent) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget as HTMLFormElement);
-
 		try {
 			const response = await axios.post(
 				"http://localhost:3001/api/auth/register",
@@ -185,7 +190,10 @@ const SignUpForm: React.FC = () => {
 									</Button>
 								</Box>
 
-								<Box component="form" onSubmit={handleSubmit}>
+								<Box
+									component="form"
+									onSubmit={handleSubmit((data) => console.log(data))}
+								>
 									<Box mb="15px">
 										<FormControl fullWidth>
 											<Typography
@@ -204,8 +212,6 @@ const SignUpForm: React.FC = () => {
 											<TextField
 												label="Enter your full name"
 												variant="filled"
-												id="fullName"
-												name="fullName"
 												sx={{
 													"& .MuiInputBase-root": {
 														border: "1px solid #D5D9E2",
@@ -219,7 +225,11 @@ const SignUpForm: React.FC = () => {
 														border: "none",
 													},
 												}}
+												{...register("fullName", { required: true })}
 											/>
+											{errors.fullName && (
+												<p style={{ color: "red" }}>Last name is required.</p>
+											)}
 										</FormControl>
 									</Box>
 
@@ -256,24 +266,24 @@ const SignUpForm: React.FC = () => {
 														border: "none",
 													},
 												}}
-												onBlur={(e) => {
-													const email = e.target.value;
-													const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-													if (!emailPattern.test(email)) {
-														const emailErrorElement =
-															document.getElementById("emailError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText =
-																"Email không hợp lệ!";
-														}
-													} else {
-														const emailErrorElement =
-															document.getElementById("emailError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText = "";
-														}
-													}
-												}}
+												// onBlur={(e) => {
+												// 	const email = e.target.value;
+												// 	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+												// 	if (!emailPattern.test(email)) {
+												// 		const emailErrorElement =
+												// 			document.getElementById("emailError");
+												// 		if (emailErrorElement) {
+												// 			emailErrorElement.innerText =
+												// 				"Email không hợp lệ!";
+												// 		}
+												// 	} else {
+												// 		const emailErrorElement =
+												// 			document.getElementById("emailError");
+												// 		if (emailErrorElement) {
+												// 			emailErrorElement.innerText = "";
+												// 		}
+												// 	}
+												// }}
 											/>
 											<Typography
 												id="emailError"

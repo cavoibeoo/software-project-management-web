@@ -97,7 +97,7 @@ const ProjectLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 					<div className="sidebar-inner">
 						<div className="sidebar-menu">
 							<Link
-								href="/sine/timeline"
+								href="/your-work/"
 								className={`sidebar-menu-link ${
 									activePage === "/my-profile" ? "active" : ""
 								}`}
@@ -120,7 +120,7 @@ const ProjectLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 									marginBottom: "5px",
 								}}
 							></div>
-							<Link href="/sine/backlog" className="sidebar-menu-link">
+							<Link href="/your-work/trash/" className="sidebar-menu-link">
 								<i className="material-symbols-outlined">delete_sweep</i>
 								<span className="title">Trashs</span>
 							</Link>
