@@ -1,7 +1,7 @@
 "use strict";
 
 import User from "./../models/user.js";
-import { GET_DB } from "../config/mongodb.js";
+// import { GET_DB } from "../config/mongodb.js";
 import bcrypt from "bcrypt";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";

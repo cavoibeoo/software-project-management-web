@@ -2,7 +2,7 @@
 
 import express from "express";
 import config from "./config/environment.js";
-import { GET_DB, CONNECT_DB } from "./config/mongodb.js";
+import { db, closeConnection } from "./config/mongodb.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -26,14 +26,11 @@ const START_SERVER = () => {
     });
 };
 
-CONNECT_DB()
-    .then(() => {
-        console.log(chalk.blueBright("Connected to MongoDB Atlas"));
-    })
+db()
     .then(() => {
         START_SERVER();
     })
-    .catch((err) => {
-        console.error(chalk.red("Failed to connect to MongoDB: ", err));
+    .catch((error) => {
+        console.error(chalk.red("Failed to connect to MongoDB: ", error));
         process.exit(0);
     });
