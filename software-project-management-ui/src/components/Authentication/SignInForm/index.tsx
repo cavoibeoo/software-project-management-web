@@ -27,6 +27,11 @@ const SignInForm: React.FC = () => {
 					password: formData.get("password"),
 				}
 			);
+
+			// Lưu accessToken và refreshToken vào localStorage
+			localStorage.setItem("accessToken", response.data.accessToken);
+			localStorage.setItem("refreshToken", response.data.refreshToken);
+
 			window.location.href = "/your-work";
 			toast.success("Sucessful signing in!");
 			console.log(response.data);

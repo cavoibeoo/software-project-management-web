@@ -1373,3 +1373,30 @@ table tfoot tr p {
 	color: var(--primaryColor);
 	background-color: #f6f7f9;
 }
+
+.icon_project {
+	box-sizing: border-box;
+	appearance: none;
+	border: none;
+	flex-shrink: 0;
+	width: var(--ds-space-300, 30px);
+	height: var(--ds-space-300, 30px);
+	border-radius: var(--ds-border-radius-050, 2px);
+	display: inline-block;
+	vertical-align: middle;
+	padding-right: 5px;
+	border-radius: 5px;
+}
+
+.project-cell {
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.hover {
+	color: #8366e4 !important;
+}
+
+.hover:hover {
+	text-decoration: underline;
+}

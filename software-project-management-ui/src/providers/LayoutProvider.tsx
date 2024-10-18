@@ -37,7 +37,7 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 		"/your-work/",
 	].includes(pathname);
 
-	const isProjectPage = ["/your-work/"].includes(pathname);
+	const isProjectPage = ["/your-work/", "/your-work/trash/"].includes(pathname);
 
 	return (
 		<>
