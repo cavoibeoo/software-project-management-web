@@ -35,14 +35,14 @@ const UserSchema = mongoose.Schema(
             enum: ["admin", "user"],
             default: "user",
         },
+        jobTitle: String,
+        department: String,
+        organization: String,
         refreshToken: [String],
-        // tokens: {
-        //     refreshToken: {
-        //         token: String,
-        //         expires: Date,
-        //     },
-        //     accessToken: {},
-        // },
+        otp: {
+            code: String,
+            expires: Date,
+        },
     },
     { Timestamp: true }
 );
