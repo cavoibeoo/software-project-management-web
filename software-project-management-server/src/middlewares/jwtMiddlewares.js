@@ -4,9 +4,12 @@ import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 
 const auth = async (req, res, next) => {
-    const token = req.header("Authorization").split(" ")[1];
+    let token = req?.header("Authorization");
     if (!token)
-        return res.status(401).json({ error: true, message: "Access Denied: No token provided" });
+        return res
+            .status(401)
+            .json({ error: StatusCodes.UNAUTHORIZED, message: "Access Denied: No token provided" });
+    token = token.split(" ")[1];
 
     try {
         const tokenDetails = jwt.verify(token, config.accessTokenPrivateKey);

@@ -36,6 +36,9 @@ const loginService = async (data) => {
     if (!user) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
     }
+    if (user.isDeleted) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, `User ${user.name} has been disable`);
+    }
 
     if (!(await bcrypt.compare(data.password, user.password))) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials");
