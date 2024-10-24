@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
-import config from "../config.js";
+import config from "../config/environment.js";
 
 const generateToken = async (user, secret, exp) => {
     try {
@@ -23,7 +23,7 @@ const generateAccessToken = async (user) => {
 
 const generateRefreshToken = async (user) => {
     try {
-        return generateToken(user, config.refreshTokenPrivateKey, config.accessTokenExp);
+        return generateToken(user, config.refreshTokenPrivateKey, config.refreshTokenExp);
     } catch (err) {
         throw err;
     }
@@ -39,9 +39,9 @@ const verifyRefreshToken = async (token) => {
 
 const verifyAccessToken = async (token) => {
     try {
-        return jwt.verify(token, config.refreshTokenPrivateKey);
+        return jwt.verify(token, config.accessTokenPrivateKey);
     } catch (err) {
-        return false;
+        throw err;
     }
 };
 

@@ -14,23 +14,40 @@ const getAllUsers = async (req, res, next) => {
     }
 };
 
-const createUser = async (req, res, next) => {
+const getCurrentUser = async (req, res, next) => {
     try {
-        let result = await userService.registerService(req.body);
-        res.status(StatusCodes.CREATED).send(result);
+        let result = await userService.findById(req?.user);
+        res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
     }
 };
 
-const login = async (req, res, next) => {
+const updateCurrentUser = async (req, res, next) => {
     try {
-        let result = await userService.loginService(req.body);
-
-        res.status(StatusCodes.OK).json(result);
+        let result = await userService.updateOne(req?.user, req.body);
+        res.status(StatusCodes.OK).send(result);
     } catch (err) {
-        next(new ApiError(StatusCodes.BAD_REQUEST, new Error(err).message));
+        next(err);
     }
 };
 
-export { getAllUsers, createUser, login };
+const changeUserStatus = async (req, res, next) => {
+    try {
+        let result = await userService.updateStatus(req.body);
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+const changePassword = async (req, res, next) => {
+    try {
+        let result = await userService.updatePasswordService(req?.user, req.body);
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { getAllUsers, getCurrentUser, updateCurrentUser, changePassword, changeUserStatus };

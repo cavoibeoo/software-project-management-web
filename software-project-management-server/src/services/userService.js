@@ -1,67 +1,158 @@
 "use strict";
 
 import User from "./../models/user.js";
-import db from "../mongodb.js";
-import bcrypt from "bcrypt";
+// import { GET_DB } from "../config/mongodb.js";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
-import config from "../config.js";
-import * as jwtUtil from "../utils/jwtUtil.js";
-
-let collection = await db.collection("users");
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import config from "../config/environment.js";
 
 const getAllUser = async (record) => {
     try {
-        let result = await collection.find({}).limit(10).toArray();
+        // let collection = await GET_DB().collection("users");
+        // let result = await collection.find({}).limit(10).toArray();
+        let result = await User.find({}).limit(10);
         return result.length > 0 ? result : null;
-    } catch (error) {
+    } catch (err) {
         throw err;
     }
 };
 
-const registerService = async (data) => {
+const findById = async (data) => {
     try {
-        if (await findByEmail(data.email)) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "User already existed");
+        let userIdString = Buffer.isBuffer(data?.userId)
+            ? data.userId.toString("hex")
+            : data?.userId;
+
+        // Validate if it's a valid ObjectId string before casting
+        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
+            throw new Error("Invalid ObjectId");
         }
 
-        const salt = await bcrypt.genSalt(Number(config.salt));
-        const hashedPassword = await bcrypt.hash(data.password, salt);
-        const newUser = await new User({
-            ...data,
-            password: hashedPassword,
-        }).save();
-
-        const accessToken = await jwtUtil.generateAccessToken(newUser);
-        const refreshToken = await jwtUtil.generateRefreshToken(newUser);
-
-        return { user: newUser._id, accessToken, refreshToken };
+        let result = await User.findOne({ _id: userIdString });
+        if (!result) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+        }
+        // let response = ({ name, email, role, createdDate } = result);
+        return (({ name, email, role, createDate, jobTitle, department, organization }) => ({
+            name,
+            email,
+            role,
+            createDate,
+            jobTitle,
+            department,
+            organization,
+        }))(result);
     } catch (err) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, new Error(err).message);
+        throw err;
     }
 };
 
-const loginService = async (data) => {
+const updateOne = async (user, data) => {
     try {
-        let user = await findByEmail(data.email);
-        if (!user) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
+        let userIdString = Buffer.isBuffer(user?.userId)
+            ? user.userId.toString("hex")
+            : user?.userId;
+
+        // Validate if it's a valid ObjectId string before casting
+        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
+            throw new Error("Invalid ObjectId");
         }
 
-        if (!(await bcrypt.compare(data.password, user.password))) {
-            throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials");
+        let result = await User.findOneAndUpdate({ _id: userIdString }, data, { new: true });
+        if (!result) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
         }
 
-        const accessToken = await jwtUtil.generateAccessToken(user);
-        const refreshToken = await jwtUtil.generateRefreshToken(user);
-
-        return {
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            messages: "Login successful",
-        };
+        // let response = ({ name, email, role, createdDate } = result);
+        return (({
+            _id,
+            name,
+            email,
+            role,
+            createDate,
+            jobTitle,
+            department,
+            organization,
+            isDeleted,
+        }) => ({
+            _id,
+            name,
+            email,
+            role,
+            createDate,
+            jobTitle,
+            department,
+            organization,
+            isDeleted,
+        }))(result);
     } catch (err) {
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, new Error(err).message);
+        throw err;
+    }
+};
+
+const updateStatus = async (data) => {
+    try {
+        let userIdString = Buffer.isBuffer(data?.userId)
+            ? data.userId.toString("hex")
+            : data?.userId;
+
+        // Validate if it's a valid ObjectId string before casting
+        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
+            throw new Error("Invalid ObjectId");
+        }
+
+        let result = await User.findOne({ _id: userIdString });
+        if (!result) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+        }
+
+        if (data?.isDeleted) result.refreshToken = [];
+        result.isDeleted = data?.isDeleted;
+        result.save();
+
+        return { message: data?.isDeleted ? "User has been disabled" : "User has been enabled" };
+    } catch (err) {
+        throw err;
+    }
+};
+
+const updatePasswordService = async (user, data) => {
+    try {
+        let userIdString = Buffer.isBuffer(user?.userId)
+            ? user.userId.toString("hex")
+            : user?.userId;
+
+        // Validate if it's a valid ObjectId string before casting
+        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
+            throw new Error("Invalid ObjectId");
+        }
+
+        let foundUser = await User.findOne({ _id: userIdString });
+
+        if (!foundUser) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+        }
+        if (!(await bcrypt.compare(data?.oldPassword, foundUser.password))) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Wrong old password");
+        }
+        if (data?.newPassword == data?.oldPassword) {
+            throw new ApiError(
+                StatusCodes.BAD_REQUEST,
+                "New password must be different from old password"
+            );
+        }
+
+        const salt = await bcrypt.genSalt(Number(config.salt));
+        const hashedPassword = await bcrypt.hash(data?.newPassword, salt);
+        foundUser.password = hashedPassword;
+        foundUser.save();
+
+        // let response = ({ name, email, role, createdDate } = result);
+        return { message: "Password changed successfully" };
+    } catch (err) {
+        throw err;
     }
 };
 
@@ -69,9 +160,9 @@ const findByEmail = async (email) => {
     try {
         let result = await User.findOne({ email: email });
         return result ? result : null;
-    } catch (error) {
+    } catch (err) {
         throw err;
     }
 };
 
-export { getAllUser, registerService, findByEmail, loginService };
+export { getAllUser, findByEmail, findById, updateOne, updateStatus, updatePasswordService };
