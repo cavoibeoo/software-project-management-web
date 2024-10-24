@@ -13,6 +13,15 @@ const createUser = async (req, res, next) => {
     }
 };
 
+const verifyUser = async (req, res, next) => {
+    try {
+        let result = await authService.verifyEmailService(req.query);
+        res.status(StatusCodes.CREATED).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
 const login = async (req, res, next) => {
     try {
         let result = await authService.loginService(req.body);
@@ -83,4 +92,41 @@ const logout = async (req, res, next) => {
     }
 };
 
-export { createUser, login, refreshToken, logout };
+const forgotPassword = async (req, res, next) => {
+    try {
+        let result = await authService.forgotPasswordService(req.body);
+        console.log(result);
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+const verifyOtp = async (req, res, next) => {
+    try {
+        let result = await authService.verifyOtp(req.query, req.body);
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+const changePasswordWithOtp = async (req, res, next) => {
+    try {
+        let result = await authService.changePasswordWithOtp(req.query, req.body);
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export {
+    createUser,
+    login,
+    refreshToken,
+    logout,
+    verifyUser,
+    forgotPassword,
+    verifyOtp,
+    changePasswordWithOtp,
+};
