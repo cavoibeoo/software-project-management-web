@@ -39,6 +39,10 @@ const UserSchema = mongoose.Schema(
         department: String,
         organization: String,
         refreshToken: [String],
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
         otp: {
             code: String,
             expires: Date,

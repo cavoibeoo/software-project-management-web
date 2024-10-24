@@ -51,6 +51,27 @@ const userUpdatePassword = Joi.object({
             new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
         ),
     confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required(),
-}).strict();
+});
 
-export { userCreate, userLogin, userRefresh, userUpdate, userStatus, userUpdatePassword };
+const updateOtpPassword = Joi.object({
+    password: Joi.string()
+        .required()
+        .min(6)
+        .max(50)
+        .trim()
+        .strict()
+        .pattern(
+            new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
+        ),
+    confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
+});
+
+export {
+    userCreate,
+    userLogin,
+    userRefresh,
+    userUpdate,
+    userStatus,
+    userUpdatePassword,
+    updateOtpPassword,
+};

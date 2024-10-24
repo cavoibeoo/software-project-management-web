@@ -41,7 +41,7 @@ const verifyAccessToken = async (token) => {
     try {
         return jwt.verify(token, config.accessTokenPrivateKey);
     } catch (err) {
-        return false;
+        throw err;
     }
 };
 
