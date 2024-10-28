@@ -4,6 +4,8 @@ import express from "express";
 import * as userRequest from "./../validations/userValidation.js";
 import * as authController from "../controllers/authController.js";
 import validate from "../middlewares/validationMiddleware.js";
+import passport from "passport";
+import("../middlewares/googleAuthMiddleware.js");
 
 const router = express.Router();
 
@@ -18,6 +20,12 @@ router.post(
     "/change-pw-otp",
     validate(userRequest.updateOtpPassword),
     authController.changePasswordWithOtp
+);
+router.get("/google", passport.authenticate("google", { scope: ["email", "profile"] }));
+router.get(
+    "/google/callback",
+    passport.authenticate("google", { failureRedirect: "/auth/api/login", failureMessage: true }),
+    authController.loginWithGoogle
 );
 
 export default router;

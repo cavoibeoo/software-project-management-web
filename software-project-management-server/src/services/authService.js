@@ -68,17 +68,23 @@ const registerService = async (data) => {
     }
 };
 
-const loginService = async (data) => {
-    let user = await User.findOne({ email: data.email });
-    if (!user) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
-    }
-    if (user.isDeleted || !user?.isVerified) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, `User ${user.name} has been disable`);
-    }
+const loginService = async (data, isGoogle) => {
+    let user;
+    if (isGoogle) {
+        user = data;
+    } else {
+        user = await User.findOne({ email: data.email });
 
-    if (!(await bcrypt.compare(data.password, user.password))) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials");
+        if (!user) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
+        }
+        if (user.isDeleted || !user?.isVerified) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, `User ${user.name} has been disable`);
+        }
+
+        if (!user?.password || !(await bcrypt.compare(data.password, user?.password))) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials");
+        }
     }
 
     const accessToken = await jwtUtil.generateAccessToken(user);
@@ -227,7 +233,11 @@ const changePasswordWithOtp = async (query, data) => {
         console.log(query);
         let otpVerify = await verifyOtp(query, query);
         let user = await User.findOne({ email: query?.email });
-        user.password = data.password;
+
+        const salt = await bcrypt.genSalt(Number(config.salt));
+        const hashedPassword = await bcrypt.hash(data?.newPassword, salt);
+
+        user.password = hashedPassword;
         user.otp.expires = new Date();
         await user.save();
         return { message: "Password has been changed successfully" };
