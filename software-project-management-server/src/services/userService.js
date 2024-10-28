@@ -7,6 +7,7 @@ import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../config/environment.js";
+import uploadImg from "../utils/uploadFirebaseImg.js";
 
 const getAllUser = async (record) => {
     try {
@@ -60,6 +61,11 @@ const updateOne = async (user, data) => {
             throw new Error("Invalid ObjectId");
         }
 
+        if (data?.avatar) {
+            let avatarUrl = await uploadImg(data?.avatar, "userAvatar", user?.userId);
+            data.avatar = avatarUrl;
+        }
+
         let result = await User.findOneAndUpdate({ _id: userIdString }, data, { new: true });
         if (!result) {
             throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
@@ -72,6 +78,7 @@ const updateOne = async (user, data) => {
             email,
             role,
             createDate,
+            avatar,
             jobTitle,
             department,
             organization,
@@ -82,6 +89,7 @@ const updateOne = async (user, data) => {
             email,
             role,
             createDate,
+            avatar,
             jobTitle,
             department,
             organization,

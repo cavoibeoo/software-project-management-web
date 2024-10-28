@@ -5,7 +5,7 @@ import * as userSchema from "./../validations/userValidation.js";
 import * as userController from "../controllers/userController.js";
 import authorization from "../middlewares/authorizationMiddleware.js";
 import validate from "../middlewares/validationMiddleware.js";
-
+import { upload } from "../middlewares/uploadImgMiddleware.js";
 const router = express.Router();
 
 router.get("/", authorization(["admin"]), userController.getAllUsers);
@@ -16,7 +16,12 @@ router.put(
     validate(userSchema.userStatus),
     userController.changeUserStatus
 );
-router.put("/update-info", validate(userSchema.userUpdate), userController.updateCurrentUser);
+router.put(
+    "/update-info",
+    validate(userSchema.userUpdate),
+    upload.single("avatar"),
+    userController.updateCurrentUser
+);
 router.put(
     "/change-password",
     validate(userSchema.userUpdatePassword),
