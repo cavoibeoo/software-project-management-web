@@ -16,7 +16,7 @@ const UserSchema = mongoose.Schema(
         },
         password: {
             type: String,
-            required: true,
+            // required: true,
         },
         avatar: {
             type: String,
@@ -38,6 +38,12 @@ const UserSchema = mongoose.Schema(
         jobTitle: String,
         department: String,
         organization: String,
+        federated_credentials: [
+            {
+                _id: String,
+                provider: String,
+            },
+        ],
         refreshToken: [String],
         isVerified: {
             type: Boolean,
