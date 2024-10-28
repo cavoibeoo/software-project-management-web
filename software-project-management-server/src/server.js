@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import routes from "./routes/index.js";
 import chalk from "chalk";
+import { firebaseStorage } from "./config/firebaseApp.js";
 
 const START_SERVER = () => {
     const app = express();
@@ -27,6 +28,7 @@ const START_SERVER = () => {
 };
 
 db()
+    .then(() => {})
     .then(() => {
         START_SERVER();
     })
