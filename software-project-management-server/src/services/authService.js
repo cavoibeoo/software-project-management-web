@@ -99,6 +99,15 @@ const loginService = async (data, isGoogle) => {
     };
 };
 
+const isLoggedIn = async (data) => {
+    try {
+        let tokenDetails = await jwtUtil.verifyAccessToken(data.accessToken);
+        return tokenDetails ? true : false;
+    } catch (error) {
+        return false;
+    }
+};
+
 const refreshTokenService = async (data) => {
     let refreshToken = data?.refreshToken;
     if (!refreshToken) {
@@ -255,4 +264,5 @@ export {
     forgotPasswordService,
     verifyOtp,
     changePasswordWithOtp,
+    isLoggedIn,
 };
