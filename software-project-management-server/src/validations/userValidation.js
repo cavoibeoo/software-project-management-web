@@ -40,7 +40,7 @@ const userStatus = Joi.object({
 }).strict();
 
 const userUpdatePassword = Joi.object({
-    oldPassword: Joi.string().max(50).required().min(6).trim().strict(),
+    oldPassword: Joi.string().max(50).min(6).trim().strict(),
     newPassword: Joi.string()
         .required()
         .min(6)

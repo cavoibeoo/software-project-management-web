@@ -145,14 +145,16 @@ const updatePasswordService = async (user, data) => {
         if (!foundUser) {
             throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
         }
-        if (!(await bcrypt.compare(data?.oldPassword, foundUser.password))) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Wrong old password");
-        }
-        if (data?.newPassword == data?.oldPassword) {
-            throw new ApiError(
-                StatusCodes.BAD_REQUEST,
-                "New password must be different from old password"
-            );
+        if (foundUser?.password) {
+            if (!(await bcrypt.compare(data?.oldPassword, foundUser.password))) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Wrong old password");
+            }
+            if (data?.newPassword == data?.oldPassword) {
+                throw new ApiError(
+                    StatusCodes.BAD_REQUEST,
+                    "New password must be different from old password"
+                );
+            }
         }
 
         const salt = await bcrypt.genSalt(Number(config.salt));

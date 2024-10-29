@@ -24,20 +24,16 @@ const verifyUser = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     try {
-        let result;
-        if (authService.isLoggedIn(req.cookies)) {
-            result = { message: "You already logged in" };
-        } else {
-            result = await authService.loginService(req.body, false);
-            res.cookie("accessToken", result.accessToken, {
-                httpOnly: true,
-                maxAge: 15 * 60 * 1000, //15 minutes
-            });
-            res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: true,
-                maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
-            });
-        }
+        let result = await authService.loginService(req.body, false);
+        res.cookie("accessToken", result.accessToken, {
+            httpOnly: true,
+            maxAge: 15 * 60 * 1000, //15 minutes
+        });
+        res.cookie("refreshToken", result.refreshToken, {
+            httpOnly: true,
+            maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
+        });
+
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
@@ -46,20 +42,16 @@ const login = async (req, res, next) => {
 
 const loginWithGoogle = async (req, res, next) => {
     try {
-        let result;
-        if (authService.isLoggedIn(req.cookies)) {
-            result = { message: "You already logged in" };
-        } else {
-            let result = await authService.loginService(req?.user, true);
-            res.cookie("accessToken", result.accessToken, {
-                httpOnly: true,
-                maxAge: 15 * 60 * 1000, //15 minutes
-            });
-            res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: true,
-                maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
-            });
-        }
+        let result = await authService.loginService(req?.user, true);
+        res.cookie("accessToken", result.accessToken, {
+            httpOnly: true,
+            maxAge: 15 * 60 * 1000, //15 minutes
+        });
+        res.cookie("refreshToken", result.refreshToken, {
+            httpOnly: true,
+            maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
+        });
+
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);

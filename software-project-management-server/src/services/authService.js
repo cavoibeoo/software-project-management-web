@@ -101,7 +101,8 @@ const loginService = async (data, isGoogle) => {
 
 const isLoggedIn = async (data) => {
     try {
-        let tokenDetails = await jwtUtil.verifyAccessToken(data.accessToken);
+        let tokenDetails = await jwtUtil.verifyAccessToken(data?.accessToken);
+        // console.log(tokenDetails);
         return tokenDetails ? true : false;
     } catch (error) {
         return false;
@@ -171,7 +172,6 @@ const verifyEmailService = async (data) => {
 
 const forgotPasswordService = async (query, data) => {
     try {
-        console.log(query);
         let user = await User.findOne({ email: query?.email });
         if (!user) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
@@ -239,7 +239,6 @@ const verifyOtp = async (param, data) => {
 
 const changePasswordWithOtp = async (query, data) => {
     try {
-        console.log(query);
         let otpVerify = await verifyOtp(query, query);
         let user = await User.findOne({ email: query?.email });
 
