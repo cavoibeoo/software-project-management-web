@@ -15,12 +15,12 @@ passport.use(
         async (request, accessToken, refreshToken, profile, done) => {
             try {
                 let user = await User.findOne({ email: profile.emails[0].value });
-                const hasGoogleProvider = user?.federated_credentials.some(
+                const hasGoogleProvider = user?.federatedCredentials.some(
                     (credential) => credential.provider === "google"
                 );
                 if (user) {
                     if (!hasGoogleProvider) {
-                        user.federated_credentials.push({
+                        user.federatedCredentials.push({
                             _id: profile.id,
                             provider: "google",
                         });
@@ -30,7 +30,7 @@ passport.use(
                     user = new User({
                         email: profile.emails[0].value,
                         name: profile.displayName,
-                        federated_credentials: [{ _id: profile.id, provider: "google" }],
+                        federatedCredentials: [{ _id: profile.id, provider: "google" }],
                         isVerified: true,
                         avatar: profile.photos[0].value,
                     });

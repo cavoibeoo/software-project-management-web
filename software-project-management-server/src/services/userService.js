@@ -9,11 +9,14 @@ import bcrypt from "bcrypt";
 import config from "../config/environment.js";
 import uploadImg from "../utils/uploadFirebaseImg.js";
 
-const getAllUser = async (record) => {
+const getAllUser = async (data) => {
     try {
-        // let collection = await GET_DB().collection("users");
-        // let result = await collection.find({}).limit(10).toArray();
-        let result = await User.find({}).limit(10);
+        let pageSize = data?.pageSize ? data?.pageSize : 10;
+        let page = data?.page ? data?.page : 1;
+        let result = await User.find({}, "-password -federatedCredentials -refreshToken")
+            .skip((page - 1) * pageSize)
+            .limit(pageSize)
+            .sort({ createDate: -1 });
         return result.length > 0 ? result : null;
     } catch (err) {
         throw err;

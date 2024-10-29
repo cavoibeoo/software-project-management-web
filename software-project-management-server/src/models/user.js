@@ -38,7 +38,7 @@ const UserSchema = mongoose.Schema(
         jobTitle: String,
         department: String,
         organization: String,
-        federated_credentials: [
+        federatedCredentials: [
             {
                 _id: String,
                 provider: String,

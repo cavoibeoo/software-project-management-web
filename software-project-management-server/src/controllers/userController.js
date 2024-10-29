@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 
 const getAllUsers = async (req, res, next) => {
     try {
-        let result = await userService.getAllUser();
+        let result = await userService.getAllUser(req?.query);
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
