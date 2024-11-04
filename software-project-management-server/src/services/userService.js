@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../config/environment.js";
 import uploadImg from "../utils/uploadFirebaseImg.js";
+import getObjectId from "../utils/objectId.js";
 
 const getAllUser = async (data) => {
     try {
@@ -25,43 +26,14 @@ const getAllUser = async (data) => {
 
 const findById = async (data) => {
     try {
-        let userIdString = Buffer.isBuffer(data?.userId)
-            ? data.userId.toString("hex")
-            : data?.userId;
-
-        // Validate if it's a valid ObjectId string before casting
-        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
-            throw new Error("Invalid ObjectId");
-        }
-
-        let result = await User.findOne({ _id: userIdString });
+        let result = await User.findById(data?.userId).select(
+            "-password -federatedCredentials -refreshToken -otp -isVerified"
+        );
         if (!result) {
             throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
         }
         // let response = ({ name, email, role, createdDate } = result);
-        return (({
-            _id,
-            name,
-            email,
-            role,
-            createDate,
-            avatar,
-            jobTitle,
-            department,
-            organization,
-            isDeleted,
-        }) => ({
-            _id,
-            name,
-            email,
-            role,
-            createDate,
-            avatar,
-            jobTitle,
-            department,
-            organization,
-            isDeleted,
-        }))(result);
+        return result ? result : null;
     } catch (err) {
         throw err;
     }
@@ -69,49 +41,22 @@ const findById = async (data) => {
 
 const updateOne = async (user, data) => {
     try {
-        let userIdString = Buffer.isBuffer(user?.userId)
-            ? user.userId.toString("hex")
-            : user?.userId;
-
-        // Validate if it's a valid ObjectId string before casting
-        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
-            throw new Error("Invalid ObjectId");
-        }
+        let userIdString = getObjectId(user?.userId);
 
         if (data?.avatar) {
             let avatarUrl = await uploadImg(data?.avatar, "userAvatar", user?.userId);
             data.avatar = avatarUrl;
         }
 
-        let result = await User.findOneAndUpdate({ _id: userIdString }, data, { new: true });
+        let result = await User.findOneAndUpdate({ _id: userIdString }, data, {
+            new: true,
+            select: "-password -federatedCredentials -refreshToken -otp -isVerified",
+        });
         if (!result) {
             throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
         }
 
-        // let response = ({ name, email, role, createdDate } = result);
-        return (({
-            _id,
-            name,
-            email,
-            role,
-            createDate,
-            avatar,
-            jobTitle,
-            department,
-            organization,
-            isDeleted,
-        }) => ({
-            _id,
-            name,
-            email,
-            role,
-            createDate,
-            avatar,
-            jobTitle,
-            department,
-            organization,
-            isDeleted,
-        }))(result);
+        return result ? result : null;
     } catch (err) {
         throw err;
     }
@@ -119,16 +64,7 @@ const updateOne = async (user, data) => {
 
 const updateStatus = async (data) => {
     try {
-        let userIdString = Buffer.isBuffer(data?.userId)
-            ? data.userId.toString("hex")
-            : data?.userId;
-
-        // Validate if it's a valid ObjectId string before casting
-        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
-            throw new Error("Invalid ObjectId");
-        }
-
-        let result = await User.findOne({ _id: userIdString });
+        let result = await User.findById(data?.userId);
         if (!result) {
             throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
         }
@@ -145,16 +81,7 @@ const updateStatus = async (data) => {
 
 const updatePasswordService = async (user, data) => {
     try {
-        let userIdString = Buffer.isBuffer(user?.userId)
-            ? user.userId.toString("hex")
-            : user?.userId;
-
-        // Validate if it's a valid ObjectId string before casting
-        if (!mongoose.Types.ObjectId.isValid(userIdString)) {
-            throw new Error("Invalid ObjectId");
-        }
-
-        let foundUser = await User.findOne({ _id: userIdString });
+        let foundUser = await User.findById(user?.userId);
 
         if (!foundUser) {
             throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
