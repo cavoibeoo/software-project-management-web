@@ -39,14 +39,28 @@ const findById = async (data) => {
             throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
         }
         // let response = ({ name, email, role, createdDate } = result);
-        return (({ name, email, role, createDate, jobTitle, department, organization }) => ({
+        return (({
+            _id,
             name,
             email,
             role,
             createDate,
+            avatar,
             jobTitle,
             department,
             organization,
+            isDeleted,
+        }) => ({
+            _id,
+            name,
+            email,
+            role,
+            createDate,
+            avatar,
+            jobTitle,
+            department,
+            organization,
+            isDeleted,
         }))(result);
     } catch (err) {
         throw err;
