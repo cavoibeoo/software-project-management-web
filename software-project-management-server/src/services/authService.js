@@ -101,9 +101,12 @@ const loginService = async (data, isGoogle) => {
 
 const isLoggedIn = async (data) => {
     try {
-        let tokenDetails = await jwtUtil.verifyAccessToken(data?.accessToken);
-        // console.log(tokenDetails);
-        return tokenDetails ? true : false;
+        if (!data?.accessToken && !data?.refreshToken) {
+            return false;
+        }
+        if (data?.accessToken) await jwtUtil.verifyAccessToken(data?.accessToken);
+        if (data?.refreshToken) await jwtUtil.verifyRefreshToken(data?.refreshToken);
+        return true;
     } catch (error) {
         return false;
     }
