@@ -67,8 +67,8 @@ const Features: React.FC = () => {
 						<Image
 							src="/images/background.png"
 							alt="dashboard-image"
-							width={848}
-							height={585}
+							width={948}
+							height={685}
 						/>
 					</div>
 

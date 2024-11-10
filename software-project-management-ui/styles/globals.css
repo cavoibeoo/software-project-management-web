@@ -1400,3 +1400,25 @@ table tfoot tr p {
 .hover:hover {
 	text-decoration: underline;
 }
+.avatar-hover {
+	position: relative;
+	transition:
+		transform 0.3s ease,
+		z-index 0.3s ease;
+}
+
+.avatar-hover:hover {
+	transform: translateY(-10px);
+	z-index: 1; /* Đảm bảo avatar nổi lên trên các avatar khác */
+}
+
+.issue-item {
+	text-align: left;
+	font-size: 14px;
+	font-weight: 500;
+	padding: 14px 14px 14px 14px;
+}
+
+.hover-underlined:hover {
+	text-decoration: underline;
+}

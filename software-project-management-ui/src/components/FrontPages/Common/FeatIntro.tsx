@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 import { Box, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 
@@ -60,8 +60,12 @@ const FeatIntro: React.FC = () => {
 								slidesPerView: 3,
 							},
 						}}
-						modules={[Pagination]}
+						modules={[Pagination, Autoplay]}
 						className="fp-team-slides"
+						autoplay={{
+							delay: 2000,
+							disableOnInteraction: false,
+						}}
 					>
 						<SwiperSlide>
 							<Box
@@ -87,7 +91,7 @@ const FeatIntro: React.FC = () => {
 										<div className="fp-widgets-image">
 											<div className="image">
 												<Image
-													src="/images/front-pages/order-summary.png"
+													src="/images/front-pages/feature/feature_Automation.png"
 													alt="order-summary-image"
 													width={662}
 													height={807}
@@ -187,13 +191,15 @@ const FeatIntro: React.FC = () => {
 									columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}
 								>
 									<Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
-										<div className="image">
-											<Image
-												src="/images/front-pages/feature/feature_timeline.png"
-												alt="order-summary-image"
-												width={662}
-												height={807}
-											/>
+										<div className="fp-widgets-image">
+											<div className="image">
+												<Image
+													src="/images/front-pages/feature/feature_timeline.png"
+													alt="order-summary-image"
+													width={662}
+													height={807}
+												/>
+											</div>
 										</div>
 									</Grid>
 									<Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
@@ -290,13 +296,15 @@ const FeatIntro: React.FC = () => {
 									columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}
 								>
 									<Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
-										<div className="image">
-											<Image
-												src="/images/front-pages/feature/feature_reports.png"
-												alt="order-summary-image"
-												width={662}
-												height={807}
-											/>
+										<div className="fp-widgets-image">
+											<div className="image" style={{ padding: "20px 16px" }}>
+												<Image
+													src="/images/front-pages/feature/feature_reports.png"
+													alt="order-summary-image"
+													width={8622}
+													height={1807}
+												/>
+											</div>
 										</div>
 									</Grid>
 
@@ -392,13 +400,15 @@ const FeatIntro: React.FC = () => {
 									columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}
 								>
 									<Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
-										<div className="image">
-											<Image
-												src="/images/front-pages/feature/feature_Automation.png"
-												alt="order-summary-image"
-												width={662}
-												height={807}
-											/>
+										<div className="fp-widgets-image">
+											<div className="image">
+												<Image
+													src="/images/front-pages/feature/feature_Automation.png"
+													alt="order-summary-image"
+													width={662}
+													height={807}
+												/>
+											</div>
 										</div>
 									</Grid>
 

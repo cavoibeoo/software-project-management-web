@@ -1,28 +1,40 @@
 "use client";
-import * as React from "react";
+import React, { useState, FormEvent } from "react";
 import { alpha } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import FadeMenu from "./menu";
-import { Button } from "@mui/material";
+import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
+import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
+import { styled } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
+import PropTypes from "prop-types";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { useContext } from "react";
+import {
+	Box,
+	Typography,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TablePagination,
+	TableRow,
+	Paper,
+	IconButton,
+	TableHead,
+	Checkbox,
+	Dialog,
+	DialogTitle,
+	Grid,
+	Button,
+	TextField,
+} from "@mui/material";
+import { ProjectNameContext } from "@/providers/ProjectNameProvider";
 
 interface Data {
 	id: number;
@@ -32,13 +44,20 @@ interface Data {
 	lead: string;
 }
 
+const uniqueKeys = new Set<string>();
+
 function createData(
 	id: number,
 	name: string,
 	key: string,
 	type: string,
 	lead: string
-): Data {
+): Data | null {
+	if (uniqueKeys.has(key)) {
+		console.error(`Duplicate key found: ${key}`);
+		return null;
+	}
+	uniqueKeys.add(key);
 	return {
 		id,
 		name,
@@ -53,11 +72,17 @@ const rows = [
 		1,
 		"FAMS_PracticalBA",
 		"FA",
-		"Team-managed sofffvare",
+		"Team-managed software",
 		"Tran Duc Quang"
 	),
-	createData(2, "SINE_PSM", "SI", "Team-managed sofffvare2", "Tran Binh phuoc"),
-];
+	createData(2, "SINE_PSM", "SG", "Team-managed software2", "Tran Binh Phuoc"),
+	createData(3, "SINE_PSM", "RI", "Team-managed software2", "Tran Binh Phuoc"),
+	createData(4, "SINE_PSM", "GI", "Team-managed software2", "Tran Binh Phuoc"),
+	createData(5, "SINE_PSM", "DI", "Team-managed software2", "Tran Binh Phuoc"),
+	createData(6, "SINE_PSM", "VI", "Team-managed software2", "Tran Binh Phuoc"),
+	createData(7, "SINE_PSM", "CI", "Team-managed software2", "Tran Binh Phuoc"),
+	createData(8, "SINE_PSM", "NI", "Team-managed software2", "Tran Binh Phuoc"),
+].filter((row): row is Data => row !== null);
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 	if (b[orderBy] < a[orderBy]) {
@@ -116,14 +141,12 @@ const headCells: readonly HeadCell[] = [
 		label: "Lead",
 	},
 	{
-		id: "type",
+		id: "id",
 		numeric: true,
 		disablePadding: false,
 		label: "More actions",
 	},
 ];
-
-// Thêm nút "Thêm Dự Án" vào vị trí thích hợp trong giao diện
 
 interface EnhancedTableProps {
 	numSelected: number;
@@ -193,8 +216,54 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 interface EnhancedTableToolbarProps {
 	numSelected: number;
 }
+
+// Modal
+interface BootstrapDialogTitleProps {
+	children?: React.ReactNode;
+	onClose: () => void;
+}
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+	"& .MuiDialogContent-root": {
+		padding: theme.spacing(2),
+	},
+	"& .MuiDialogActions-root": {
+		padding: theme.spacing(1),
+	},
+}));
+
+function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
+	const { children, onClose, ...other } = props;
+
+	return (
+		<DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+			{children}
+			{onClose ? (
+				<IconButton
+					aria-label="close"
+					onClick={onClose}
+					sx={{
+						position: "absolute",
+						right: 8,
+						top: 8,
+						color: (theme) => theme.palette.grey[500],
+					}}
+				>
+					<CloseIcon />
+				</IconButton>
+			) : null}
+		</DialogTitle>
+	);
+}
+
+BootstrapDialogTitle.propTypes = {
+	children: PropTypes.node,
+	onClose: PropTypes.func.isRequired,
+};
+
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 	const { numSelected } = props;
+
 	return (
 		<Toolbar
 			sx={[
@@ -217,6 +286,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 					color="inherit"
 					variant="subtitle1"
 					component="div"
+					style={{ maxHeight: "20px" }}
 				>
 					{numSelected} selected
 				</Typography>
@@ -227,7 +297,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 					id="tableTitle"
 					component="div"
 				>
-					Nutrition
+					<Box
+						sx={{
+							display: { xs: "block", sm: "flex" },
+							alignItems: "center",
+							justifyContent: "space-between",
+						}}
+					></Box>
 				</Typography>
 			)}
 			{numSelected > 0 ? (
@@ -237,7 +313,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 					</IconButton>
 				</Tooltip>
 			) : (
-				<Button variant="contained">Create </Button>
+				<></>
 			)}
 		</Toolbar>
 	);
@@ -249,6 +325,7 @@ export default function EnhancedTable() {
 	const [page, setPage] = React.useState(0);
 	const [dense, setDense] = React.useState(false);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [search, setSearch] = React.useState("");
 
 	const handleRequestSort = (
 		event: React.MouseEvent<unknown>,
@@ -298,8 +375,8 @@ export default function EnhancedTable() {
 		setPage(0);
 	};
 
-	const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setDense(event.target.checked);
+	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearch(event.target.value);
 	};
 
 	// Avoid a layout jump when reaching the last page with empty rows.
@@ -309,113 +386,325 @@ export default function EnhancedTable() {
 	const visibleRows = React.useMemo(
 		() =>
 			[...rows]
+				.filter(
+					(row) =>
+						row.name.toLowerCase().includes(search.toLowerCase()) ||
+						row.key.toLowerCase().includes(search.toLowerCase()) ||
+						row.lead.toLowerCase().includes(search.toLowerCase()) ||
+						row.type.toLowerCase().includes(search.toLowerCase())
+				)
 				.sort(getComparator(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page, rowsPerPage]
+		[order, orderBy, page, rowsPerPage, search]
 	);
 
-	return (
-		<Box sx={{ width: "100%" }}>
-			<Paper sx={{ width: "100%", mb: 2 }}>
-				<EnhancedTableToolbar numSelected={selected.length} />
-				<TableContainer>
-					<Table
-						sx={{ minWidth: 750 }}
-						aria-labelledby="tableTitle"
-						size={dense ? "small" : "medium"}
-					>
-						<EnhancedTableHead
-							numSelected={selected.length}
-							order={order}
-							orderBy={orderBy}
-							onSelectAllClick={handleSelectAllClick}
-							onRequestSort={handleRequestSort}
-							rowCount={rows.length}
-						/>
-						<TableBody>
-							{visibleRows.map((row, index) => {
-								const isItemSelected = selected.includes(row.id);
-								const labelId = `enhanced-table-checkbox-${index}`;
+	// Modal
+	const [open, setOpen] = useState(false);
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		// const data = new FormData(event.currentTarget);
+	};
 
-								return (
-									<TableRow
-										hover
-										role="checkbox"
-										aria-checked={isItemSelected}
-										tabIndex={-1}
-										key={row.id}
-										selected={isItemSelected}
-										sx={{ cursor: "pointer" }}
-									>
-										<TableCell padding="checkbox">
-											<Checkbox
-												onClick={(event) => handleClick(event, row.id)}
-												color="primary"
-												checked={isItemSelected}
-												inputProps={{
-													"aria-labelledby": labelId,
-												}}
-											/>
-										</TableCell>
-										<TableCell
-											component="th"
-											id={labelId}
-											scope="row"
-											padding="none"
-											className="project-cell hover"
+	const projectName = useContext(ProjectNameContext);
+
+	return (
+		<>
+			<Button
+				onClick={handleClickOpen}
+				variant="outlined"
+				sx={{
+					textTransform: "capitalize",
+					borderRadius: "7px",
+					fontWeight: "500",
+					fontSize: "13px",
+					padding: "6px 13px",
+					marginBottom: "20px",
+				}}
+				color="primary"
+			>
+				<AddIcon sx={{ position: "relative", top: "-1px" }} /> Add New Project
+			</Button>
+			<form className={styles.searchBox} style={{ maxWidth: "30%" }}>
+				<label>
+					<i className="material-symbols-outlined">search</i>
+				</label>
+				<input
+					type="text"
+					className={styles.inputSearch}
+					id="searchboxColor"
+					placeholder="Search here..."
+					value={search} // Đảm bảo rằng giá trị của ô tìm kiếm được liên kết với trạng thái
+					onChange={handleSearch} // Gọi hàm handleSearch khi có sự thay đổi
+					style={{
+						padding: "5px 38px 8px 10px;",
+						border: "1px solid #a6adba",
+						marginBottom: "10px",
+						fontSize: "0.86875rem",
+					}}
+				/>
+			</form>
+			<Box sx={{ width: "100%" }}>
+				<Paper sx={{ width: "100%", mb: 2 }}>
+					{selected.length > 0 && (
+						<EnhancedTableToolbar numSelected={selected.length} />
+					)}
+					<TableContainer>
+						<Table
+							sx={{ minWidth: 750 }}
+							aria-labelledby="tableTitle"
+							size={dense ? "small" : "medium"}
+						>
+							<EnhancedTableHead
+								numSelected={selected.length}
+								order={order}
+								orderBy={orderBy}
+								onSelectAllClick={handleSelectAllClick}
+								onRequestSort={handleRequestSort}
+								rowCount={rows.length}
+							/>
+							<TableBody>
+								{visibleRows.map((row, index) => {
+									const isItemSelected = selected.includes(row.id);
+									const labelId = `enhanced-table-checkbox-${index}`;
+
+									return (
+										<TableRow
+											hover
+											role="checkbox"
+											aria-checked={isItemSelected}
+											tabIndex={-1}
+											key={row.id}
+											selected={isItemSelected}
+											sx={{ cursor: "pointer" }}
 										>
-											<Typography
-												component="a"
-												href={`/${row.name}`}
-												className="project-link"
+											<TableCell padding="checkbox">
+												<Checkbox
+													onClick={(event) => handleClick(event, row.id)}
+													color="primary"
+													checked={isItemSelected}
+													inputProps={{
+														"aria-labelledby": labelId,
+													}}
+												/>
+											</TableCell>
+											<TableCell
+												component="th"
+												id={labelId}
+												scope="row"
+												padding="none"
+												className="project-cell hover"
+											>
+												<Typography
+													component="a"
+													href={`/projects/${row.name}/board`}
+													className="project-link"
+													onClick={() => projectName?.setProjectName(row.name)}
+													sx={{
+														display: "flex",
+														alignItems: "center",
+														textDecoration: "none",
+														color: "inherit",
+													}}
+												>
+													<img
+														src="https://scrumwithjira.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10403?size=medium"
+														alt="Project Logo"
+														className="icon_project"
+													/>
+													{row.name}
+												</Typography>
+											</TableCell>
+											<TableCell align="right">{row.key}</TableCell>
+											<TableCell align="right">{row.type}</TableCell>
+											<TableCell align="right" className="project-cell hover">
+												{row.lead}
+											</TableCell>
+											<TableCell align="right">
+												<FadeMenu />
+											</TableCell>
+										</TableRow>
+									);
+								})}
+								{emptyRows > 0 && (
+									<TableRow
+										style={{
+											height: (dense ? 33 : 53) * emptyRows,
+										}}
+									>
+										<TableCell colSpan={6} />
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					</TableContainer>
+					<TablePagination
+						rowsPerPageOptions={[5, 10, 25]}
+						component="div"
+						count={rows.length}
+						rowsPerPage={rowsPerPage}
+						page={page}
+						onPageChange={handleChangePage}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+						className="tablePagination"
+					/>
+				</Paper>
+			</Box>
+			<BootstrapDialog
+				onClose={handleClose}
+				aria-labelledby="customized-dialog-title"
+				open={open}
+				className="rmu-modal"
+			>
+				<Box>
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
+							background: "#f6f7f9",
+							padding: { xs: "15px 20px", md: "25px" },
+						}}
+						className="rmu-modal-header"
+					>
+						<Typography
+							id="modal-modal-title"
+							variant="h6"
+							sx={{
+								fontWeight: "600",
+								fontSize: { xs: "16px", md: "18px" },
+							}}
+							className="text-black"
+						>
+							Add New Project
+						</Typography>
+
+						<IconButton aria-label="remove" size="small" onClick={handleClose}>
+							<ClearIcon />
+						</IconButton>
+					</Box>
+
+					<Box className="rmu-modal-content">
+						<Box component="form" noValidate onSubmit={handleSubmit}>
+							<Box
+								sx={{
+									padding: "25px",
+									borderRadius: "8px",
+								}}
+								className="bg-white"
+							>
+								<Grid container alignItems="center" spacing={2}>
+									<Grid item xs={12} md={12} lg={12}>
+										<Typography
+											component="h5"
+											sx={{
+												fontWeight: "500",
+												fontSize: "14px",
+												mb: "12px",
+											}}
+											className="text-black"
+										>
+											Project Name*
+										</Typography>
+
+										<TextField
+											autoComplete="projectName"
+											name="projectName"
+											required
+											fullWidth
+											id="projectName"
+											label="Project Name"
+											autoFocus
+											InputProps={{
+												style: { borderRadius: 8 },
+											}}
+										/>
+									</Grid>
+									<Grid item xs={12} md={12} lg={5}>
+										<Typography
+											component="h5"
+											sx={{
+												fontWeight: "500",
+												fontSize: "14px",
+												mb: "12px",
+											}}
+											className="text-black"
+										>
+											Key*
+										</Typography>
+
+										<TextField
+											autoComplete="projectKey"
+											name="projectKey"
+											required
+											fullWidth
+											id="projectKey"
+											label="Project Key"
+											autoFocus
+											InputProps={{
+												style: { borderRadius: 8 },
+											}}
+										/>
+									</Grid>
+
+									<Grid item xs={12} mt={1}>
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "end",
+												gap: "10px",
+											}}
+										>
+											<Button
+												onClick={handleClose}
+												variant="outlined"
+												color="error"
 												sx={{
-													display: "flex",
-													alignItems: "center",
-													textDecoration: "none",
-													color: "inherit",
+													textTransform: "capitalize",
+													borderRadius: "8px",
+													fontWeight: "500",
+													fontSize: "13px",
+													padding: "11px 30px",
 												}}
 											>
-												<img
-													src="https://scrumwithjira.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10403?size=medium"
-													alt="Project Logo"
-													className="icon_project"
-												/>
-												{row.name}
-											</Typography>
-										</TableCell>
-										<TableCell align="right">{row.key}</TableCell>
-										<TableCell align="right">{row.type}</TableCell>
-										<TableCell align="right" className="project-cell hover">
-											{row.lead}
-										</TableCell>
-										<TableCell align="right">
-											<FadeMenu />
-										</TableCell>
-									</TableRow>
-								);
-							})}
-							{emptyRows > 0 && (
-								<TableRow
-									style={{
-										height: (dense ? 33 : 53) * emptyRows,
-									}}
-								>
-									<TableCell colSpan={6} />
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[5, 10, 25]}
-					component="div"
-					count={rows.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onPageChange={handleChangePage}
-					onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
-			</Paper>
-		</Box>
+												Cancel
+											</Button>
+
+											<Button
+												type="submit"
+												variant="contained"
+												sx={{
+													textTransform: "capitalize",
+													borderRadius: "8px",
+													fontWeight: "500",
+													fontSize: "13px",
+													padding: "11px 30px",
+													color: "#fff !important",
+												}}
+											>
+												<AddIcon
+													sx={{
+														position: "relative",
+														top: "-2px",
+													}}
+													className="mr-5px"
+												/>{" "}
+												Create
+											</Button>
+										</Box>
+									</Grid>
+								</Grid>
+							</Box>
+						</Box>
+					</Box>
+				</Box>
+			</BootstrapDialog>
+		</>
 	);
 }

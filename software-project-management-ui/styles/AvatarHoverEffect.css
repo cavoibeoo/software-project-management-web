@@ -1,0 +1,11 @@
+.avatar-hover {
+	position: relative;
+	transition:
+		transform 0.3s ease,
+		z-index 0.3s ease;
+}
+
+.avatar-hover:hover {
+	transform: translateY(-10px);
+	z-index: 1; /* Đảm bảo avatar nổi lên trên các avatar khác */
+}
