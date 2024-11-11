@@ -33,23 +33,26 @@ const ProjectSchema = mongoose.Schema(
                     required: true,
                 },
                 permissions: {
-                    modify_project: Boolean,
+                    update_project: Boolean,
                     delete_project: Boolean,
                     archive_project: Boolean,
                     add_workflow: Boolean,
-                    edit_workflow: Boolean,
+                    update_workflow: Boolean,
                     delete_workflow: Boolean,
                     add_actor: Boolean,
-                    edit_actor_role: Boolean,
+                    update_actor_role: Boolean,
                     remove_actor: Boolean,
                     add_sprint: Boolean,
-                    edit_sprint: Boolean,
+                    update_sprint: Boolean,
                     delete_sprint: Boolean,
+                    add_issue_type: Boolean,
+                    update_issue_type: Boolean,
+                    delete_issue_type: Boolean,
                     add_issue: Boolean,
-                    edit_issue: Boolean,
+                    update_issue: Boolean,
                     delete_issue: Boolean,
                     add_comment: Boolean,
-                    edit_comment: Boolean,
+                    update_comment: Boolean,
                     delete_comment: Boolean,
                 },
                 isDefault: Boolean,
@@ -67,7 +70,7 @@ const ProjectSchema = mongoose.Schema(
                 },
             },
         ],
-        issueType: [
+        issueTypes: [
             {
                 name: {
                     type: String,
@@ -80,8 +83,8 @@ const ProjectSchema = mongoose.Schema(
                     {
                         name: { type: String, required: true },
                         dataType: {
-                            type: mongoose.Schema.Types.Mixed,
-                            enum: [Number, String, Array, Object, Date, Boolean],
+                            type: String,
+                            enum: ["String", "Number", "Boolean", "Date", "Array", "Object"],
                             required: true,
                         },
                         isRequired: {
