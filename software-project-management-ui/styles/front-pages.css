@@ -25,7 +25,9 @@
 
 .fp-btn:active {
 	color: #666;
-	box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+	box-shadow:
+		inset 4px 4px 12px #c5c5c5,
+		inset -4px -4px 12px #ffffff;
 }
 
 .fp-btn:before {
@@ -826,7 +828,6 @@
 	position: relative;
 }
 .fp-widgets-image .image {
-	max-width: 509px;
 	padding: 27px 34px;
 	border-radius: 7px;
 	background: rgba(255, 255, 255, 0.45);

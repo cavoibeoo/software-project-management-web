@@ -24,7 +24,7 @@ const verifyUser = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     try {
-        let result = await authService.loginService(req.body);
+        let result = await authService.loginService(req.body, false);
         res.cookie("accessToken", result.accessToken, {
             httpOnly: true,
             maxAge: 15 * 60 * 1000, //15 minutes
@@ -33,6 +33,34 @@ const login = async (req, res, next) => {
             httpOnly: true,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
         });
+
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+const loginWithGoogle = async (req, res, next) => {
+    try {
+        let result = await authService.loginService(req?.user, true);
+        res.cookie("accessToken", result.accessToken, {
+            httpOnly: true,
+            maxAge: 15 * 60 * 1000, //15 minutes
+        });
+        res.cookie("refreshToken", result.refreshToken, {
+            httpOnly: true,
+            maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
+        });
+
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+const isAuthenticated = async (req, res, next) => {
+    try {
+        let result = { isAuthenticated: await authService.isLoggedIn(req.cookies) };
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
@@ -123,10 +151,12 @@ const changePasswordWithOtp = async (req, res, next) => {
 export {
     createUser,
     login,
+    loginWithGoogle,
     refreshToken,
     logout,
     verifyUser,
     forgotPassword,
     verifyOtp,
     changePasswordWithOtp,
+    isAuthenticated,
 };

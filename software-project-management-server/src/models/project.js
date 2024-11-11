@@ -1,24 +1,24 @@
 "use strict";
 
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const ProjectSchema = mongoose.Schema(
     {
         name: { type: String, required: true },
         key: { type: String, required: true },
         img: { type: String, required: false },
-        createDate: { type: Date, default: Date.now },
         status: {
-            type: Number, // 0 is deleted, 1 is temporarily deleted, 2 is still active
-            default: 2,
+            type: Number, // 0 is temporarily deleted, 1 is still active, 2 is archived
+            default: 1,
         },
         createdDate: { type: Date, default: Date.now },
-        author: { type: String, required: true },
-        attendees: [
+        author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
+        actors: [
             {
+                _id: false,
                 user: {
-                    type: String,
-                    required: true,
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "User",
                 },
                 role: {
                     type: String,
@@ -32,12 +32,26 @@ const ProjectSchema = mongoose.Schema(
                     type: String,
                     required: true,
                 },
-                permissions: [
-                    {
-                        name: String,
-                        allowedAPI: [String],
-                    },
-                ],
+                permissions: {
+                    modify_project: Boolean,
+                    delete_project: Boolean,
+                    archive_project: Boolean,
+                    add_workflow: Boolean,
+                    edit_workflow: Boolean,
+                    delete_workflow: Boolean,
+                    add_actor: Boolean,
+                    edit_actor_role: Boolean,
+                    remove_actor: Boolean,
+                    add_sprint: Boolean,
+                    edit_sprint: Boolean,
+                    delete_sprint: Boolean,
+                    add_issue: Boolean,
+                    edit_issue: Boolean,
+                    delete_issue: Boolean,
+                    add_comment: Boolean,
+                    edit_comment: Boolean,
+                    delete_comment: Boolean,
+                },
                 isDefault: Boolean,
             },
         ],
@@ -65,8 +79,8 @@ const ProjectSchema = mongoose.Schema(
                 fields: [
                     {
                         name: { type: String, required: true },
-                        type: {
-                            type: any,
+                        dataType: {
+                            type: mongoose.Schema.Types.Mixed,
                             enum: [Number, String, Array, Object, Date, Boolean],
                             required: true,
                         },

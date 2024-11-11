@@ -9,7 +9,6 @@ import SearchForm from "./SearchForm";
 import Notifications from "./Notifications";
 import Profile from "./Profile";
 import FullscreenButton from "./FullscreenButton";
-import sineMenu from "./sineMenu";
 import ChooseLanguage from "./ChooseLanguage/index";
 import ControlPanel from "../ControlPanel";
 
@@ -69,8 +68,6 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ toggleActive }) => {
 									<i className="material-symbols-outlined">menu</i>
 								</IconButton>
 							</Tooltip>
-
-							<sineMenu />
 						</Box>
 
 						<Box

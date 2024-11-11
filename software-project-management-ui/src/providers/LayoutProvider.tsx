@@ -38,6 +38,7 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 	].includes(pathname);
 
 	const isProjectPage = ["/your-work/", "/your-work/trash/"].includes(pathname);
+	const isBacklogPage = ["/sine/backlog/"].includes(pathname);
 
 	return (
 		<>
@@ -55,6 +56,12 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 						<ProjectLeftSidebarMenu toggleActive={toggleActive} />
 					</>
 				)}
+				{isBacklogPage &&
+					false && ( // Chỉnh sửa để Footer không hiển thị trên trang backlog
+						<>
+							<Footer />
+						</>
+					)}
 
 				<div className="main-content">
 					{children}

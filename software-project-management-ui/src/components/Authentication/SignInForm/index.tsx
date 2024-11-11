@@ -8,13 +8,20 @@ import {
 	Typography,
 	FormControl,
 	TextField,
+	IconButton,
 } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useState } from "react";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { cookies } from "next/headers";
 
 const SignInForm: React.FC = () => {
+	const [showPassword, setShowPassword] = useState(false);
+
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget as HTMLFormElement);
@@ -25,16 +32,14 @@ const SignInForm: React.FC = () => {
 				{
 					email: formData.get("email"),
 					password: formData.get("password"),
-				}
+				},
+				{ withCredentials: true }
 			);
 
-			// Lưu accessToken và refreshToken vào localStorage
-			localStorage.setItem("accessToken", response.data.accessToken);
-			localStorage.setItem("refreshToken", response.data.refreshToken);
+			document.cookie = `token=${response.data.token}; path=/;`;
 
 			window.location.href = "/your-work";
 			toast.success("Sucessful signing in!");
-			console.log(response.data);
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
 				const statusCode = error.response.status;
@@ -50,9 +55,9 @@ const SignInForm: React.FC = () => {
 			}
 		}
 	};
-
 	return (
 		<>
+			{console.log(document.cookie)}
 			<Box
 				className="auth-main-wrapper sign-in-area"
 				sx={{
@@ -292,7 +297,7 @@ const SignInForm: React.FC = () => {
 											<TextField
 												label="Type Password"
 												variant="filled"
-												type="password"
+												type={showPassword ? "text" : "password"}
 												id="password"
 												name="password"
 												inputProps={{ maxLength: 50 }}
@@ -310,22 +315,37 @@ const SignInForm: React.FC = () => {
 													},
 												}}
 												onBlur={(e) => {
-													const email = e.target.value;
-													const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-													if (!emailPattern.test(email)) {
-														const emailErrorElement =
+													const password = e.target.value;
+													const passwordPattern =
+														/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/; // Password must be at least 6 characters and contain a special character
+													if (!passwordPattern.test(password)) {
+														const passwordErrorElement =
 															document.getElementById("passwordError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText =
-																"Password need more than 6!";
+														if (passwordErrorElement) {
+															passwordErrorElement.innerText =
+																"Password must be at least 6 characters and include a special character!";
 														}
 													} else {
-														const emailErrorElement =
+														const passwordErrorElement =
 															document.getElementById("passwordError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText = "";
+														if (passwordErrorElement) {
+															passwordErrorElement.innerText = "";
 														}
 													}
+												}}
+												InputProps={{
+													endAdornment: (
+														<IconButton
+															onClick={() => setShowPassword(!showPassword)}
+															edge="end"
+														>
+															{showPassword ? (
+																<VisibilityOff />
+															) : (
+																<Visibility />
+															)}
+														</IconButton>
+													),
 												}}
 											/>
 											<Typography

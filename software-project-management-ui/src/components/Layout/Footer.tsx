@@ -13,6 +13,8 @@ const Footer: React.FC = () => {
 					bgcolor: "#fff",
 					borderRadius: "7px 7px 0 0",
 					padding: "20px 25px",
+					bottom: 0,
+					position: "sticky",
 				}}
 			>
 				<Typography>Copyright © 2024 Sine</Typography>

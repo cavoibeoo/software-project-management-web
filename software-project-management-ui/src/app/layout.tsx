@@ -19,6 +19,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "@/theme";
 import LayoutProvider from "@/providers/LayoutProvider";
+import { ProjectNameProvider } from "@/providers/ProjectNameProvider";
 
 export const metadata = {
 	title: "Sine - Issue | Project Tracking Software",
@@ -37,8 +38,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
 			<body>
 				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
 					<ThemeProvider theme={theme}>
-						<CssBaseline />
-						<LayoutProvider>{props.children}</LayoutProvider>
+						<ProjectNameProvider>
+							<CssBaseline />
+							<LayoutProvider>{props.children}</LayoutProvider>
+						</ProjectNameProvider>
 					</ThemeProvider>
 					<ToastContainer position="bottom-right" />
 				</AppRouterCacheProvider>

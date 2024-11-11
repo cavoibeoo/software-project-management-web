@@ -15,7 +15,7 @@ const userCreate = Joi.object({
     role: Joi.string().valid("admin", "user").trim().strict(),
     avatar: Joi.string().trim().strict(),
     isDeleted: Joi.boolean(),
-});
+}).strict();
 
 const userLogin = Joi.object({
     email: Joi.string().email().required().max(50).email().trim().strict(),
@@ -40,7 +40,7 @@ const userStatus = Joi.object({
 }).strict();
 
 const userUpdatePassword = Joi.object({
-    oldPassword: Joi.string().max(50).required().min(6).trim().strict(),
+    oldPassword: Joi.string().max(50).min(6).trim().strict(),
     newPassword: Joi.string()
         .required()
         .min(6)
@@ -51,7 +51,7 @@ const userUpdatePassword = Joi.object({
             new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
         ),
     confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required(),
-});
+}).strict();
 
 const updateOtpPassword = Joi.object({
     password: Joi.string()

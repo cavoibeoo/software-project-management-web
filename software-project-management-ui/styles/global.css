@@ -29,3 +29,7 @@ body {
 	padding-left: 285px;
 	padding-right: 25px;
 } /*# sourceMappingURL=global.css.map */
+
+.backlogCell {
+	border: none !important;
+}

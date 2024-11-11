@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 
 const getAllUsers = async (req, res, next) => {
     try {
-        let result = await userService.getAllUser();
+        let result = await userService.getAllUser(req?.query);
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
@@ -25,6 +25,7 @@ const getCurrentUser = async (req, res, next) => {
 
 const updateCurrentUser = async (req, res, next) => {
     try {
+        if (req?.file) req.body.avatar = req?.file;
         let result = await userService.updateOne(req?.user, req.body);
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
