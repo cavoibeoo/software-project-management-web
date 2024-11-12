@@ -49,6 +49,16 @@ const createProject = async (req, res, next) => {
     }
 };
 
+const createDefaultProject = async (req, res, next) => {
+    try {
+        req.body.isDefault = true;
+        let result = await projectService.createProject(req.user, req.body);
+        res.status(StatusCodes.CREATED).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
 const addNewActor = async (req, res, next) => {
     try {
         let result = await projectService.addActor(req.params, req.body, true);
@@ -117,4 +127,5 @@ export {
     hardDeleteProject,
     recoverDeletedProject,
     archivedProject,
+    createDefaultProject,
 };

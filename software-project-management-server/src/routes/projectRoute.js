@@ -13,6 +13,12 @@ const router = express.Router();
 router.get("/", authorization(["admin"]), controller.getAllProject);
 router.get("/my-projects", controller.getCurrentUserProjects);
 router.post("/create", validation(validationSchema.createProject), controller.createProject);
+router.post(
+    "/create-default",
+    authorization(["admin"]),
+    validation(validationSchema.createProject),
+    controller.createDefaultProject
+);
 router.get("/my-deleted-projects", controller.getSoftDeleted);
 
 //Access project
