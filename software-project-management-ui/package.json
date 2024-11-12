@@ -35,6 +35,7 @@
 		"react-hook-form": "^7.53.0",
 		"react-toastify": "^10.0.6",
 		"remixicon": "^4.3.0",
+		"sine-react": "file:",
 		"swiper": "^11.1.4"
 	},
 	"devDependencies": {

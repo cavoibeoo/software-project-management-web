@@ -73,87 +73,22 @@ const createProject = async (user, data) => {
         if (project) {
             throw new ApiError(StatusCodes.CONFLICT, "Project key already exists");
         }
+
+        let defaultProject = data?.defaultProject
+            ? await Project.findOne({ _id: getObjectId(data.defaultFrom) })
+            : await Project.findOne({ isDefault: true, status: 1 });
+
+        if (!defaultProject) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Default project not found!");
+        }
+
         project = new Project({
             ...data,
             author: userId,
             actors: [{ user: userId, role: "Admin" }],
-            roles: [
-                {
-                    name: "Admin",
-                    permissions: {
-                        modify_project: true,
-                        delete_project: true,
-                        archive_project: true,
-                        add_workflow: true,
-                        edit_workflow: true,
-                        delete_workflow: true,
-                        add_actor: true,
-                        edit_actor_role: true,
-                        remove_actor: true,
-                        add_sprint: true,
-                        edit_sprint: true,
-                        delete_sprint: true,
-                        add_issue: true,
-                        edit_issue: true,
-                        delete_issue: true,
-                        add_comment: true,
-                        edit_comment: true,
-                        delete_comment: true,
-                    },
-
-                    isDefault: true,
-                },
-                {
-                    name: "Member",
-                    permissions: {
-                        modify_project: false,
-                        delete_project: false,
-                        archive_project: false,
-                        add_workflow: false,
-                        edit_workflow: false,
-                        delete_workflow: false,
-                        add_actor: false,
-                        edit_actor_role: false,
-                        remove_actor: false,
-                        add_sprint: true,
-                        edit_sprint: true,
-                        delete_sprint: true,
-                        add_issue: true,
-                        edit_issue: true,
-                        delete_issue: true,
-                        add_comment: true,
-                        edit_comment: true,
-                        delete_comment: true,
-                    },
-
-                    isDefault: true,
-                },
-                {
-                    name: "Viewer",
-                    permissions: {
-                        modify_project: false,
-                        delete_project: false,
-                        archive_project: false,
-                        add_workflow: false,
-                        edit_workflow: false,
-                        delete_workflow: false,
-                        add_actor: false,
-                        edit_actor_role: false,
-                        remove_actor: false,
-                        add_sprint: false,
-                        edit_sprint: false,
-                        delete_sprint: false,
-                        add_issue: false,
-                        edit_issue: false,
-                        delete_issue: false,
-                        add_comment: false,
-                        edit_comment: false,
-                        delete_comment: false,
-                    },
-
-                    isDefault: true,
-                },
-            ],
+            roles: data.roles ? data.roles : defaultProject.roles,
+            workflow: data.workflow ? data.workflow : defaultProject.workflow,
+            issueType: data.issueType ? data.issueType : defaultProject.issueType,
         });
         data.author = userId;
 
