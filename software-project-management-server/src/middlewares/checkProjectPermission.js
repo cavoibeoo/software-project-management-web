@@ -24,7 +24,6 @@ const checkPermission = (requiredPermissions) => {
                 //     message: "You have no permission to access this project",
                 // });
             }
-            console.log(project.roles[0].permissions);
             // Check if the user has the required permission
             if (requiredPermissions) {
                 if (

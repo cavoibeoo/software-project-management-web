@@ -88,7 +88,7 @@ const createProject = async (user, data) => {
             actors: [{ user: userId, role: "Admin" }],
             roles: data.roles ? data.roles : defaultProject.roles,
             workflow: data.workflow ? data.workflow : defaultProject.workflow,
-            issueType: data.issueType ? data.issueType : defaultProject.issueType,
+            issueTypes: data.issueType ? data.issueType : defaultProject.issueTypes,
         });
         data.author = userId;
 

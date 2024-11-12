@@ -42,15 +42,45 @@ const createIssueType = async (project, data) => {
     try {
         let prjId = getObjectId(project?.prjId);
         let result = await Project.findById(prjId);
-        // if (!result) {
-        //     throw new ApiError(StatusCodes.NOT_FOUND, "Project not found");
-        // }
         let foundIssue = result.issueTypes.some((issue) => issue.name === data?.name);
         if (foundIssue) {
             throw new ApiError(StatusCodes.CONFLICT, "Issue type already exists");
         }
-        // let issueType = { data };
-        result.issueTypes.push(data);
+        let defaultFields = [
+            {
+                name: "Summary",
+                isRequired: true,
+                dataType: "String",
+                isDefault: true,
+            },
+            {
+                name: "Description",
+                isRequired: false,
+                dataType: "String",
+            },
+            {
+                name: "Assignee",
+                isRequired: false,
+                dataType: "Object",
+            },
+            {
+                name: "Parent",
+                isRequired: false,
+                dataType: "Object",
+            },
+            {
+                name: "Sprint",
+                isRequired: false,
+                dataType: "Object",
+            },
+        ];
+        let issueType = {
+            name: data?.name,
+            description: data?.description,
+            isDefault: data?.isDefault,
+            fields: defaultFields,
+        };
+        result.issueTypes.push(issueType);
         await result.save();
         return result.issueTypes;
     } catch (error) {
@@ -61,24 +91,31 @@ const createIssueType = async (project, data) => {
 const updateIssueType = async (project, data) => {
     try {
         let prjId = getObjectId(project?.prjId);
-        let issueType = await Project.findOne(
-            {
-                _id: prjId,
-                "issueTypes._id": getObjectId(project?.issueTypeId),
-            },
-            { "issueTypes.$": 1 }
-        );
+        let foundProject = await Project.findOne({
+            _id: prjId,
+            "issueTypes._id": getObjectId(project?.issueTypeId),
+        });
 
-        // console.log(issueType);
+        let issueType = foundProject.issueTypes.id(getObjectId(project?.issueTypeId));
+
         if (!issueType) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Issue type not found");
         }
 
         issueType.name = data?.name || issueType.name;
         issueType.description = data?.description || issueType.description;
-        issueType.fields = data?.fields || issueType.fields;
+        if (data?.fields) {
+            issueType.fields = data?.fields;
+            if (!data.fields.some((f) => f.name == "Summary" && f.isDefault == true))
+                issueType.fields.push({
+                    name: "Summary",
+                    isRequired: true,
+                    dataType: "String",
+                    isDefault: true,
+                });
+        }
 
-        await result.save();
+        await foundProject.save();
         return issueType;
     } catch (error) {
         throw error;
