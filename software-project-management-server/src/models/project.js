@@ -97,6 +97,7 @@ const ProjectSchema = mongoose.Schema(
                             type: Boolean,
                             default: false,
                         },
+                        isDefault: { type: Boolean, default: false },
                         description: String,
                     },
                 ],
