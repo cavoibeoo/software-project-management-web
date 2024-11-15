@@ -49,7 +49,7 @@ const Profile: React.FC<ProfileProps> = () => {
 					aria-expanded={open ? "true" : undefined}
 				>
 					<Avatar
-						src="/images/admin.png"
+						src="/images/avt_quang.jpg"
 						alt="Olivia"
 						sx={{
 							width: { xs: "20px", sm: "28px" },
@@ -110,7 +110,7 @@ const Profile: React.FC<ProfileProps> = () => {
 			>
 				<MenuItem sx={{ padding: "10px 20px" }}>
 					<Avatar
-						src="/images/admin.png"
+						src="/images/avt_quang.jpg"
 						sx={{
 							width: 31,
 							height: 31,
@@ -128,10 +128,12 @@ const Profile: React.FC<ProfileProps> = () => {
 							}}
 							className="text-black"
 						>
-							Olivia Jhon
+							Tran Duc Quang
 						</Typography>
 
-						<Typography sx={{ fontSize: "12px" }}>Marketing Manager</Typography>
+						<Typography sx={{ fontSize: "12px" }}>
+							21110793@student.hcmute.edu.vn
+						</Typography>
 					</Box>
 				</MenuItem>
 

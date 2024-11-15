@@ -53,12 +53,6 @@ const Sidebar: React.FC = () => {
 									gap: "10px",
 								}}
 							>
-								<i
-									className="material-symbols-outlined"
-									style={{ fontSize: "20px" }}
-								>
-									edit
-								</i>
 								Compose
 							</Box>
 						</Button>

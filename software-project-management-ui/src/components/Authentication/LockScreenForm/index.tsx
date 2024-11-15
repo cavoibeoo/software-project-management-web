@@ -110,7 +110,7 @@ const LockScreenForm: React.FC = () => {
 									}}
 								>
 									<Image
-										src="/images/admin.png"
+										src="/images/avt_quang.jpg"
 										className="rounded-circle"
 										alt="admin-image"
 										width={50}

@@ -1,8 +1,84 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
+"use client";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
+import React, { useState, FormEvent } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
+
+import { alpha } from "@mui/material/styles";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { visuallyHidden } from "@mui/utils";
+import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
+import { styled } from "@mui/material/styles";
+import CloseIcon from "@mui/icons-material/Close";
+import PropTypes from "prop-types";
+import { SelectChangeEvent } from "@mui/material/Select";
+import {
+	Box,
+	Typography,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TablePagination,
+	TableRow,
+	Paper,
+	IconButton,
+	TableHead,
+	Checkbox,
+	Dialog,
+	DialogTitle,
+	Grid,
+	Button,
+	TextField,
+} from "@mui/material";
+
+interface BootstrapDialogTitleProps {
+	children?: React.ReactNode;
+	onClose: () => void;
+}
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+	"& .MuiDialogContent-root": {
+		padding: theme.spacing(2),
+	},
+	"& .MuiDialogActions-root": {
+		padding: theme.spacing(1),
+	},
+}));
+
+function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
+	const { children, onClose, ...other } = props;
+
+	return (
+		<DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+			{children}
+			{onClose ? (
+				<IconButton
+					aria-label="close"
+					onClick={onClose}
+					sx={{
+						position: "absolute",
+						right: 8,
+						top: 8,
+						color: (theme) => theme.palette.grey[500],
+					}}
+				>
+					<CloseIcon />
+				</IconButton>
+			) : null}
+		</DialogTitle>
+	);
+}
+
+BootstrapDialogTitle.propTypes = {
+	children: PropTypes.node,
+	onClose: PropTypes.func.isRequired,
+};
 
 export default function FadeMenu() {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -14,30 +90,142 @@ export default function FadeMenu() {
 		setAnchorEl(null);
 	};
 
+	// Modal
+	const [openNotification, setOpenNotification] = useState(false);
+	const handleClickOpenNotification = () => {
+		setOpenNotification(true);
+	};
+	const handleCloseNotification = () => {
+		setOpenNotification(false);
+	};
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		// const data = new FormData(event.currentTarget);
+		// console.log();
+	};
+
 	return (
-		<div>
-			<Button
-				id="fade-button"
-				aria-controls={open ? "fade-menu" : undefined}
-				aria-haspopup="true"
-				aria-expanded={open ? "true" : undefined}
-				onClick={handleClick}
+		<>
+			<div>
+				<Button
+					id="fade-button"
+					aria-controls={open ? "fade-menu" : undefined}
+					aria-haspopup="true"
+					aria-expanded={open ? "true" : undefined}
+					onClick={handleClick}
+				>
+					<span className="material-symbols-outlined">more_horiz</span>
+				</Button>
+				<Menu
+					id="fade-menu"
+					MenuListProps={{
+						"aria-labelledby": "fade-button",
+					}}
+					anchorEl={anchorEl}
+					open={open}
+					onClose={handleClose}
+					TransitionComponent={Fade}
+				>
+					<MenuItem onClick={handleClose}>Project settings</MenuItem>
+					<MenuItem onClick={handleClickOpenNotification}>
+						Move to trash
+					</MenuItem>
+				</Menu>
+			</div>
+			<BootstrapDialog
+				onClose={handleCloseNotification}
+				aria-labelledby="customized-dialog-title"
+				open={openNotification}
+				className="rmu-modal"
 			>
-				<span className="material-symbols-outlined">more_horiz</span>
-			</Button>
-			<Menu
-				id="fade-menu"
-				MenuListProps={{
-					"aria-labelledby": "fade-button",
-				}}
-				anchorEl={anchorEl}
-				open={open}
-				onClose={handleClose}
-				TransitionComponent={Fade}
-			>
-				<MenuItem onClick={handleClose}>Project settings</MenuItem>
-				<MenuItem onClick={handleClose}>Move to trash</MenuItem>
-			</Menu>
-		</div>
+				<Box>
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
+							background: "#ff6666",
+							padding: { xs: "15px 20px", md: "25px" },
+						}}
+						className="rmu-modal-header"
+					>
+						<Typography
+							id="modal-modal-title"
+							variant="h6"
+							sx={{
+								fontWeight: "600",
+								fontSize: { xs: "16px", md: "18px" },
+								color: "#fff !important",
+							}}
+							className="text-black"
+						>
+							Move to Trash
+						</Typography>
+
+						<IconButton
+							aria-label="remove"
+							size="small"
+							onClick={handleCloseNotification}
+						>
+							<ClearIcon />
+						</IconButton>
+					</Box>
+
+					<Box className="rmu-modal-content">
+						<Box component="form" noValidate onSubmit={handleSubmit}>
+							<Box
+								sx={{
+									padding: "25px",
+									borderRadius: "8px",
+								}}
+								className="bg-white"
+							>
+								<Grid container alignItems="center" spacing={2}>
+									<Grid item xs={12} mt={1}>
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												gap: "10px",
+											}}
+										>
+											<Button
+												onClick={handleCloseNotification}
+												variant="outlined"
+												color="error"
+												sx={{
+													textTransform: "capitalize",
+													borderRadius: "8px",
+													fontWeight: "500",
+													fontSize: "13px",
+													padding: "11px 30px",
+												}}
+											>
+												Cancel
+											</Button>
+
+											<Button
+												type="submit"
+												variant="contained"
+												sx={{
+													textTransform: "capitalize",
+													borderRadius: "8px",
+													fontWeight: "500",
+													fontSize: "13px",
+													padding: "11px 30px",
+													color: "#fff !important",
+												}}
+											>
+												Move
+											</Button>
+										</Box>
+									</Grid>
+								</Grid>
+							</Box>
+						</Box>
+					</Box>
+				</Box>
+			</BootstrapDialog>
+		</>
 	);
 }
