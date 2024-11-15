@@ -43,16 +43,18 @@ const createIssue = async (project, data) => {
     let dbProject = await Project.findOne({ _id: projectId });
     let dbIssues = await Issue.find({ project: projectId }).sort({ count: 1 });
 
+    console.log(data);
+
     let issue = {
         summary: data?.summary,
         project: projectId,
-        key: `${dbProject.key}-${dbIssues.reduce((sum, dbIssue) => sum + dbIssue.count, 0) + 1}`,
+        key: `${dbProject.key}-${dbIssues.reduce((sum, dbIssue) => sum + dbIssue?.count, 0) + 1}`,
         issueType: data.issueType,
         fields: data.fields,
     };
 
     let insertIssue =
-        dbIssues[0].count < 10
+        dbIssues[0]?.count < 10
             ? dbIssues[0]
             : new Issue({
                   project: dbProject._id,

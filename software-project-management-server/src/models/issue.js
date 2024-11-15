@@ -15,9 +15,8 @@ const IssueSchema = mongoose.Schema(
                 key: { type: String, required: true },
                 description: String,
                 issueType: {
-                    //ref IssueType
-                    type: String,
-                    required: true,
+                    img: { type: String },
+                    name: { type: String, required: true },
                 },
                 fields: { type: mongoose.Schema.Types.Mixed, required: true },
                 workFlow: {
