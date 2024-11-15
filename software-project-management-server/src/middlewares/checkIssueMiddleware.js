@@ -6,11 +6,12 @@ const checkIssueFields = async (req, res, next) => {
     try {
         // query for issue type
         let project = await Project.findOne({ _id: req.params.prjId });
-        let issueType = project.issueTypes.find((type) =>
+        let issueType = project?.issueTypes.find((type) =>
             [type.name, type._id.toString()].includes(req.body.issueType)
         );
         if (!issueType) throw new ApiError(400, "Issue type not found.");
         if (!req.body?.fields) throw new ApiError(400, "No fields provided.");
+        req.body.issueType = { name: issueType.name, img: issueType.img };
 
         // check required fields
         let tmpFields = {};
