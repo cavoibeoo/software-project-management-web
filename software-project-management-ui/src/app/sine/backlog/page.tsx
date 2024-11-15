@@ -9,36 +9,38 @@ import {
 	Dialog,
 	Fade,
 	IconButton,
-	Input,
 	Link,
 	Menu,
 	MenuItem,
-	Select,
-	SelectChangeEvent,
-	LinearProgress,
 	Tooltip,
 } from "@mui/material";
 import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
 import { Card, Typography, Avatar, Badge, styled, Box } from "@mui/material";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Accordion from "@mui/material/Accordion";
-import AccordionActions from "@mui/material/AccordionActions";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FormDialog from "./AddMemberDialog";
-import StartSprintDialog from "./StartSprintDialog";
+import FormDialog from "../backlog/Dialogs/AddMemberDialog/AddMemberDialog";
+import StartSprintDialog from "./Dialogs/StartSprintDialog/StartSprintDialog";
 import { FormEvent, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import AssignMemberDialog from "./AssignMemberDialog";
-import { toast } from "react-toastify";
-import PositionedTooltips from "@/components/UiKit/Tooltip/PositionedTooltips";
+import { BacklogList } from "./BacklogList/BacklogList";
+import {
+	DndContext,
+	KeyboardSensor,
+	TouchSensor,
+	useSensor,
+	PointerSensor,
+	useSensors,
+	closestCorners,
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+
+import { arrayMove } from "@dnd-kit/sortable";
+import ExampleDND from "../drag&drop/page";
+import "../drag&drop/component/Column/Column.css";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 export default function Page({ projectName }: { projectName: string }) {
 	const breadcrumbs = [
@@ -80,20 +82,10 @@ export default function Page({ projectName }: { projectName: string }) {
 			},
 		},
 	}));
-	const Item = styled(Paper)(({ theme }) => ({
-		backgroundColor: "#fff",
-		...theme.typography.body2,
-		padding: theme.spacing(1),
-		textAlign: "center",
-		color: theme.palette.text.secondary,
-		...theme.applyStyles("dark", {
-			backgroundColor: "#1A2027",
-		}),
-	}));
+
 	const [isEpicVisible, setIsEpicVisible] = React.useState(true);
 	const [expanded, setExpanded] = React.useState<string | string[]>([]);
 	const [sprints, setSprints] = React.useState<string[]>([]);
-	const [backlogs, setBacklogs] = React.useState<string[]>([]);
 
 	const handleAccordionChange =
 		(panel: string) => (event: React.SyntheticEvent) => {
@@ -110,9 +102,6 @@ export default function Page({ projectName }: { projectName: string }) {
 
 	const handleCreateSprint = () => {
 		setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
-	};
-	const handleCreateBacklog = () => {
-		setBacklogs((prev) => [...prev, `Backlog ${prev.length + 1}`]);
 	};
 
 	React.useEffect(() => {
@@ -156,25 +145,54 @@ export default function Page({ projectName }: { projectName: string }) {
 		event.preventDefault();
 	};
 
-	const [epicValue, setEpicValue] = useState<string>("0");
-	const [progressValue, setProgressValue] = useState<string>("0");
+	const [backlogs, setBacklogs] = useState([
+		{
+			id: "1",
+			title: "SINES-51",
+			description: "Import syllabus/ syllabus importing screen",
+		},
+		{
+			id: "2",
+			title: "SINES-52",
+			description: "Another task description",
+		},
+		{
+			id: "3",
+			title: "SINES-52",
+			description: "AAnother task description",
+		},
+	]);
 
-	const handleEpicValueChange = (event: SelectChangeEvent) => {
-		setEpicValue(event.target.value as string);
-	};
-	const handleProgressValueChange = (event: SelectChangeEvent) => {
-		setProgressValue(event.target.value as string);
-	};
+	const getTaskPos = (id: string) =>
+		backlogs.findIndex((backlog) => backlog.id === id);
 
-	const [loading, setLoading] = useState(false);
-
-	const handleBacklogSubmit = () => {
-		setLoading(true);
-		setTimeout(() => {
-			toast.success("Create Backlog Successful!");
-			setLoading(false);
-		}, 2000);
+	const handleDragEnd = (event: {
+		active: { id: string };
+		over: { id: string };
+	}) => {
+		const { active, over } = event;
+		if (active.id === over.id) return;
+		setBacklogs((backlogs) => {
+			const originalPos = getTaskPos(active.id);
+			const newPos = getTaskPos(over.id);
+			return arrayMove(backlogs, originalPos, newPos);
+		});
 	};
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 3,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				distance: 3,
+			},
+		}),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		})
+	);
 
 	return (
 		<>
@@ -499,513 +517,16 @@ export default function Page({ projectName }: { projectName: string }) {
 								alignItems="center"
 								justifyContent="space-between"
 							>
-								<Typography
-									variant="h3"
-									sx={{
-										fontSize: { xs: "16px", md: "16px" },
-										fontWeight: 500,
-										flexGrow: 1,
-									}}
-									className="text-black"
-								>
-									<Accordion
-										expanded={
-											Array.isArray(expanded)
-												? expanded.includes("panel4")
-												: expanded === "panel4"
-										}
-										onChange={handleAccordionChange("panel4")}
-										className="accordionItem"
-										sx={{
-											backgroundColor:
-												expanded === "panel4" ? "#e9ebee" : "inherit",
-											"&:hover": {
-												backgroundColor: "#e9ebee",
-											},
-											boxShadow: "none",
-											border: "none",
-											padding: { xs: "0px", sm: "0px", lg: "0px" },
-											flexGrow: 1, // Đảm bảo accordion chiếm không gian còn lại
-										}}
-									>
-										<AccordionSummary
-											expandIcon={<ExpandMoreIcon />}
-											aria-controls="panel4-content"
-											id="panel4-header"
-											sx={{ fontWeight: "500", fontSize: "15px" }}
-										>
-											FP Sprint 1
-										</AccordionSummary>
-										<AccordionDetails>
-											<Stack spacing={1}>
-												<Item
-													className="backlogItem"
-													style={{ padding: "0px 0px 0px 0px" }}
-												>
-													<Table
-														sx={{
-															borderBottom: "none !important",
-														}}
-													>
-														<TableBody>
-															<TableRow>
-																<TableCell
-																	style={{
-																		border: "none",
-																		alignItems: "center",
-																		justifyContent: "center",
-																	}}
-																>
-																	<div
-																		style={{
-																			paddingTop: "5px",
-																			display: "flex",
-																			justifyContent: "center",
-																		}}
-																	>
-																		<svg
-																			width="20px"
-																			height="20px"
-																			style={{
-																				marginRight: "5px",
-																			}}
-																			viewBox="0 0 16 16"
-																			version="1.1"
-																			xmlns="http://www.w3.org/2000/svg"
-																		>
-																			<defs></defs>
-																			<g
-																				id="Page-1"
-																				stroke="none"
-																				strokeWidth="1"
-																				fill="none"
-																				fillRule="evenodd"
-																			>
-																				<g id="task">
-																					<g
-																						id="Task"
-																						transform="translate(1.000000, 1.000000)"
-																					>
-																						<rect
-																							id="Rectangle-36"
-																							fill="#4BADE8"
-																							x="0"
-																							y="0"
-																							width="14"
-																							height="14"
-																							rx="2"
-																						></rect>
-																						<g
-																							id="Page-1"
-																							transform="translate(4.000000, 4.500000)"
-																							stroke="#FFFFFF"
-																							strokeWidth="2"
-																							strokeLinecap="round"
-																						>
-																							<path
-																								d="M2,5 L6,0"
-																								id="Stroke-1"
-																							></path>
-																							<path
-																								d="M2,5 L0,3"
-																								id="Stroke-3"
-																							></path>
-																						</g>
-																					</g>
-																				</g>
-																			</g>
-																		</svg>
-																		SINES-51
-																	</div>
-																</TableCell>
-																<TableCell style={{ border: "none" }}>
-																	<Link
-																		className="hover-underlined"
-																		color="inherit"
-																		href=""
-																	>
-																		Import syllabus/ syllabus importing screen
-																	</Link>
-																</TableCell>
-																<TableCell
-																	style={{
-																		border: "none",
-																		display: "flex",
-																		flexDirection: "row",
-																	}}
-																>
-																	<Select
-																		labelId="product-type-label"
-																		id="product-type"
-																		className="epicSelectBg"
-																		size="small"
-																		value={epicValue}
-																		onChange={handleEpicValueChange}
-																		style={{ marginRight: "5px" }}
-																		sx={{
-																			"& fieldset": {
-																				maxWidth: "120px",
-																			},
-																			"& .MuiSelect-select": {
-																				overflow: "hidden",
-																				textOverflow: "ellipsis",
-																				whiteSpace: "nowrap",
-																			},
-																		}}
-																	>
-																		<MenuItem value={0}>epic</MenuItem>
-																		<MenuItem value={1}>1</MenuItem>
-																		<MenuItem value={2}>2</MenuItem>
-																		<MenuItem value={3}>3</MenuItem>
-																		<MenuItem value={4}>4</MenuItem>
-																	</Select>
-																	<Select
-																		labelId="product-type-label"
-																		className="progressSelectBg"
-																		id="product-type"
-																		size="small"
-																		value={progressValue}
-																		onChange={handleProgressValueChange}
-																		sx={{
-																			"& fieldset": {},
-																			"& .MuiSelect-select": {
-																				overflow: "hidden",
-																				textOverflow: "ellipsis",
-																				whiteSpace: "nowrap",
-																			},
-																		}}
-																	>
-																		<MenuItem value={0}>progress</MenuItem>
-																		<MenuItem value={1}>1</MenuItem>
-																		<MenuItem value={2}>2</MenuItem>
-																		<MenuItem value={3}>3</MenuItem>
-																		<MenuItem value={4}>4</MenuItem>
-																	</Select>
-																</TableCell>
-																<TableCell style={{ border: "none" }}>
-																	<AssignMemberDialog />
-																</TableCell>
-															</TableRow>
-														</TableBody>
-													</Table>
-												</Item>
-												<Item
-													className="backlogItem"
-													style={{ padding: "0px 0px 0px 0px" }}
-												>
-													<Table
-														sx={{
-															borderBottom: "none !important",
-														}}
-													>
-														<TableBody>
-															<TableRow>
-																<TableCell
-																	style={{
-																		border: "none",
-																		alignItems: "center",
-																		justifyContent: "center",
-																	}}
-																>
-																	<div
-																		style={{
-																			paddingTop: "5px",
-																			display: "flex",
-																			justifyContent: "center",
-																		}}
-																	>
-																		<svg
-																			width="20px"
-																			height="20px"
-																			style={{
-																				marginRight: "5px",
-																			}}
-																			viewBox="0 0 16 16"
-																			version="1.1"
-																			xmlns="http://www.w3.org/2000/svg"
-																		>
-																			<defs></defs>
-																			<g
-																				id="Page-1"
-																				stroke="none"
-																				strokeWidth="1"
-																				fill="none"
-																				fillRule="evenodd"
-																			>
-																				<g id="task">
-																					<g
-																						id="Task"
-																						transform="translate(1.000000, 1.000000)"
-																					>
-																						<rect
-																							id="Rectangle-36"
-																							fill="#4BADE8"
-																							x="0"
-																							y="0"
-																							width="14"
-																							height="14"
-																							rx="2"
-																						></rect>
-																						<g
-																							id="Page-1"
-																							transform="translate(4.000000, 4.500000)"
-																							stroke="#FFFFFF"
-																							strokeWidth="2"
-																							strokeLinecap="round"
-																						>
-																							<path
-																								d="M2,5 L6,0"
-																								id="Stroke-1"
-																							></path>
-																							<path
-																								d="M2,5 L0,3"
-																								id="Stroke-3"
-																							></path>
-																						</g>
-																					</g>
-																				</g>
-																			</g>
-																		</svg>
-																		SINES-51
-																	</div>
-																</TableCell>
-																<TableCell style={{ border: "none" }}>
-																	<Link
-																		className="hover-underlined"
-																		color="inherit"
-																		href=""
-																	>
-																		Import syllabus/ syllabus importing screen
-																	</Link>
-																</TableCell>
-																<TableCell
-																	style={{
-																		border: "none",
-																		display: "flex",
-																		flexDirection: "row",
-																	}}
-																>
-																	<Select
-																		labelId="product-type-label"
-																		id="product-type"
-																		className="epicSelectBg"
-																		size="small"
-																		value={epicValue}
-																		onChange={handleEpicValueChange}
-																		style={{ marginRight: "5px" }}
-																		sx={{
-																			"& fieldset": {
-																				maxWidth: "120px",
-																			},
-																			"& .MuiSelect-select": {
-																				overflow: "hidden",
-																				textOverflow: "ellipsis",
-																				whiteSpace: "nowrap",
-																			},
-																		}}
-																	>
-																		<MenuItem value={0}>epic</MenuItem>
-																		<MenuItem value={1}>1</MenuItem>
-																		<MenuItem value={2}>2</MenuItem>
-																		<MenuItem value={3}>3</MenuItem>
-																		<MenuItem value={4}>4</MenuItem>
-																	</Select>
-																	<Select
-																		labelId="product-type-label"
-																		className="progressSelectBg"
-																		id="product-type"
-																		size="small"
-																		value={progressValue}
-																		onChange={handleProgressValueChange}
-																		sx={{
-																			"& fieldset": {},
-																			"& .MuiSelect-select": {
-																				overflow: "hidden",
-																				textOverflow: "ellipsis",
-																				whiteSpace: "nowrap",
-																			},
-																		}}
-																	>
-																		<MenuItem value={0}>progress</MenuItem>
-																		<MenuItem value={1}>1</MenuItem>
-																		<MenuItem value={2}>2</MenuItem>
-																		<MenuItem value={3}>3</MenuItem>
-																		<MenuItem value={4}>4</MenuItem>
-																	</Select>
-																</TableCell>
-																<TableCell style={{ border: "none" }}>
-																	<AssignMemberDialog />
-																</TableCell>
-															</TableRow>
-														</TableBody>
-													</Table>
-												</Item>
-												<Item
-													className="backlogItem"
-													style={{ padding: "0px 0px 0px 0px" }}
-												>
-													<Table
-														sx={{
-															borderBottom: "none !important",
-														}}
-													>
-														<TableBody>
-															<TableRow>
-																<TableCell
-																	style={{
-																		border: "none",
-																		alignItems: "center",
-																		justifyContent: "center",
-																	}}
-																>
-																	<div
-																		style={{
-																			paddingTop: "5px",
-																			display: "flex",
-																			justifyContent: "center",
-																		}}
-																	>
-																		<svg
-																			width="20px"
-																			height="20px"
-																			style={{
-																				marginRight: "5px",
-																			}}
-																			viewBox="0 0 16 16"
-																			version="1.1"
-																			xmlns="http://www.w3.org/2000/svg"
-																		>
-																			<defs></defs>
-																			<g
-																				id="Page-1"
-																				stroke="none"
-																				strokeWidth="1"
-																				fill="none"
-																				fillRule="evenodd"
-																			>
-																				<g id="task">
-																					<g
-																						id="Task"
-																						transform="translate(1.000000, 1.000000)"
-																					>
-																						<rect
-																							id="Rectangle-36"
-																							fill="#4BADE8"
-																							x="0"
-																							y="0"
-																							width="14"
-																							height="14"
-																							rx="2"
-																						></rect>
-																						<g
-																							id="Page-1"
-																							transform="translate(4.000000, 4.500000)"
-																							stroke="#FFFFFF"
-																							strokeWidth="2"
-																							strokeLinecap="round"
-																						>
-																							<path
-																								d="M2,5 L6,0"
-																								id="Stroke-1"
-																							></path>
-																							<path
-																								d="M2,5 L0,3"
-																								id="Stroke-3"
-																							></path>
-																						</g>
-																					</g>
-																				</g>
-																			</g>
-																		</svg>
-																		SINES-51
-																	</div>
-																</TableCell>
-																<TableCell style={{ border: "none" }}>
-																	<Link
-																		className="hover-underlined"
-																		color="inherit"
-																		href=""
-																	>
-																		Import syllabus/ syllabus importing screen
-																	</Link>
-																</TableCell>
-																<TableCell
-																	style={{
-																		border: "none",
-																		display: "flex",
-																		flexDirection: "row",
-																	}}
-																>
-																	<Select
-																		labelId="product-type-label"
-																		id="product-type"
-																		className="epicSelectBg"
-																		size="small"
-																		value={epicValue}
-																		onChange={handleEpicValueChange}
-																		style={{ marginRight: "5px" }}
-																		sx={{
-																			"& fieldset": {
-																				maxWidth: "120px",
-																			},
-																			"& .MuiSelect-select": {
-																				overflow: "hidden",
-																				textOverflow: "ellipsis",
-																				whiteSpace: "nowrap",
-																			},
-																		}}
-																	>
-																		<MenuItem value={0}>epic</MenuItem>
-																		<MenuItem value={1}>1</MenuItem>
-																		<MenuItem value={2}>2</MenuItem>
-																		<MenuItem value={3}>3</MenuItem>
-																		<MenuItem value={4}>4</MenuItem>
-																	</Select>
-																	<Select
-																		labelId="product-type-label"
-																		className="progressSelectBg"
-																		id="product-type"
-																		size="small"
-																		value={progressValue}
-																		onChange={handleProgressValueChange}
-																		sx={{
-																			"& fieldset": {},
-																			"& .MuiSelect-select": {
-																				overflow: "hidden",
-																				textOverflow: "ellipsis",
-																				whiteSpace: "nowrap",
-																			},
-																		}}
-																	>
-																		<MenuItem value={0}>progress</MenuItem>
-																		<MenuItem value={1}>1</MenuItem>
-																		<MenuItem value={2}>2</MenuItem>
-																		<MenuItem value={3}>3</MenuItem>
-																		<MenuItem value={4}>4</MenuItem>
-																	</Select>
-																</TableCell>
-																<TableCell style={{ border: "none" }}>
-																	<AssignMemberDialog />
-																</TableCell>
-															</TableRow>
-														</TableBody>
-													</Table>
-												</Item>
-												<Button className="createIssueBtn">
-													+ Create Issue
-												</Button>
-											</Stack>
-										</AccordionDetails>
-									</Accordion>
-								</Typography>
+								<Box display="flex">
+									<StartSprintDialog />
+								</Box>
 								<Box
+									display="flex"
 									sx={{
 										display: "flex",
-										justifyContent: "flex-end",
 										flexDirection: "row",
 									}}
 								>
-									<StartSprintDialog />
 									<Button
 										id="fade-button"
 										aria-controls={open ? "fade-menu" : undefined}
@@ -1033,101 +554,152 @@ export default function Page({ projectName }: { projectName: string }) {
 										</MenuItem>
 									</Menu>
 								</Box>
-								<BootstrapDialog
-									onClose={handleCloseNotification}
-									aria-labelledby="customized-dialog-title"
-									open={openNotification}
-									className="rmu-modal"
+							</Box>
+
+							<Accordion
+								expanded={
+									Array.isArray(expanded)
+										? expanded.includes("panel4")
+										: expanded === "panel4"
+								}
+								onChange={handleAccordionChange("panel4")}
+								className="accordionItem"
+								sx={{
+									backgroundColor:
+										expanded === "panel4" ? "#e9ebee" : "inherit",
+									"&:hover": {
+										backgroundColor: "#e9ebee",
+									},
+									boxShadow: "none",
+									border: "none",
+									padding: { xs: "0px", sm: "0px", lg: "0px" },
+									flexGrow: 1, // Đảm bảo accordion chiếm không gian còn lại
+								}}
+							>
+								<AccordionSummary
+									expandIcon={<ExpandMoreIcon />}
+									aria-controls="panel4-content"
+									id="panel4-header"
+									sx={{ fontWeight: "500", fontSize: "15px" }}
 								>
-									<Box>
-										<Box
+									FP Sprint 1
+								</AccordionSummary>
+								<AccordionDetails>
+									<Stack spacing={1}>
+										<AccordionDetails>
+											<DndContext
+												modifiers={[restrictToVerticalAxis]}
+												sensors={sensors}
+												collisionDetection={closestCorners}
+												onDragEnd={(event) =>
+													handleDragEnd(
+														event as {
+															active: { id: string };
+															over: { id: string };
+														}
+													)
+												}
+											>
+												<BacklogList backlogs={backlogs}></BacklogList>
+											</DndContext>
+										</AccordionDetails>
+									</Stack>
+								</AccordionDetails>
+							</Accordion>
+							<BootstrapDialog
+								onClose={handleCloseNotification}
+								aria-labelledby="customized-dialog-title"
+								open={openNotification}
+								className="rmu-modal"
+							>
+								<Box>
+									<Box
+										sx={{
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+											background: "#ff6666",
+											padding: { xs: "15px 20px", md: "25px" },
+										}}
+										className="rmu-modal-header"
+									>
+										<Typography
+											id="modal-modal-title"
+											variant="h6"
 											sx={{
-												display: "flex",
-												justifyContent: "space-between",
-												alignItems: "center",
-												background: "#ff6666",
-												padding: { xs: "15px 20px", md: "25px" },
+												fontWeight: "600",
+												fontSize: { xs: "16px", md: "18px" },
+												color: "#fff !important",
 											}}
-											className="rmu-modal-header"
+											className="text-black"
 										>
-											<Typography
-												id="modal-modal-title"
-												variant="h6"
+											Move to Trash
+										</Typography>
+
+										<IconButton
+											aria-label="remove"
+											size="small"
+											onClick={handleCloseNotification}
+										>
+											<ClearIcon />
+										</IconButton>
+									</Box>
+
+									<Box className="rmu-modal-content">
+										<Box component="form" noValidate onSubmit={handleSubmit}>
+											<Box
 												sx={{
-													fontWeight: "600",
-													fontSize: { xs: "16px", md: "18px" },
-													color: "#fff !important",
+													padding: "25px",
+													borderRadius: "8px",
 												}}
-												className="text-black"
+												className="bg-white"
 											>
-												Move to Trash
-											</Typography>
-
-											<IconButton
-												aria-label="remove"
-												size="small"
-												onClick={handleCloseNotification}
-											>
-												<ClearIcon />
-											</IconButton>
-										</Box>
-
-										<Box className="rmu-modal-content">
-											<Box component="form" noValidate onSubmit={handleSubmit}>
-												<Box
-													sx={{
-														padding: "25px",
-														borderRadius: "8px",
-													}}
-													className="bg-white"
-												>
-													<Grid container alignItems="center" spacing={2}>
-														<Grid item xs={12} mt={1}>
-															<Box
+												<Grid container alignItems="center" spacing={2}>
+													<Grid item xs={12} mt={1}>
+														<Box
+															sx={{
+																display: "flex",
+																alignItems: "center",
+																gap: "10px",
+															}}
+														>
+															<Button
+																onClick={handleCloseNotification}
+																variant="outlined"
+																color="error"
 																sx={{
-																	display: "flex",
-																	alignItems: "center",
-																	gap: "10px",
+																	textTransform: "capitalize",
+																	borderRadius: "8px",
+																	fontWeight: "500",
+																	fontSize: "13px",
+																	padding: "11px 30px",
 																}}
 															>
-																<Button
-																	onClick={handleCloseNotification}
-																	variant="outlined"
-																	color="error"
-																	sx={{
-																		textTransform: "capitalize",
-																		borderRadius: "8px",
-																		fontWeight: "500",
-																		fontSize: "13px",
-																		padding: "11px 30px",
-																	}}
-																>
-																	Cancel
-																</Button>
+																Cancel
+															</Button>
 
-																<Button
-																	type="submit"
-																	variant="contained"
-																	sx={{
-																		textTransform: "capitalize",
-																		borderRadius: "8px",
-																		fontWeight: "500",
-																		fontSize: "13px",
-																		padding: "11px 30px",
-																		color: "#fff !important",
-																	}}
-																>
-																	Move
-																</Button>
-															</Box>
-														</Grid>
+															<Button
+																type="submit"
+																variant="contained"
+																sx={{
+																	textTransform: "capitalize",
+																	borderRadius: "8px",
+																	fontWeight: "500",
+																	fontSize: "13px",
+																	padding: "11px 30px",
+																	color: "#fff !important",
+																}}
+															>
+																Move
+															</Button>
+														</Box>
 													</Grid>
-												</Box>
+												</Grid>
 											</Box>
 										</Box>
 									</Box>
-								</BootstrapDialog>
-							</Box>
+								</Box>
+							</BootstrapDialog>
 						</Card>
 						{sprints.map((sprint, index) => (
 							<Card
@@ -1331,6 +903,16 @@ export default function Page({ projectName }: { projectName: string }) {
 								</Box>
 							</Card>
 						))}
+						<Box>
+							<Button
+								variant="outlined"
+								size="medium"
+								sx={{ marginBottom: "10px" }}
+								onClick={handleCreateSprint}
+							>
+								Create Sprint
+							</Button>
+						</Box>
 						<Card
 							sx={{
 								boxShadow: "none",
@@ -1384,150 +966,24 @@ export default function Page({ projectName }: { projectName: string }) {
 											Backlog
 										</AccordionSummary>
 										<AccordionDetails>
-											<Stack spacing={1}>
-												{backlogs.map((backlog, index) => (
-													<>
-														<Item
-															className="backlogItem"
-															style={{ padding: "0px 0px 0px 0px" }}
-														>
-															<Table
-																sx={{
-																	borderBottom: "none !important",
-																}}
-															>
-																<TableBody>
-																	<TableRow>
-																		<TableCell
-																			style={{
-																				border: "none",
-																				alignItems: "center",
-																				justifyContent: "center",
-																			}}
-																		>
-																			<div
-																				style={{
-																					paddingTop: "5px",
-																					display: "flex",
-																					justifyContent: "center",
-																				}}
-																			>
-																				<svg
-																					width="20px"
-																					height="20px"
-																					style={{
-																						marginRight: "5px",
-																					}}
-																					viewBox="0 0 16 16"
-																					version="1.1"
-																					xmlns="http://www.w3.org/2000/svg"
-																				>
-																					<defs></defs>
-																					<g
-																						id="Page-1"
-																						stroke="none"
-																						strokeWidth="1"
-																						fill="none"
-																						fillRule="evenodd"
-																					>
-																						<g id="task">
-																							<g
-																								id="Task"
-																								transform="translate(1.000000, 1.000000)"
-																							>
-																								<rect
-																									id="Rectangle-36"
-																									fill="#4BADE8"
-																									x="0"
-																									y="0"
-																									width="14"
-																									height="14"
-																									rx="2"
-																								></rect>
-																								<g
-																									id="Page-1"
-																									transform="translate(4.000000, 4.500000)"
-																									stroke="#FFFFFF"
-																									strokeWidth="2"
-																									strokeLinecap="round"
-																								>
-																									<path
-																										d="M2,5 L6,0"
-																										id="Stroke-1"
-																									></path>
-																									<path
-																										d="M2,5 L0,3"
-																										id="Stroke-3"
-																									></path>
-																								</g>
-																							</g>
-																						</g>
-																					</g>
-																				</svg>
-																			</div>
-																		</TableCell>
-																		<TableCell style={{ border: "none" }}>
-																			{loading ? (
-																				<LinearProgress
-																					sx={{
-																						width: "100vh",
-																						color: "white",
-																					}}
-																					color="secondary"
-																				/>
-																			) : (
-																				<Input
-																					placeholder="Backlog name.."
-																					sx={{
-																						width: "100%",
-																						color: "white",
-																					}}
-																					aria-label="Name"
-																					onKeyDown={(event) => {
-																						if (event.key === "Enter") {
-																							handleBacklogSubmit();
-																						}
-																					}}
-																				/>
-																			)}
-																		</TableCell>
-																		<TableCell
-																			style={{
-																				border: "none",
-																				display: "flex",
-																				flexDirection: "row",
-																				alignItems: "center",
-																			}}
-																		></TableCell>
-																		<TableCell
-																			style={{ border: "none" }}
-																		></TableCell>
-																	</TableRow>
-																</TableBody>
-															</Table>
-														</Item>
-													</>
-												))}
-												<Button
-													className="createIssueBtn"
-													onClick={handleCreateBacklog}
-												>
-													+ Create Issue
-												</Button>
-											</Stack>
+											<DndContext
+												modifiers={[restrictToVerticalAxis]}
+												sensors={sensors}
+												collisionDetection={closestCorners}
+												onDragEnd={(event) =>
+													handleDragEnd(
+														event as {
+															active: { id: string };
+															over: { id: string };
+														}
+													)
+												}
+											>
+												<BacklogList backlogs={backlogs}></BacklogList>
+											</DndContext>
 										</AccordionDetails>
 									</Accordion>
 								</Typography>
-								<Box>
-									<Button
-										variant="outlined"
-										size="medium"
-										sx={{ marginLeft: "20px" }}
-										onClick={handleCreateSprint}
-									>
-										Create Sprint
-									</Button>
-								</Box>
 							</Box>
 						</Card>
 					</Grid>

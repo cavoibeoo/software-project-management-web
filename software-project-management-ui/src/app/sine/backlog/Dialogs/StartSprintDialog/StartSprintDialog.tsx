@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
 import {
-	Card,
-	Typography,
 	Button,
 	DialogActions,
 	DialogContentText,
@@ -13,12 +10,10 @@ import {
 	Dialog,
 	TextField,
 	FormControl,
-	InputLabel,
 	Select,
 	MenuItem,
 	SelectChangeEvent,
 } from "@mui/material";
-import SelectAutoWidth from "./SelectAutoWidth";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RichTextEditor from "@mantine/rte";
@@ -49,7 +44,12 @@ const StartSprintDialog: React.FC = () => {
 		<>
 			<Button
 				variant="contained"
-				style={{ marginInline: "5px", padding: "2px 2px !important" }}
+				style={{
+					marginLeft: "5px",
+					marginTop: "5px",
+					marginBottom: "5px",
+					padding: "2px 2px !important",
+				}}
 				onClick={handleClickOpen}
 			>
 				Start Sprint

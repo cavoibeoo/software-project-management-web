@@ -13,7 +13,7 @@ import {
 	Dialog,
 	TextField,
 } from "@mui/material";
-import SelectAutoWidth from "./SelectAutoWidth";
+import SelectAutoWidth from "./Component/SelectRole";
 
 const FormDialog: React.FC = () => {
 	const [open, setOpen] = React.useState(false);
