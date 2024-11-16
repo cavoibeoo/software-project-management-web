@@ -15,6 +15,7 @@ const IssueSchema = mongoose.Schema(
                 key: { type: String, required: true },
                 description: String,
                 issueType: {
+                    _id: { type: mongoose.Schema.Types.ObjectId },
                     img: { type: String },
                     name: { type: String, required: true },
                 },
