@@ -22,6 +22,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SupportIcon from "@mui/icons-material/Support";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 interface ProfileProps {}
 
@@ -35,6 +37,23 @@ const Profile: React.FC<ProfileProps> = () => {
 
 	const handleClose = () => {
 		setAnchorEl(null);
+	};
+
+	const handleLogout = (event: any) => {
+		event.preventDefault();
+		try {
+			axios.get("http://localhost:3001/api/auth/logout", {
+				withCredentials: true,
+			});
+
+			window.location.href = "/authentication/logout/";
+			toast.success("Sucessful logout!");
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response) {
+			} else {
+				toast.error("Logout Không Thành Công!");
+			}
+		}
 	};
 
 	return (
@@ -266,9 +285,8 @@ const Profile: React.FC<ProfileProps> = () => {
 					</Link>
 				</MenuItem>
 
-				<MenuItem sx={{ padding: "8px 20px" }}>
-					<Link
-						href="/authentication/logout/"
+				<MenuItem sx={{ padding: "8px 20px" }} onClick={handleLogout}>
+					<Box
 						className="text-black"
 						style={{
 							display: "flex",
@@ -280,7 +298,7 @@ const Profile: React.FC<ProfileProps> = () => {
 						</ListItemIcon>
 
 						<span style={{ fontSize: "13px" }}>Logout</span>
-					</Link>
+					</Box>
 				</MenuItem>
 			</Menu>
 		</>

@@ -18,6 +18,7 @@ import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { cookies } from "next/headers";
+import { log } from "console";
 
 const SignInForm: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -35,8 +36,7 @@ const SignInForm: React.FC = () => {
 				},
 				{ withCredentials: true }
 			);
-
-			document.cookie = `token=${response.data.token}; path=/;`;
+			console.log(response);
 
 			window.location.href = "/your-work";
 			toast.success("Sucessful signing in!");
@@ -49,6 +49,29 @@ const SignInForm: React.FC = () => {
 					toast.error("Invalid Password!");
 				} else if (statusCode === 422) {
 					toast.error("Please Input with correct form!");
+				}
+			} else {
+				toast.error("Đăng Nhập Không Thành Công!");
+			}
+		}
+	};
+	const handleLoginWithGG = async (event: React.FormEvent) => {
+		event.preventDefault();
+
+		try {
+			window.location.href = "http://localhost:3001/api/auth/google";
+			const response = await axios.get(
+				"http://localhost:3001/api/auth/google",
+				{ withCredentials: true }
+			);
+			console.log(response);
+
+			toast.success("Sucessful signing in!");
+		} catch (error) {
+			if (axios.isAxiosError(error) && error.response) {
+				const statusCode = error.response.status;
+				if (statusCode === 400) {
+					toast.error("User not existed!");
 				}
 			} else {
 				toast.error("Đăng Nhập Không Thành Công!");
@@ -170,6 +193,7 @@ const SignInForm: React.FC = () => {
 											borderRadius: "8px",
 											padding: "10.5px 20px",
 										}}
+										onClick={handleLoginWithGG}
 									>
 										<Image
 											src="/images/icons/google.svg"
