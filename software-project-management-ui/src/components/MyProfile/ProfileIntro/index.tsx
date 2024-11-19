@@ -54,7 +54,7 @@ const ProfileIntro: React.FC = () => {
 								fontWeight={600}
 								className="text-black"
 							>
-								Olivia John
+								Duc Quang
 							</Typography>
 
 							<Typography>Marketing Manager</Typography>

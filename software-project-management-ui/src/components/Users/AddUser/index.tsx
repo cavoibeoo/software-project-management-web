@@ -111,7 +111,7 @@ const AddUser: React.FC = () => {
 
 											<TextField
 												label="Enter user name"
-												placeholder="E.g. Olivia John"
+												placeholder="E.g. Duc Quang"
 												variant="filled"
 												id="userName"
 												name="userName"
