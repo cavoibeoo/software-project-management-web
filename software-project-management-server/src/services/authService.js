@@ -146,16 +146,20 @@ const refreshTokenService = async (data) => {
 };
 
 const logoutService = async (data) => {
-    let refreshToken = data.refreshToken;
-    let foundUser = await User.findOne({ refreshToken }).exec();
-    if (!foundUser) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, new Error("Invalid refresh token").message);
-    }
+    try {
+        let refreshToken = data.refreshToken;
+        let foundUser = await User.findOne({ refreshToken }).exec();
+        if (!foundUser) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, new Error("Invalid refresh token").message);
+        }
 
-    // Delete refreshToken in db
-    foundUser.refreshToken = foundUser.refreshToken.filter((rt) => rt !== refreshToken);
-    const result = await foundUser.save();
-    return { messages: "Logout successfully" };
+        // Delete refreshToken in db
+        foundUser.refreshToken = foundUser.refreshToken.filter((rt) => rt !== refreshToken);
+        const result = await foundUser.save();
+        return { messages: "Logout successfully" };
+    } catch (error) {
+        throw error;
+    }
 };
 
 const verifyEmailService = async (data) => {

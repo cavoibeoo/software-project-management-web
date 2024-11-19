@@ -27,7 +27,7 @@ const updateSchema = Joi.object({
     fields: Joi.any().optional(),
     workFlow: Joi.string().optional(),
     parent: Joi.string().optional(),
-    sprint: Joi.string().optional(),
+    sprint: Joi.string().allow("").optional(),
     comments: Joi.array()
         .items(
             Joi.object({

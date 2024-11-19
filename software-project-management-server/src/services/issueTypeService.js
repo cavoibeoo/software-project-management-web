@@ -1,3 +1,5 @@
+"use strict";
+
 import Project from "./../models/project.js";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
@@ -106,13 +108,6 @@ const updateIssueType = async (project, data) => {
         issueType.description = data?.description || issueType.description;
         if (data?.fields) {
             issueType.fields = data?.fields;
-            if (!data.fields.some((f) => f.name == "Summary" && f.isDefault == true))
-                issueType.fields.push({
-                    name: "Summary",
-                    isRequired: true,
-                    dataType: "String",
-                    isDefault: true,
-                });
         }
 
         await foundProject.save();

@@ -18,7 +18,7 @@ const IssueSchema = mongoose.Schema(
                     img: { type: String },
                     name: { type: String, required: true },
                 },
-                fields: { type: mongoose.Schema.Types.Mixed, required: true },
+                fields: { type: mongoose.Schema.Types.Mixed },
                 workFlow: {
                     // ref Workflow
                     type: String,
@@ -29,8 +29,8 @@ const IssueSchema = mongoose.Schema(
                     type: String,
                 },
                 sprint: {
-                    // ref Sprint
-                    type: String,
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Sprint",
                 },
                 comments: [
                     {
