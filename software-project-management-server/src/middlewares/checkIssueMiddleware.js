@@ -11,7 +11,7 @@ const checkIssueFields = async (req, res, next) => {
         );
         if (!issueType) throw new ApiError(400, "Issue type not found.");
         if (!req.body?.fields) throw new ApiError(400, "No fields provided.");
-        req.body.issueType = { name: issueType.name, img: issueType.img };
+        req.body.issueType = { _id: issueType._id, name: issueType.name, img: issueType.img };
 
         // check required fields
         let tmpFields = {};

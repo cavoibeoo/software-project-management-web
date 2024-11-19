@@ -32,6 +32,7 @@ const getById = async (req, res, next) => {
 };
 const updateIssueType = async (req, res, next) => {
     try {
+        if (req?.file) req.body.img = req?.file;
         let result = await issueTypeService.updateIssueType(req.params, req.body);
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
@@ -40,7 +41,7 @@ const updateIssueType = async (req, res, next) => {
 };
 const deleteIssueType = async (req, res, next) => {
     try {
-        let result = await issueTypeService.deleteIssueType(req.params);
+        let result = await issueTypeService.deleteIssueType(req.params, req.body);
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         next(error);
