@@ -1,3 +1,5 @@
+"use strict";
+
 import Project from "./../models/project.js";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";

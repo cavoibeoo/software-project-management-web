@@ -10,20 +10,25 @@ const SprintSchema = mongoose.Schema(
         },
         startDate: {
             type: Date,
-            default: Date.now(),
         },
         endDate: {
             type: Date,
             required: false,
+        },
+        status: {
+            type: String,
+            default: "created",
+            enum: ["created", "started", "completed"],
         },
         sprintGoal: {
             type: String,
             required: false,
         },
         project: {
-            //ref project
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Project",
         },
+        // issues: [{ type: mongoose.Schema.Types.ObjectId }],
     },
     { Timestamp: true }
 );

@@ -27,7 +27,12 @@ const START_SERVER = () => {
     app.use(passport.initialize());
     // app.use(passport.session());
     app.use(express.json({ extended: true }));
-    app.use(cors());
+    app.use(
+        cors({
+            origin: "http://localhost:3000",
+            credentials: true,
+        })
+    );
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
     app.use(morgan("combined"));
