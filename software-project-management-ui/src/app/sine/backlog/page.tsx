@@ -9,10 +9,20 @@ import {
 	Dialog,
 	Fade,
 	IconButton,
+	Input,
+	LinearProgress,
 	Link,
+	Select,
 	Menu,
 	MenuItem,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableRow,
 	Tooltip,
+	FormControlLabel,
+	Switch,
 } from "@mui/material";
 import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
 import { Card, Typography, Avatar, Badge, styled, Box } from "@mui/material";
@@ -34,6 +44,8 @@ import {
 	PointerSensor,
 	useSensors,
 	closestCorners,
+	DragOverlay,
+	defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
@@ -41,6 +53,8 @@ import { arrayMove } from "@dnd-kit/sortable";
 import ExampleDND from "../drag&drop/page";
 import "../drag&drop/component/Column/Column.css";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { Backlog } from "./BacklogList/BackLog/Backlog";
+import { toast } from "react-toastify";
 
 export default function Page({ projectName }: { projectName: string }) {
 	const breadcrumbs = [
@@ -86,6 +100,7 @@ export default function Page({ projectName }: { projectName: string }) {
 	const [isEpicVisible, setIsEpicVisible] = React.useState(true);
 	const [expanded, setExpanded] = React.useState<string | string[]>([]);
 	const [sprints, setSprints] = React.useState<string[]>([]);
+	const [newbacklogs, setNewBacklogs] = React.useState<string[]>([]);
 
 	const handleAccordionChange =
 		(panel: string) => (event: React.SyntheticEvent) => {
@@ -104,9 +119,33 @@ export default function Page({ projectName }: { projectName: string }) {
 		setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
 	};
 
+	const handleCreateBacklog = () => {
+		setNewBacklogs((prev) => [...prev, `Backlog ${prev.length + 1}`]);
+	};
+
+	const [loading, setLoading] = useState(false);
+
+	const handleBacklogSubmit = () => {
+		setLoading(true);
+		setTimeout(() => {
+			toast.success("Create Backlog Successful!");
+			setLoading(false);
+		}, 2000);
+	};
+
+	const Item = styled(Paper)(({ theme }) => ({
+		backgroundColor: "#fff",
+		...theme.typography.body2,
+		padding: theme.spacing(1),
+		textAlign: "center",
+		color: theme.palette.text.secondary,
+		...theme.applyStyles("dark", {
+			backgroundColor: "#1A2027",
+		}),
+	}));
 	React.useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent) => {
-			if (event.ctrlKey && event.key === "e") {
+			if (event.key === "`") {
 				setIsEpicVisible((prev) => !prev);
 			}
 		};
@@ -117,6 +156,9 @@ export default function Page({ projectName }: { projectName: string }) {
 			window.removeEventListener("keydown", handleKeyPress);
 		};
 	}, []);
+	const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setIsEpicVisible(event.target.checked);
+	};
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -166,6 +208,12 @@ export default function Page({ projectName }: { projectName: string }) {
 	const getTaskPos = (id: string) =>
 		backlogs.findIndex((backlog) => backlog.id === id);
 
+	const handleOnDragStart = (event: any) => {
+		console.log("Start Drag", event);
+		setactiveDragItemId(event?.active?.id);
+		setactiveDragItemData(event?.active?.data?.current);
+	};
+
 	const handleDragEnd = (event: {
 		active: { id: string };
 		over: { id: string };
@@ -177,6 +225,10 @@ export default function Page({ projectName }: { projectName: string }) {
 			const newPos = getTaskPos(over.id);
 			return arrayMove(backlogs, originalPos, newPos);
 		});
+		console.log("setactiveDragItemId", activeDragItemId);
+		console.log("setactiveDragItemData", activeDragItemData);
+		setactiveDragItemId(null);
+		setactiveDragItemData(null);
 	};
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -193,6 +245,15 @@ export default function Page({ projectName }: { projectName: string }) {
 			coordinateGetter: sortableKeyboardCoordinates,
 		})
 	);
+
+	const [activeDragItemId, setactiveDragItemId] = useState(null);
+	const [activeDragItemData, setactiveDragItemData] = useState(null);
+
+	const dropAnimation = {
+		sideEffects: defaultDropAnimationSideEffects({
+			styles: { active: { opacity: "0.5" } },
+		}),
+	};
 
 	return (
 		<>
@@ -232,6 +293,16 @@ export default function Page({ projectName }: { projectName: string }) {
 							}}
 						/>
 					</Box>
+					<FormControlLabel
+						control={
+							<Switch
+								defaultChecked
+								checked={isEpicVisible}
+								onChange={handleSwitchChange}
+							/>
+						}
+						label="Epic"
+					></FormControlLabel>
 					<Box display="flex" alignItems="center" sx={{ marginBottom: "20px" }}>
 						<FormDialog></FormDialog>
 						<AvatarGroup max={4}>
@@ -566,7 +637,9 @@ export default function Page({ projectName }: { projectName: string }) {
 								className="accordionItem"
 								sx={{
 									backgroundColor:
-										expanded === "panel4" ? "#e9ebee" : "inherit",
+										Array.isArray(expanded) && expanded.includes("panel4")
+											? "#e9ebee"
+											: "inherit",
 									"&:hover": {
 										backgroundColor: "#e9ebee",
 									},
@@ -591,6 +664,7 @@ export default function Page({ projectName }: { projectName: string }) {
 												modifiers={[restrictToVerticalAxis]}
 												sensors={sensors}
 												collisionDetection={closestCorners}
+												onDragStart={handleOnDragStart}
 												onDragEnd={(event) =>
 													handleDragEnd(
 														event as {
@@ -601,6 +675,158 @@ export default function Page({ projectName }: { projectName: string }) {
 												}
 											>
 												<BacklogList backlogs={backlogs}></BacklogList>
+												<DragOverlay dropAnimation={dropAnimation}>
+													{!activeDragItemData && null}
+													{
+														<div
+															className="backlogItem"
+															style={{ padding: "0px 0px 0px 0px" }}
+														>
+															<Table
+																sx={{
+																	borderBottom: "none !important",
+																}}
+															>
+																<TableBody>
+																	<TableRow>
+																		<TableCell
+																			style={{
+																				border: "none",
+																				alignItems: "center",
+																				justifyContent: "center",
+																			}}
+																		>
+																			<div
+																				style={{
+																					paddingTop: "5px",
+																					display: "flex",
+																					justifyContent: "center",
+																				}}
+																			>
+																				<svg
+																					width="20px"
+																					height="20px"
+																					style={{
+																						marginRight: "5px",
+																					}}
+																					viewBox="0 0 16 16"
+																					version="1.1"
+																					xmlns="http://www.w3.org/2000/svg"
+																				>
+																					<defs></defs>
+																					<g
+																						id="Page-1"
+																						stroke="none"
+																						strokeWidth="1"
+																						fill="none"
+																						fillRule="evenodd"
+																					>
+																						<g id="task">
+																							<g
+																								id="Task"
+																								transform="translate(1.000000, 1.000000)"
+																							>
+																								<rect
+																									id="Rectangle-36"
+																									fill="#4BADE8"
+																									x="0"
+																									y="0"
+																									width="14"
+																									height="14"
+																									rx="2"
+																								></rect>
+																								<g
+																									id="Page-1"
+																									transform="translate(4.000000, 4.500000)"
+																									stroke="#FFFFFF"
+																									strokeWidth="2"
+																									strokeLinecap="round"
+																								>
+																									<path
+																										d="M2,5 L6,0"
+																										id="Stroke-1"
+																									></path>
+																									<path
+																										d="M2,5 L0,3"
+																										id="Stroke-3"
+																									></path>
+																								</g>
+																							</g>
+																						</g>
+																					</g>
+																				</svg>
+																			</div>
+																		</TableCell>
+																		<TableCell
+																			style={{ border: "none" }}
+																			sx={{ width: "50%" }}
+																		>
+																			<Link
+																				className="hover-underlined"
+																				color="inherit"
+																				href=""
+																			></Link>
+																		</TableCell>
+																		<TableCell
+																			style={{
+																				border: "none",
+																				display: "flex",
+																				flexDirection: "row",
+																			}}
+																		>
+																			<Select
+																				labelId="product-type-label"
+																				id="product-type"
+																				className="epicSelectBg"
+																				size="small"
+																				style={{ marginRight: "5px" }}
+																				sx={{
+																					"& fieldset": {
+																						maxWidth: "120px",
+																					},
+																					"& .MuiSelect-select": {
+																						overflow: "hidden",
+																						textOverflow: "ellipsis",
+																						whiteSpace: "nowrap",
+																					},
+																				}}
+																			>
+																				<MenuItem value={0}>epic</MenuItem>
+																				<MenuItem value={1}>1</MenuItem>
+																				<MenuItem value={2}>2</MenuItem>
+																				<MenuItem value={3}>3</MenuItem>
+																				<MenuItem value={4}>4</MenuItem>
+																			</Select>
+																			<Select
+																				labelId="product-type-label"
+																				className="progressSelectBg"
+																				id="product-type"
+																				size="small"
+																				sx={{
+																					"& fieldset": {},
+																					"& .MuiSelect-select": {
+																						overflow: "hidden",
+																						textOverflow: "ellipsis",
+																						whiteSpace: "nowrap",
+																					},
+																				}}
+																			>
+																				<MenuItem value={0}>progress</MenuItem>
+																				<MenuItem value={1}>1</MenuItem>
+																				<MenuItem value={2}>2</MenuItem>
+																				<MenuItem value={3}>3</MenuItem>
+																				<MenuItem value={4}>4</MenuItem>
+																			</Select>
+																		</TableCell>
+																		<TableCell
+																			style={{ border: "none" }}
+																		></TableCell>
+																	</TableRow>
+																</TableBody>
+															</Table>
+														</div>
+													}
+												</DragOverlay>
 											</DndContext>
 										</AccordionDetails>
 									</Stack>
@@ -701,38 +927,84 @@ export default function Page({ projectName }: { projectName: string }) {
 								</Box>
 							</BootstrapDialog>
 						</Card>
-						{sprints.map((sprint, index) => (
-							<Card
-								sx={{
-									boxShadow: "none",
-									borderRadius: "7px",
-									mb: "10px",
-									padding: { xs: "8px", sm: "10px", lg: "15px" },
-								}}
-								className="rmui-card"
+						<Box>
+							<DndContext
+								modifiers={[restrictToVerticalAxis]}
+								sensors={sensors}
+								collisionDetection={closestCorners}
+								onDragEnd={(event) =>
+									handleDragEnd(
+										event as {
+											active: { id: string };
+											over: { id: string };
+										}
+									)
+								}
 							>
-								<Box
-									display="flex"
-									alignItems="center"
-									justifyContent="space-between"
-								>
-									<Typography
-										variant="h3"
+								{sprints.map((sprint, index) => (
+									<Card
 										sx={{
-											fontSize: { xs: "16px", md: "16px" },
-											fontWeight: 500,
-											flexGrow: 1,
+											boxShadow: "none",
+											borderRadius: "7px",
+											mb: "10px",
+											padding: { xs: "8px", sm: "10px", lg: "15px" },
 										}}
-										className="text-black"
+										className="rmui-card"
 									>
+										<Box
+											display="flex"
+											alignItems="center"
+											justifyContent="space-between"
+										>
+											<Box display="flex">
+												<StartSprintDialog />
+											</Box>
+											<Box
+												display="flex"
+												sx={{
+													display: "flex",
+													flexDirection: "row",
+												}}
+											>
+												<Button
+													id="fade-button"
+													aria-controls={open ? "fade-menu" : undefined}
+													aria-haspopup="true"
+													aria-expanded={open ? "true" : undefined}
+													onClick={handleClick}
+												>
+													<span className="material-symbols-outlined">
+														more_horiz
+													</span>
+												</Button>
+												<Menu
+													id="fade-menu"
+													MenuListProps={{
+														"aria-labelledby": "fade-button",
+													}}
+													anchorEl={anchorEl}
+													open={open}
+													onClose={handleClose}
+													TransitionComponent={Fade}
+												>
+													<MenuItem onClick={handleClose}>
+														Project settings
+													</MenuItem>
+													<MenuItem onClick={handleClickOpenNotification}>
+														Move to trash
+													</MenuItem>
+												</Menu>
+											</Box>
+										</Box>
+
 										<Accordion
-											className="accordionItem"
 											expanded={
 												Array.isArray(expanded)
 													? expanded.includes(sprint)
 													: expanded === sprint
 											}
 											onChange={handleAccordionChange(sprint)}
+											className="accordionItem"
 											sx={{
 												backgroundColor:
 													expanded === sprint ? "#e9ebee" : "inherit",
@@ -742,250 +1014,342 @@ export default function Page({ projectName }: { projectName: string }) {
 												boxShadow: "none",
 												border: "none",
 												padding: { xs: "0px", sm: "0px", lg: "0px" },
-												flexGrow: 1,
+												flexGrow: 1, // Đảm bảo accordion chiếm không gian còn lại
 											}}
 										>
 											<AccordionSummary
 												expandIcon={<ExpandMoreIcon />}
-												aria-controls="sprint-content"
-												id="sprint-header"
+												aria-controls="panel4-content"
+												id="panel4-header"
 												sx={{ fontWeight: "500", fontSize: "15px" }}
 											>
 												{sprint}
 											</AccordionSummary>
 											<AccordionDetails>
 												<Stack spacing={1}>
-													<Button className="createIssueBtn">
-														+ Create Issue
-													</Button>
+													<AccordionDetails>
+														<DndContext
+															modifiers={[restrictToVerticalAxis]}
+															sensors={sensors}
+															collisionDetection={closestCorners}
+															onDragEnd={(event) =>
+																handleDragEnd(
+																	event as {
+																		active: { id: string };
+																		over: { id: string };
+																	}
+																)
+															}
+														>
+															<Stack spacing={1}>
+																{newbacklogs.map((newbacklog, index) => (
+																	<>
+																		<Item
+																			className="backlogItem"
+																			style={{ padding: "0px 0px 0px 0px" }}
+																		>
+																			<Table
+																				sx={{
+																					borderBottom: "none !important",
+																				}}
+																			>
+																				<TableBody>
+																					<TableRow>
+																						<TableCell
+																							style={{
+																								border: "none",
+																								alignItems: "center",
+																								justifyContent: "center",
+																							}}
+																						>
+																							<div
+																								style={{
+																									paddingTop: "5px",
+																									display: "flex",
+																									justifyContent: "center",
+																								}}
+																							>
+																								<svg
+																									width="20px"
+																									height="20px"
+																									style={{
+																										marginRight: "5px",
+																									}}
+																									viewBox="0 0 16 16"
+																									version="1.1"
+																									xmlns="http://www.w3.org/2000/svg"
+																								>
+																									<defs></defs>
+																									<g
+																										id="Page-1"
+																										stroke="none"
+																										strokeWidth="1"
+																										fill="none"
+																										fillRule="evenodd"
+																									>
+																										<g id="task">
+																											<g
+																												id="Task"
+																												transform="translate(1.000000, 1.000000)"
+																											>
+																												<rect
+																													id="Rectangle-36"
+																													fill="#4BADE8"
+																													x="0"
+																													y="0"
+																													width="14"
+																													height="14"
+																													rx="2"
+																												></rect>
+																												<g
+																													id="Page-1"
+																													transform="translate(4.000000, 4.500000)"
+																													stroke="#FFFFFF"
+																													strokeWidth="2"
+																													strokeLinecap="round"
+																												>
+																													<path
+																														d="M2,5 L6,0"
+																														id="Stroke-1"
+																													></path>
+																													<path
+																														d="M2,5 L0,3"
+																														id="Stroke-3"
+																													></path>
+																												</g>
+																											</g>
+																										</g>
+																									</g>
+																								</svg>
+																							</div>
+																						</TableCell>
+																						<TableCell
+																							style={{ border: "none" }}
+																						>
+																							{loading ? (
+																								<LinearProgress
+																									sx={{
+																										width: "100vh",
+																										color: "white",
+																									}}
+																									color="secondary"
+																								/>
+																							) : (
+																								<Input
+																									placeholder="Backlog name.."
+																									sx={{
+																										width: "100%",
+																										color: "white",
+																									}}
+																									aria-label="Name"
+																									onKeyDown={(event) => {
+																										if (event.key === "Enter") {
+																											handleBacklogSubmit();
+																										}
+																									}}
+																								/>
+																							)}
+																						</TableCell>
+																						<TableCell
+																							style={{
+																								border: "none",
+																								display: "flex",
+																								flexDirection: "row",
+																								alignItems: "center",
+																							}}
+																						></TableCell>
+																						<TableCell
+																							style={{ border: "none" }}
+																						></TableCell>
+																					</TableRow>
+																				</TableBody>
+																			</Table>
+																		</Item>
+																	</>
+																))}
+																<Button
+																	className="createIssueBtn"
+																	onClick={handleCreateBacklog}
+																>
+																	+ Create Issue
+																</Button>
+															</Stack>
+														</DndContext>
+													</AccordionDetails>
 												</Stack>
 											</AccordionDetails>
 										</Accordion>
-									</Typography>
-									<Box>
-										<Button
-											variant="contained"
-											disabled
-											style={{
-												marginInline: "5px",
-												padding: "2px 2px !important",
-											}}
+										<BootstrapDialog
+											onClose={handleCloseNotification}
+											aria-labelledby="customized-dialog-title"
+											open={openNotification}
+											className="rmu-modal"
 										>
-											Start Sprint
-										</Button>
-										<Button
-											id="fade-button"
-											aria-controls={open ? "fade-menu" : undefined}
-											aria-haspopup="true"
-											aria-expanded={open ? "true" : undefined}
-											onClick={handleClick}
-										>
-											<span className="material-symbols-outlined">
-												more_horiz
-											</span>
-										</Button>
-										<Menu
-											id="fade-menu"
-											MenuListProps={{
-												"aria-labelledby": "fade-button",
-											}}
-											anchorEl={anchorEl}
-											open={open}
-											onClose={handleClose}
-											TransitionComponent={Fade}
-										>
-											<MenuItem onClick={handleClose}>
-												Project settings
-											</MenuItem>
-											<MenuItem onClick={handleClickOpenNotification}>
-												Move to trash
-											</MenuItem>
-										</Menu>
-									</Box>
-									<BootstrapDialog
-										onClose={handleCloseNotification}
-										aria-labelledby="customized-dialog-title"
-										open={openNotification}
-										className="rmu-modal"
-									>
-										<Box>
-											<Box
-												sx={{
-													display: "flex",
-													justifyContent: "space-between",
-													alignItems: "center",
-													background: "#ff6666",
-													padding: { xs: "15px 20px", md: "25px" },
-												}}
-												className="rmu-modal-header"
-											>
-												<Typography
-													id="modal-modal-title"
-													variant="h6"
-													sx={{
-														fontWeight: "600",
-														fontSize: { xs: "16px", md: "18px" },
-														color: "#fff !important",
-													}}
-													className="text-black"
-												>
-													Move to Trash
-												</Typography>
-
-												<IconButton
-													aria-label="remove"
-													size="small"
-													onClick={handleCloseNotification}
-												>
-													<ClearIcon />
-												</IconButton>
-											</Box>
-
-											<Box className="rmu-modal-content">
+											<Box>
 												<Box
-													component="form"
-													noValidate
-													onSubmit={handleSubmit}
+													sx={{
+														display: "flex",
+														justifyContent: "space-between",
+														alignItems: "center",
+														background: "#ff6666",
+														padding: { xs: "15px 20px", md: "25px" },
+													}}
+													className="rmu-modal-header"
 												>
-													<Box
+													<Typography
+														id="modal-modal-title"
+														variant="h6"
 														sx={{
-															padding: "25px",
-															borderRadius: "8px",
+															fontWeight: "600",
+															fontSize: { xs: "16px", md: "18px" },
+															color: "#fff !important",
 														}}
-														className="bg-white"
+														className="text-black"
 													>
-														<Grid container alignItems="center" spacing={2}>
-															<Grid item xs={12} mt={1}>
-																<Box
-																	sx={{
-																		display: "flex",
-																		alignItems: "center",
-																		gap: "10px",
-																	}}
-																>
-																	<Button
-																		onClick={handleCloseNotification}
-																		variant="outlined"
-																		color="error"
-																		sx={{
-																			textTransform: "capitalize",
-																			borderRadius: "8px",
-																			fontWeight: "500",
-																			fontSize: "13px",
-																			padding: "11px 30px",
-																		}}
-																	>
-																		Cancel
-																	</Button>
+														Move to Trash
+													</Typography>
 
-																	<Button
-																		type="submit"
-																		variant="contained"
+													<IconButton
+														aria-label="remove"
+														size="small"
+														onClick={handleCloseNotification}
+													>
+														<ClearIcon />
+													</IconButton>
+												</Box>
+
+												<Box className="rmu-modal-content">
+													<Box
+														component="form"
+														noValidate
+														onSubmit={handleSubmit}
+													>
+														<Box
+															sx={{
+																padding: "25px",
+																borderRadius: "8px",
+															}}
+															className="bg-white"
+														>
+															<Grid container alignItems="center" spacing={2}>
+																<Grid item xs={12} mt={1}>
+																	<Box
 																		sx={{
-																			textTransform: "capitalize",
-																			borderRadius: "8px",
-																			fontWeight: "500",
-																			fontSize: "13px",
-																			padding: "11px 30px",
-																			color: "#fff !important",
+																			display: "flex",
+																			alignItems: "center",
+																			gap: "10px",
 																		}}
 																	>
-																		Move
-																	</Button>
-																</Box>
+																		<Button
+																			onClick={handleCloseNotification}
+																			variant="outlined"
+																			color="error"
+																			sx={{
+																				textTransform: "capitalize",
+																				borderRadius: "8px",
+																				fontWeight: "500",
+																				fontSize: "13px",
+																				padding: "11px 30px",
+																			}}
+																		>
+																			Cancel
+																		</Button>
+
+																		<Button
+																			type="submit"
+																			variant="contained"
+																			sx={{
+																				textTransform: "capitalize",
+																				borderRadius: "8px",
+																				fontWeight: "500",
+																				fontSize: "13px",
+																				padding: "11px 30px",
+																				color: "#fff !important",
+																			}}
+																		>
+																			Move
+																		</Button>
+																	</Box>
+																</Grid>
 															</Grid>
-														</Grid>
+														</Box>
 													</Box>
 												</Box>
 											</Box>
-										</Box>
-									</BootstrapDialog>
-								</Box>
-							</Card>
-						))}
-						<Box>
-							<Button
-								variant="outlined"
-								size="medium"
-								sx={{ marginBottom: "10px" }}
-								onClick={handleCreateSprint}
-							>
-								Create Sprint
-							</Button>
-						</Box>
-						<Card
-							sx={{
-								boxShadow: "none",
-								borderRadius: "7px",
-								mb: "10px",
-								padding: { xs: "8px", sm: "10px", lg: "15px" },
-								backgroundColor: "#f6f7f9",
-							}}
-							className="backlogCard"
-						>
-							<Box
-								display="flex"
-								alignItems="center"
-								justifyContent="space-between"
-							>
-								<Typography
-									variant="h3"
-									sx={{
-										fontSize: { xs: "16px", md: "16px" },
-										fontWeight: 500,
-										flexGrow: 1,
-									}}
-									className="text-black"
-								>
-									<Accordion
-										expanded={
-											Array.isArray(expanded)
-												? expanded.includes("panel5")
-												: expanded === "panel5"
-										}
-										onChange={handleAccordionChange("panel5")}
-										className="backlogItembg"
-										sx={{
-											backgroundColor:
-												expanded === "panel5" ? "#e9ebee" : "inherit",
-											"&:hover": {
-												backgroundColor: "#e9ebee",
-											},
-											boxShadow: "none",
-											border: "none",
-											padding: { xs: "0px", sm: "0px", lg: "0px" },
-											flexGrow: 1,
-										}}
+										</BootstrapDialog>
+									</Card>
+								))}
+								<Box>
+									<Button
+										variant="outlined"
+										size="medium"
+										sx={{ marginBottom: "10px" }}
+										onClick={handleCreateSprint}
 									>
-										<AccordionSummary
-											expandIcon={<ExpandMoreIcon />}
-											aria-controls="panel5-content"
-											id="panel5-header"
-											sx={{ fontWeight: "500", fontSize: "15px" }}
+										Create Sprint
+									</Button>
+								</Box>
+								<Card
+									sx={{
+										boxShadow: "none",
+										borderRadius: "7px",
+										mb: "10px",
+										padding: { xs: "8px", sm: "10px", lg: "15px" },
+										backgroundColor: "#f6f7f9",
+									}}
+									className="backlogCard"
+								>
+									<Box
+										display="flex"
+										alignItems="center"
+										justifyContent="space-between"
+									>
+										<Typography
+											variant="h3"
+											sx={{
+												fontSize: { xs: "16px", md: "16px" },
+												fontWeight: 500,
+												flexGrow: 1,
+											}}
+											className="text-black"
 										>
-											Backlog
-										</AccordionSummary>
-										<AccordionDetails>
-											<DndContext
-												modifiers={[restrictToVerticalAxis]}
-												sensors={sensors}
-												collisionDetection={closestCorners}
-												onDragEnd={(event) =>
-													handleDragEnd(
-														event as {
-															active: { id: string };
-															over: { id: string };
-														}
-													)
+											<Accordion
+												expanded={
+													Array.isArray(expanded)
+														? expanded.includes("panel5")
+														: expanded === "panel5"
 												}
+												onChange={handleAccordionChange("panel5")}
+												className="backlogItembg"
+												sx={{
+													backgroundColor:
+														expanded === "panel5" ? "#e9ebee" : "inherit",
+													"&:hover": {
+														backgroundColor: "#e9ebee",
+													},
+													boxShadow: "none",
+													border: "none",
+													padding: { xs: "0px", sm: "0px", lg: "0px" },
+													flexGrow: 1,
+												}}
 											>
-												<BacklogList backlogs={backlogs}></BacklogList>
-											</DndContext>
-										</AccordionDetails>
-									</Accordion>
-								</Typography>
-							</Box>
-						</Card>
+												<AccordionSummary
+													expandIcon={<ExpandMoreIcon />}
+													aria-controls="panel5-content"
+													id="panel5-header"
+													sx={{ fontWeight: "500", fontSize: "15px" }}
+												>
+													Backlog
+												</AccordionSummary>
+												<AccordionDetails>
+													<BacklogList backlogs={backlogs}></BacklogList>
+												</AccordionDetails>
+											</Accordion>
+										</Typography>
+									</Box>
+								</Card>
+							</DndContext>
+						</Box>
 					</Grid>
 				</Grid>
 			</div>

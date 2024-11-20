@@ -48,7 +48,7 @@ const ProfileInformation: React.FC = () => {
 						>
 							Full Name:
 						</Typography>{" "}
-						Olivia John
+						Duc Quang
 					</Box>
 
 					<Box className="text-black" sx={{ fontWeight: "500", mt: "10px" }}>

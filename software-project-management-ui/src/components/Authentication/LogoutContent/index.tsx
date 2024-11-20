@@ -118,7 +118,7 @@ const LogoutContent: React.FC = () => {
 											display: "block",
 										}}
 									>
-										Olivia John
+										Duc Quang
 									</Typography>
 								</Box>
 

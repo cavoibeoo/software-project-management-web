@@ -1422,3 +1422,12 @@ table tfoot tr p {
 .hover-underlined:hover {
 	text-decoration: underline;
 }
+
+.backlogItem {
+	background-color: #ffffff;
+	color: #000000;
+}
+.backlogItem:hover {
+	background-color: #eef8ff;
+	color: #000000;
+}

@@ -11,6 +11,7 @@ const ProjectSchema = mongoose.Schema(
             type: Number, // 0 is temporarily deleted, 1 is still active, 2 is archived
             default: 1,
         },
+        isDefault: { type: Boolean, default: false },
         createdDate: { type: Date, default: Date.now },
         author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
         actors: [
@@ -32,26 +33,34 @@ const ProjectSchema = mongoose.Schema(
                     type: String,
                     required: true,
                 },
-                permissions: {
-                    modify_project: Boolean,
-                    delete_project: Boolean,
-                    archive_project: Boolean,
-                    add_workflow: Boolean,
-                    edit_workflow: Boolean,
-                    delete_workflow: Boolean,
-                    add_actor: Boolean,
-                    edit_actor_role: Boolean,
-                    remove_actor: Boolean,
-                    add_sprint: Boolean,
-                    edit_sprint: Boolean,
-                    delete_sprint: Boolean,
-                    add_issue: Boolean,
-                    edit_issue: Boolean,
-                    delete_issue: Boolean,
-                    add_comment: Boolean,
-                    edit_comment: Boolean,
-                    delete_comment: Boolean,
-                },
+                permissions: [
+                    {
+                        type: String,
+                        enum: [
+                            "update_project",
+                            "delete_project",
+                            "archive_project",
+                            "add_workflow",
+                            "update_workflow",
+                            "delete_workflow",
+                            "add_actor",
+                            "update_actor_role",
+                            "remove_actor",
+                            "add_sprint",
+                            "update_sprint",
+                            "delete_sprint",
+                            "add_issue_type",
+                            "update_issue_type",
+                            "delete_issue_type",
+                            "add_issue",
+                            "update_issue",
+                            "delete_issue",
+                            "add_comment",
+                            "update_comment",
+                            "delete_comment",
+                        ],
+                    },
+                ],
                 isDefault: Boolean,
             },
         ],
@@ -67,7 +76,7 @@ const ProjectSchema = mongoose.Schema(
                 },
             },
         ],
-        issueType: [
+        issueTypes: [
             {
                 name: {
                     type: String,
@@ -80,14 +89,15 @@ const ProjectSchema = mongoose.Schema(
                     {
                         name: { type: String, required: true },
                         dataType: {
-                            type: mongoose.Schema.Types.Mixed,
-                            enum: [Number, String, Array, Object, Date, Boolean],
+                            type: String,
+                            enum: ["String", "Number", "Boolean", "Date", "Array", "Object"],
                             required: true,
                         },
                         isRequired: {
                             type: Boolean,
                             default: false,
                         },
+                        isDefault: { type: Boolean, default: false },
                         description: String,
                     },
                 ],

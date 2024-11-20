@@ -124,7 +124,7 @@ const LockScreenForm: React.FC = () => {
 											display: "block",
 										}}
 									>
-										Olivia John
+										Duc Quang
 									</Typography>
 								</Box>
 
