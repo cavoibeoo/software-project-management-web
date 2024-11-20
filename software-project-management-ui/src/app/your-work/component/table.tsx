@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { alpha } from "@mui/material/styles";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
@@ -35,6 +35,8 @@ import {
 	TextField,
 } from "@mui/material";
 import { ProjectNameContext } from "@/providers/ProjectNameProvider";
+import axios from "axios";
+import { useFetchProjects } from "../../../api-services/projectServices";
 
 interface Data {
 	id: number;
@@ -67,257 +69,6 @@ function createData(
 	};
 }
 
-const rows = [
-	createData(
-		1,
-		"FAMS_PracticalBA",
-		"FA",
-		"Team-managed software",
-		"Tran Duc Quang"
-	),
-	createData(2, "SINE_PSM", "SG", "Team-managed software2", "Tran Binh Phuoc"),
-	createData(3, "SINE_PSM", "RI", "Team-managed software2", "Tran Binh Phuoc"),
-	createData(4, "SINE_PSM", "GI", "Team-managed software2", "Tran Binh Phuoc"),
-	createData(5, "SINE_PSM", "DI", "Team-managed software2", "Tran Binh Phuoc"),
-	createData(6, "SINE_PSM", "VI", "Team-managed software2", "Tran Binh Phuoc"),
-	createData(7, "SINE_PSM", "CI", "Team-managed software2", "Tran Binh Phuoc"),
-	createData(8, "SINE_PSM", "NI", "Team-managed software2", "Tran Binh Phuoc"),
-].filter((row): row is Data => row !== null);
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-	if (b[orderBy] < a[orderBy]) {
-		return -1;
-	}
-	if (b[orderBy] > a[orderBy]) {
-		return 1;
-	}
-	return 0;
-}
-
-type Order = "asc" | "desc";
-
-function getComparator<Key extends keyof any>(
-	order: Order,
-	orderBy: Key
-): (
-	a: { [key in Key]: number | string },
-	b: { [key in Key]: number | string }
-) => number {
-	return order === "desc"
-		? (a, b) => descendingComparator(a, b, orderBy)
-		: (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-interface HeadCell {
-	disablePadding: boolean;
-	id: keyof Data;
-	label: string;
-	numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-	{
-		id: "name",
-		numeric: false,
-		disablePadding: true,
-		label: "Project name",
-	},
-	{
-		id: "key",
-		numeric: true,
-		disablePadding: false,
-		label: "Key",
-	},
-	{
-		id: "lead",
-		numeric: true,
-		disablePadding: false,
-		label: "Type",
-	},
-	{
-		id: "type",
-		numeric: true,
-		disablePadding: false,
-		label: "Lead",
-	},
-	{
-		id: "id",
-		numeric: true,
-		disablePadding: false,
-		label: "More actions",
-	},
-];
-
-interface EnhancedTableProps {
-	numSelected: number;
-	onRequestSort: (
-		event: React.MouseEvent<unknown>,
-		property: keyof Data
-	) => void;
-	onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	order: Order;
-	orderBy: string;
-	rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-	const {
-		onSelectAllClick,
-		order,
-		orderBy,
-		numSelected,
-		rowCount,
-		onRequestSort,
-	} = props;
-	const createSortHandler =
-		(property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-			onRequestSort(event, property);
-		};
-
-	return (
-		<TableHead>
-			<TableRow>
-				<TableCell padding="checkbox">
-					<Checkbox
-						color="primary"
-						indeterminate={numSelected > 0 && numSelected < rowCount}
-						checked={rowCount > 0 && numSelected === rowCount}
-						onChange={onSelectAllClick}
-						inputProps={{
-							"aria-label": "select all desserts",
-						}}
-					/>
-				</TableCell>
-				{headCells.map((headCell) => (
-					<TableCell
-						key={headCell.id}
-						align={headCell.numeric ? "right" : "left"}
-						padding={headCell.disablePadding ? "none" : "normal"}
-						sortDirection={orderBy === headCell.id ? order : false}
-					>
-						<TableSortLabel
-							active={orderBy === headCell.id}
-							direction={orderBy === headCell.id ? order : "asc"}
-							onClick={createSortHandler(headCell.id)}
-						>
-							{headCell.label}
-							{orderBy === headCell.id ? (
-								<Box component="span" sx={visuallyHidden}>
-									{order === "desc" ? "sorted descending" : "sorted ascending"}
-								</Box>
-							) : null}
-						</TableSortLabel>
-					</TableCell>
-				))}
-			</TableRow>
-		</TableHead>
-	);
-}
-interface EnhancedTableToolbarProps {
-	numSelected: number;
-}
-
-// Modal
-interface BootstrapDialogTitleProps {
-	children?: React.ReactNode;
-	onClose: () => void;
-}
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-	"& .MuiDialogContent-root": {
-		padding: theme.spacing(2),
-	},
-	"& .MuiDialogActions-root": {
-		padding: theme.spacing(1),
-	},
-}));
-
-function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
-	const { children, onClose, ...other } = props;
-
-	return (
-		<DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-			{children}
-			{onClose ? (
-				<IconButton
-					aria-label="close"
-					onClick={onClose}
-					sx={{
-						position: "absolute",
-						right: 8,
-						top: 8,
-						color: (theme) => theme.palette.grey[500],
-					}}
-				>
-					<CloseIcon />
-				</IconButton>
-			) : null}
-		</DialogTitle>
-	);
-}
-
-BootstrapDialogTitle.propTypes = {
-	children: PropTypes.node,
-	onClose: PropTypes.func.isRequired,
-};
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-	const { numSelected } = props;
-
-	return (
-		<Toolbar
-			sx={[
-				{
-					pl: { sm: 2 },
-					pr: { xs: 1, sm: 1 },
-				},
-				numSelected > 0 && {
-					bgcolor: (theme) =>
-						alpha(
-							theme.palette.primary.main,
-							theme.palette.action.activatedOpacity
-						),
-				},
-			]}
-		>
-			{numSelected > 0 ? (
-				<Typography
-					sx={{ flex: "1 1 100%" }}
-					color="inherit"
-					variant="subtitle1"
-					component="div"
-					style={{ maxHeight: "20px" }}
-				>
-					{numSelected} selected
-				</Typography>
-			) : (
-				<Typography
-					sx={{ flex: "1 1 100%" }}
-					variant="h6"
-					id="tableTitle"
-					component="div"
-				>
-					<Box
-						sx={{
-							display: { xs: "block", sm: "flex" },
-							alignItems: "center",
-							justifyContent: "space-between",
-						}}
-					></Box>
-				</Typography>
-			)}
-			{numSelected > 0 ? (
-				<Tooltip title="Delete">
-					<IconButton>
-						<DeleteIcon />
-					</IconButton>
-				</Tooltip>
-			) : (
-				<></>
-			)}
-		</Toolbar>
-	);
-}
 export default function EnhancedTable() {
 	const [order, setOrder] = React.useState<Order>("asc");
 	const [orderBy, setOrderBy] = React.useState<keyof Data>("key");
@@ -326,6 +77,254 @@ export default function EnhancedTable() {
 	const [dense, setDense] = React.useState(false);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
 	const [search, setSearch] = React.useState("");
+
+	const projects = useFetchProjects();
+	const [sortedProjects, setSortedProjects] = useState<Data[]>([]);
+
+	useEffect(() => {
+		if (projects) {
+			setSortedProjects([...projects].sort(getComparator(order, orderBy)));
+		} else {
+			console.error("Không thể lấy dữ liệu dự án");
+		}
+	}, [projects, order, orderBy]);
+
+	function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+		if (b[orderBy] < a[orderBy]) {
+			return -1;
+		}
+		if (b[orderBy] > a[orderBy]) {
+			return 1;
+		}
+		return 0;
+	}
+
+	type Order = "asc" | "desc";
+
+	function getComparator<Key extends keyof any>(
+		order: Order,
+		orderBy: Key
+	): (
+		a: { [key in Key]: number | string },
+		b: { [key in Key]: number | string }
+	) => number {
+		return order === "desc"
+			? (a, b) => descendingComparator(a, b, orderBy)
+			: (a, b) => -descendingComparator(a, b, orderBy);
+	}
+
+	interface HeadCell {
+		disablePadding: boolean;
+		id: keyof Data;
+		label: string;
+		numeric: boolean;
+	}
+
+	const headCells: readonly HeadCell[] = [
+		{
+			id: "name",
+			numeric: false,
+			disablePadding: true,
+			label: "Project name",
+		},
+		{
+			id: "key",
+			numeric: true,
+			disablePadding: false,
+			label: "Key",
+		},
+		{
+			id: "lead",
+			numeric: true,
+			disablePadding: false,
+			label: "Type",
+		},
+		{
+			id: "type",
+			numeric: true,
+			disablePadding: false,
+			label: "Lead",
+		},
+		{
+			id: "id",
+			numeric: true,
+			disablePadding: false,
+			label: "More actions",
+		},
+	];
+
+	interface EnhancedTableProps {
+		numSelected: number;
+		onRequestSort: (
+			event: React.MouseEvent<unknown>,
+			property: keyof Data
+		) => void;
+		onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
+		order: Order;
+		orderBy: string;
+		rowCount: number;
+	}
+
+	function EnhancedTableHead(props: EnhancedTableProps) {
+		const {
+			onSelectAllClick,
+			order,
+			orderBy,
+			numSelected,
+			rowCount,
+			onRequestSort,
+		} = props;
+		const createSortHandler =
+			(property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+				onRequestSort(event, property);
+			};
+
+		return (
+			<TableHead>
+				<TableRow>
+					<TableCell padding="checkbox">
+						<Checkbox
+							color="primary"
+							indeterminate={numSelected > 0 && numSelected < rowCount}
+							checked={rowCount > 0 && numSelected === rowCount}
+							onChange={onSelectAllClick}
+							inputProps={{
+								"aria-label": "select all desserts",
+							}}
+						/>
+					</TableCell>
+					{headCells.map((headCell) => (
+						<TableCell
+							key={headCell.id}
+							align={headCell.numeric ? "right" : "left"}
+							padding={headCell.disablePadding ? "none" : "normal"}
+							sortDirection={orderBy === headCell.id ? order : false}
+						>
+							<TableSortLabel
+								active={orderBy === headCell.id}
+								direction={orderBy === headCell.id ? order : "asc"}
+								onClick={createSortHandler(headCell.id)}
+							>
+								{headCell.label}
+								{orderBy === headCell.id ? (
+									<Box component="span" sx={visuallyHidden}>
+										{order === "desc"
+											? "sorted descending"
+											: "sorted ascending"}
+									</Box>
+								) : null}
+							</TableSortLabel>
+						</TableCell>
+					))}
+				</TableRow>
+			</TableHead>
+		);
+	}
+	interface EnhancedTableToolbarProps {
+		numSelected: number;
+	}
+
+	// Modal
+	interface BootstrapDialogTitleProps {
+		children?: React.ReactNode;
+		onClose: () => void;
+	}
+
+	const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+		"& .MuiDialogContent-root": {
+			padding: theme.spacing(2),
+		},
+		"& .MuiDialogActions-root": {
+			padding: theme.spacing(1),
+		},
+	}));
+
+	function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
+		const { children, onClose, ...other } = props;
+
+		return (
+			<DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+				{children}
+				{onClose ? (
+					<IconButton
+						aria-label="close"
+						onClick={onClose}
+						sx={{
+							position: "absolute",
+							right: 8,
+							top: 8,
+							color: (theme) => theme.palette.grey[500],
+						}}
+					>
+						<CloseIcon />
+					</IconButton>
+				) : null}
+			</DialogTitle>
+		);
+	}
+
+	BootstrapDialogTitle.propTypes = {
+		children: PropTypes.node,
+		onClose: PropTypes.func.isRequired,
+	};
+
+	function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
+		const { numSelected } = props;
+
+		return (
+			<Toolbar
+				sx={[
+					{
+						pl: { sm: 2 },
+						pr: { xs: 1, sm: 1 },
+					},
+					numSelected > 0 && {
+						bgcolor: (theme) =>
+							alpha(
+								theme.palette.primary.main,
+								theme.palette.action.activatedOpacity
+							),
+					},
+				]}
+			>
+				{numSelected > 0 ? (
+					<Typography
+						sx={{ flex: "1 1 100%" }}
+						color="inherit"
+						variant="subtitle1"
+						component="div"
+						style={{ maxHeight: "20px" }}
+					>
+						{numSelected} selected
+					</Typography>
+				) : (
+					<Typography
+						sx={{ flex: "1 1 100%" }}
+						variant="h6"
+						id="tableTitle"
+						component="div"
+					>
+						<Box
+							sx={{
+								display: { xs: "block", sm: "flex" },
+								alignItems: "center",
+								justifyContent: "space-between",
+							}}
+						></Box>
+					</Typography>
+				)}
+				{numSelected > 0 ? (
+					<Tooltip title="Delete">
+						<IconButton>
+							<DeleteIcon />
+						</IconButton>
+					</Tooltip>
+				) : (
+					<></>
+				)}
+			</Toolbar>
+		);
+	}
 
 	const handleRequestSort = (
 		event: React.MouseEvent<unknown>,
@@ -338,7 +337,7 @@ export default function EnhancedTable() {
 
 	const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (event.target.checked) {
-			const newSelected = rows.map((n) => n.id);
+			const newSelected = projects.map((n: any) => n.id);
 			setSelected(newSelected);
 			return;
 		}
@@ -379,23 +378,20 @@ export default function EnhancedTable() {
 		setSearch(event.target.value);
 	};
 
-	// Avoid a layout jump when reaching the last page with empty rows.
-	const emptyRows =
-		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
 	const visibleRows = React.useMemo(
 		() =>
-			[...rows]
+			sortedProjects
 				.filter(
-					(row) =>
-						row.name.toLowerCase().includes(search.toLowerCase()) ||
-						row.key.toLowerCase().includes(search.toLowerCase()) ||
-						row.lead.toLowerCase().includes(search.toLowerCase()) ||
-						row.type.toLowerCase().includes(search.toLowerCase())
+					(row: any) =>
+						(row.name &&
+							row.name.toLowerCase().includes(search.toLowerCase())) ||
+						(row.key && row.key.toLowerCase().includes(search.toLowerCase())) ||
+						(row.type &&
+							row.type.toLowerCase().includes(search.toLowerCase())) ||
+						(row.lead && row.lead.toLowerCase().includes(search.toLowerCase()))
 				)
-				.sort(getComparator(order, orderBy))
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[order, orderBy, page, rowsPerPage, search]
+		[sortedProjects, page, rowsPerPage, search]
 	);
 
 	// Modal
@@ -442,7 +438,7 @@ export default function EnhancedTable() {
 					value={search} // Đảm bảo rằng giá trị của ô tìm kiếm được liên kết với trạng thái
 					onChange={handleSearch} // Gọi hàm handleSearch khi có sự thay đổi
 					style={{
-						padding: "5px 38px 8px 10px;",
+						padding: "5px 38px 8px 10px",
 						border: "1px solid #a6adba",
 						marginBottom: "10px",
 						fontSize: "0.86875rem",
@@ -466,11 +462,11 @@ export default function EnhancedTable() {
 								orderBy={orderBy}
 								onSelectAllClick={handleSelectAllClick}
 								onRequestSort={handleRequestSort}
-								rowCount={rows.length}
+								rowCount={projects.length}
 							/>
 							<TableBody>
-								{visibleRows.map((row, index) => {
-									const isItemSelected = selected.includes(row.id);
+								{visibleRows.map((project: any, index: any) => {
+									const isItemSelected = selected.includes(project.id);
 									const labelId = `enhanced-table-checkbox-${index}`;
 
 									return (
@@ -479,15 +475,15 @@ export default function EnhancedTable() {
 											role="checkbox"
 											aria-checked={isItemSelected}
 											tabIndex={-1}
-											key={row.id}
+											key={project.key}
 											selected={isItemSelected}
 											sx={{ cursor: "pointer" }}
 										>
 											<TableCell padding="checkbox">
 												<Checkbox
-													onClick={(event) => handleClick(event, row.id)}
+													onClick={(event) => handleClick(event, project.id)}
 													color="primary"
-													checked={isItemSelected}
+													checked={isItemSelected} // Sử dụng checked để kiểm soát trạng thái
 													inputProps={{
 														"aria-labelledby": labelId,
 													}}
@@ -502,9 +498,11 @@ export default function EnhancedTable() {
 											>
 												<Typography
 													component="a"
-													href={`/projects/${row.name}/board`}
+													href={`/projects/${project.name}/board`}
 													className="project-link"
-													onClick={() => projectName?.setProjectName(row.name)}
+													onClick={() =>
+														projectName?.setProjectName(project.name)
+													}
 													sx={{
 														display: "flex",
 														alignItems: "center",
@@ -517,36 +515,27 @@ export default function EnhancedTable() {
 														alt="Project Logo"
 														className="icon_project"
 													/>
-													{row.name}
+													{project.name}
 												</Typography>
 											</TableCell>
-											<TableCell align="right">{row.key}</TableCell>
-											<TableCell align="right">{row.type}</TableCell>
-											<TableCell align="right" className="project-cell hover">
-												{row.lead}
+											<TableCell align="right">{project.key}</TableCell>
+											<TableCell align="right">
+												{project.actors[0]?.role}
 											</TableCell>
+											<TableCell align="right">{project.author.name}</TableCell>
 											<TableCell align="right">
 												<FadeMenu />
 											</TableCell>
 										</TableRow>
 									);
 								})}
-								{emptyRows > 0 && (
-									<TableRow
-										style={{
-											height: (dense ? 33 : 53) * emptyRows,
-										}}
-									>
-										<TableCell colSpan={6} />
-									</TableRow>
-								)}
 							</TableBody>
 						</Table>
 					</TableContainer>
 					<TablePagination
 						rowsPerPageOptions={[5, 10, 25]}
 						component="div"
-						count={rows.length}
+						count={projects.length}
 						rowsPerPage={rowsPerPage}
 						page={page}
 						onPageChange={handleChangePage}

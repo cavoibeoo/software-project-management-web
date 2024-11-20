@@ -1,10 +1,6 @@
 import * as React from "react";
-import { cookies } from "next/headers";
 
 export default async function MeProfile() {
-	const cookieStore = cookies();
-	const sessionToken = cookieStore.get("sessionToken");
-	console.log(sessionToken);
 	return (
 		<>
 			<div className="breadcrumb-card">

@@ -1,3 +1,4 @@
+
 "use strict";
 
 import Project from "./../models/project.js";
@@ -102,6 +103,7 @@ const updateIssueType = async (project, data) => {
 
         let issueType = foundProject.issueTypes.id(getObjectId(project?.issueTypeId));
         let clonedIssueType = issueType.toObject();
+
         if (!issueType) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Issue type not found");
         }
@@ -138,6 +140,7 @@ const updateIssueType = async (project, data) => {
     }
 };
 
+
 const deleteIssueType = async (data, newData) => {
     try {
         let prjId = getObjectId(data?.prjId);
@@ -146,6 +149,7 @@ const deleteIssueType = async (data, newData) => {
         if (!project) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Issue type not found.");
         }
+
         let previousIssueType = project.issueTypes.id(issueTypeId);
         if (previousIssueType.isDefault) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot delete default issue type.");

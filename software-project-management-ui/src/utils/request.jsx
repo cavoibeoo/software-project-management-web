@@ -1,5 +1,5 @@
 import axios from "axios";
 
-export const loginRequest = axios.create({
-	login_Base_URL: "localhost:3001/",
-});
+export const authRequest = axios.create({
+	baseURL: "http://localhost:3001/api/auth",
+

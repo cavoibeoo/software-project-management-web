@@ -26,6 +26,7 @@ router.put(
     checkPermission(Permission.UPDATE_ISSUE_TYPE),
     validation(validationSchema.issueTypeUpdate),
     upload.single("img"),
+
     controller.updateIssueType
 );
 router.delete(

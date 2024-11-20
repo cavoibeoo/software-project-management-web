@@ -8,10 +8,7 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import { toast } from "react-toastify";
 import { Backlog } from "./BackLog/Backlog";
-import {
-	SortableContext,
-	verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext } from "@dnd-kit/sortable";
 
 export const BacklogList: React.FC<{
 	backlogs: {
@@ -49,7 +46,7 @@ export const BacklogList: React.FC<{
 
 	return (
 		<Stack spacing={1}>
-			<SortableContext items={backlogs} strategy={verticalListSortingStrategy}>
+			<SortableContext items={backlogs}>
 				{backlogs.map((backlog) => (
 					<Backlog
 						key={backlog.id}

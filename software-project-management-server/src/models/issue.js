@@ -20,6 +20,7 @@ const IssueSchema = mongoose.Schema(
                     name: { type: String, required: true },
                 },
                 fields: { type: mongoose.Schema.Types.Mixed },
+
                 workFlow: {
                     // ref Workflow
                     type: String,

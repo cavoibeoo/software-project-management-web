@@ -5,6 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+import { CheckCookieServices } from "@/api-services/AuthServices";
+import { Box } from "@mui/material";
+
 const Navbar: React.FC = () => {
 	const pathname = usePathname();
 
@@ -46,10 +49,14 @@ const Navbar: React.FC = () => {
 							</span>
 						</button>
 						<div className="other-options">
-							<Link href="/authentication/sign-in/" className="fp-outlined-btn">
+							<Box
+								component="div"
+								onClick={() => CheckCookieServices()}
+								className="fp-outlined-btn"
+							>
 								<i className="material-symbols-outlined">login</i>
 								Login
-							</Link>
+							</Box>
 
 							<Link href="/authentication/sign-up/" className="fp-btn">
 								<i className="material-symbols-outlined">person</i>

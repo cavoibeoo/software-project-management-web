@@ -24,6 +24,7 @@ import SupportIcon from "@mui/icons-material/Support";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { LogoutServices } from "@/api-services/AuthServices";
 
 interface ProfileProps {}
 
@@ -39,21 +40,9 @@ const Profile: React.FC<ProfileProps> = () => {
 		setAnchorEl(null);
 	};
 
-	const handleLogout = (event: any) => {
+	const handleLogout = async (event: any) => {
 		event.preventDefault();
-		try {
-			axios.get("http://localhost:3001/api/auth/logout", {
-				withCredentials: true,
-			});
-
-			window.location.href = "/authentication/logout/";
-			toast.success("Sucessful logout!");
-		} catch (error) {
-			if (axios.isAxiosError(error) && error.response) {
-			} else {
-				toast.error("Logout Không Thành Công!");
-			}
-		}
+		LogoutServices();
 	};
 
 	return (

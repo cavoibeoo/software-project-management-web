@@ -12,72 +12,30 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { cookies } from "next/headers";
-import { log } from "console";
+import {
+	FormLoginServices,
+	GGLoginServices,
+} from "@/api-services/AuthServices";
+import { validateEmail, validatePassword } from "./formValidation";
 
 const SignInForm: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
 
-	const handleSubmit = async (event: React.FormEvent) => {
+	const handleLoginForm = async (event: React.FormEvent) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget as HTMLFormElement);
-
-		try {
-			const response = await axios.post(
-				"http://localhost:3001/api/auth/login",
-				{
-					email: formData.get("email"),
-					password: formData.get("password"),
-				},
-				{ withCredentials: true }
-			);
-			console.log(response);
-
-			window.location.href = "/your-work";
-			toast.success("Sucessful signing in!");
-		} catch (error) {
-			if (axios.isAxiosError(error) && error.response) {
-				const statusCode = error.response.status;
-				if (statusCode === 400) {
-					toast.error("User not existed!");
-				} else if (statusCode === 401) {
-					toast.error("Invalid Password!");
-				} else if (statusCode === 422) {
-					toast.error("Please Input with correct form!");
-				}
-			} else {
-				toast.error("Đăng Nhập Không Thành Công!");
-			}
-		}
+		FormLoginServices(formData.get("email"), formData.get("password"));
 	};
+
+
 	const handleLoginWithGG = async (event: React.FormEvent) => {
 		event.preventDefault();
-
-		try {
-			window.location.href = "http://localhost:3001/api/auth/google";
-			const response = await axios.get(
-				"http://localhost:3001/api/auth/google",
-				{ withCredentials: true }
-			);
-			console.log(response);
-
-			toast.success("Sucessful signing in!");
-		} catch (error) {
-			if (axios.isAxiosError(error) && error.response) {
-				const statusCode = error.response.status;
-				if (statusCode === 400) {
-					toast.error("User not existed!");
-				}
-			} else {
-				toast.error("Đăng Nhập Không Thành Công!");
-			}
-		}
+		GGLoginServices();
 	};
+
 	return (
 		<>
 			{console.log(document.cookie)}
@@ -238,7 +196,7 @@ const SignInForm: React.FC = () => {
 									</Button>
 								</Box>
 
-								<Box component="form" onSubmit={handleSubmit}>
+								<Box component="form" onSubmit={handleLoginForm}>
 									<Box mb="15px">
 										<FormControl fullWidth>
 											<Typography
@@ -275,20 +233,10 @@ const SignInForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const email = e.target.value;
-													const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-													if (!emailPattern.test(email)) {
-														const emailErrorElement =
-															document.getElementById("emailError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText =
-																"Email không hợp lệ!";
-														}
-													} else {
-														const emailErrorElement =
-															document.getElementById("emailError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText = "";
-														}
+													const emailErrorElement =
+														document.getElementById("emailError");
+													if (emailErrorElement) {
+														emailErrorElement.innerText = validateEmail(email);
 													}
 												}}
 											/>
@@ -340,21 +288,11 @@ const SignInForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const password = e.target.value;
-													const passwordPattern =
-														/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/; // Password must be at least 6 characters and contain a special character
-													if (!passwordPattern.test(password)) {
-														const passwordErrorElement =
-															document.getElementById("passwordError");
-														if (passwordErrorElement) {
-															passwordErrorElement.innerText =
-																"Password must be at least 6 characters and include a special character!";
-														}
-													} else {
-														const passwordErrorElement =
-															document.getElementById("passwordError");
-														if (passwordErrorElement) {
-															passwordErrorElement.innerText = "";
-														}
+													const passwordErrorElement =
+														document.getElementById("passwordError");
+													if (passwordErrorElement) {
+														passwordErrorElement.innerText =
+															validatePassword(password);
 													}
 												}}
 												InputProps={{
