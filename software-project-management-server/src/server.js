@@ -15,28 +15,28 @@ import passport from "passport";
 const START_SERVER = () => {
 	const app = express();
 
-	// Configure express-session middleware
-	app.use(
-		session({
-			secret: "your-secret-key", // Replace with a strong secret key
-			resave: false,
-			saveUninitialized: true,
-			cookie: { secure: false }, // Set to true if using HTTPS
-		})
-	);
-	app.use(passport.initialize());
-	// app.use(passport.session());
-	app.use(express.json({ extended: true }));
-	app.use(
-		cors({
-			origin: "http://localhost:3000",
-			credentials: true,
-		})
-	);
-	app.use(express.urlencoded({ extended: true }));
-	app.use(cookieParser());
-	app.use(morgan("combined"));
-	const port = config.port;
+    // Configure express-session middleware
+    app.use(
+        session({
+            secret: "your-secret-key", // Replace with a strong secret key
+            resave: false,
+            saveUninitialized: true,
+            cookie: { secure: false }, // Set to true if using HTTPS
+        })
+    );
+    app.use(passport.initialize());
+    // app.use(passport.session());
+    app.use(express.json({ extended: true }));
+    app.use(
+        cors({
+            origin: "http://localhost:3000",
+            credentials: true,
+        })
+    );
+    app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
+    app.use(morgan("combined"));
+    const port = config.port;
 
 	routes(app);
 

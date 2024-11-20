@@ -30,6 +30,7 @@ const SignInForm: React.FC = () => {
 		FormLoginServices(formData.get("email"), formData.get("password"));
 	};
 
+
 	const handleLoginWithGG = async (event: React.FormEvent) => {
 		event.preventDefault();
 		GGLoginServices();

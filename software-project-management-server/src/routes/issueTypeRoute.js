@@ -8,6 +8,7 @@ import * as validationSchema from "../validations/issueTypeValidation.js";
 import checkPermission from "../middlewares/checkProjectPermission.js";
 import Permission from "../utils/permission.js";
 import checkStatus from "../middlewares/checkProjectStatus.js";
+import { upload } from "../middlewares/uploadImgMiddleware.js";
 const router = express.Router();
 
 router.get("/get-all/:prjId", checkStatus, checkPermission(), controller.getIssueType);
@@ -23,6 +24,9 @@ router.put(
     "/:prjId/:issueTypeId",
     checkStatus,
     checkPermission(Permission.UPDATE_ISSUE_TYPE),
+    validation(validationSchema.issueTypeUpdate),
+    upload.single("img"),
+
     controller.updateIssueType
 );
 router.delete(

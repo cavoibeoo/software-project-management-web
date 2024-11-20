@@ -4,6 +4,7 @@ import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import User from "./../models/user.js";
 import getObjectId from "../utils/getObjectId.js";
+import Sprint from "../models/sprint.js";
 import mongoose from "mongoose";
 
 const getAllIssue = async (data) => {
@@ -71,13 +72,31 @@ const createIssue = async (project, data) => {
 
 const updateIssue = async (params, data) => {
     try {
-        let issue = await Issue.findOneAndUpdate(
-            { project: getObjectId(params.prjId), "issues._id": getObjectId(params.issueId) },
-            { $set: { "issues.$": data } }, // Use the positional $ operator to target the matching issue
-            { new: true } // Optionally return the updated document
-        );
-        console.log(issue);
-        return issue;
+        if (data?.sprint) {
+            let sprint = await Sprint.findOne({ _id: getObjectId(data.sprint) });
+            if (!data.sprint) {
+                throw new ApiError(StatusCodes.NOT_FOUND, "Sprint not found");
+            }
+            data.sprint = getObjectId(data.sprint);
+        }
+
+        let foundedIssue = await Issue.findOne({
+            project: getObjectId(params.prjId),
+            "issues._id": getObjectId(params.issueId),
+        });
+        let issue = foundedIssue.issues[0];
+
+        issue.key = data?.key || issue?.key;
+        issue.summary = data?.summary || issue?.summary;
+        issue.description = data?.description || issue?.description;
+        issue.issueType = data?.issueType || issue?.issueType;
+        issue.fields = data?.fields || issue?.fields;
+        issue.workFlow = data?.workFlow || issue?.workFlow;
+        issue.parent = data?.parent || issue?.parent;
+        issue.sprint = data?.sprint == "" ? null : data?.sprint || issue?.sprint;
+        issue.comments = data?.comments || issue?.comments;
+
+        return foundedIssue.save();
     } catch (error) {
         throw error;
     }
