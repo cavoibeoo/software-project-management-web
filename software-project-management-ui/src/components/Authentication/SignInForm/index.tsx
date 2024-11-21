@@ -30,7 +30,6 @@ const SignInForm: React.FC = () => {
 		FormLoginServices(formData.get("email"), formData.get("password"));
 	};
 
-
 	const handleLoginWithGG = async (event: React.FormEvent) => {
 		event.preventDefault();
 		GGLoginServices();
@@ -38,7 +37,6 @@ const SignInForm: React.FC = () => {
 
 	return (
 		<>
-			{console.log(document.cookie)}
 			<Box
 				className="auth-main-wrapper sign-in-area"
 				sx={{
