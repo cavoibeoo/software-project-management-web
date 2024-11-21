@@ -3,7 +3,6 @@ import Project from "../models/project.js";
 import ApiError from "../utils/ApiError.js";
 import Issue from "../models/issue.js";
 
-
 const checkIssueFields = async (req, res, next) => {
     try {
         // query for issue type
@@ -21,7 +20,7 @@ const checkIssueFields = async (req, res, next) => {
             [type.name, type._id.toString()].includes(req.body.issueType)
         );
         if (!issueType) throw new ApiError(400, "Issue type not found.");
-        if (!req.body?.fields) throw new ApiError(400, "No fields provided.");
+        // if (!req.body?.fields) throw new ApiError(400, "No fields provided.");
 
         req.body.issueType = { _id: issueType._id, name: issueType.name, img: issueType.img };
 

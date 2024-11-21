@@ -6,7 +6,7 @@ const createSchema = Joi.object({
     description: Joi.string().optional(),
     issueType: Joi.string().required(),
     fields: Joi.any().optional(),
-    workFlow: Joi.string().optional(),
+    workflow: Joi.string().optional(),
     parent: Joi.string().optional(),
     sprint: Joi.string().optional(),
     comments: Joi.array()
@@ -25,7 +25,7 @@ const updateSchema = Joi.object({
     description: Joi.string().optional(),
     issueType: Joi.string().optional(),
     fields: Joi.any().optional(),
-    workFlow: Joi.string().optional(),
+    workflow: Joi.string().optional(),
     parent: Joi.string().optional(),
     sprint: Joi.string().allow("").optional(),
     comments: Joi.array()

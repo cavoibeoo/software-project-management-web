@@ -149,6 +149,10 @@ const changeProjectStatus = async (project, data, status) => {
         let prjId = getObjectId(project.prjId);
         let currentProject = await Project.findOne({ _id: prjId });
 
+        if (currentProject.isDefault) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot delete default project!");
+        }
+
         if (!currentProject) {
             throw new ApiError(StatusCodes.NOT_FOUND, `Project '${data.projectName}' not found!`);
         }
@@ -169,6 +173,10 @@ const hardDeleteProject = async (user, project, data) => {
         let userId = getObjectId(user?.userId);
         let prjId = getObjectId(project.prjId);
         let currentProject = await Project.findOne({ _id: prjId });
+
+        if (currentProject.isDefault) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot delete default project!");
+        }
 
         if (!currentProject) {
             throw new ApiError(StatusCodes.NOT_FOUND, `Project '${project.prjId}' not found!`);
