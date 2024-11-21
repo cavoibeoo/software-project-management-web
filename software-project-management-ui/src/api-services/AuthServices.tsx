@@ -23,19 +23,11 @@ export const CheckCookieServices = async () => {
 
 export const FormLoginServices = async (email: any, password: any) => {
 	try {
-		const response = await authRequest.post(
+		await authRequest.post(
 			"/login",
 			{
 				email: email,
 				password: password,
-			},
-			{ withCredentials: true }
-		);
-		console.log(response);
-		await NextRequest.post(
-			"/api/auth",
-			{
-				response: response,
 			},
 			{ withCredentials: true }
 		);
@@ -99,22 +91,6 @@ export const LogoutServices = async () => {
 			toast.error("Logout Không Thành Công!");
 		}
 	}
-};
-
-export const getAccessToken = () => {
-	const name = "accessToken=";
-	const decodedCookie = decodeURIComponent(document.cookie);
-	const cookies = decodedCookie.split(";");
-	for (let i = 0; i < cookies.length; i++) {
-		let cookie = cookies[i];
-		while (cookie.charAt(0) === " ") {
-			cookie = cookie.substring(1);
-		}
-		if (cookie.indexOf(name) === 0) {
-			return cookie.substring(name.length, cookie.length);
-		}
-	}
-	return "";
 };
 
 // -----------------------Register Services-----------------------
