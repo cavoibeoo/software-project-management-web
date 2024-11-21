@@ -21,7 +21,7 @@ const IssueSchema = mongoose.Schema(
                 },
                 fields: { type: mongoose.Schema.Types.Mixed },
 
-                workFlow: {
+                workflow: {
                     // ref Workflow
                     type: String,
                     default: "Todo",
