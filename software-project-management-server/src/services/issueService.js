@@ -80,6 +80,17 @@ const updateIssue = async (params, data) => {
             data.sprint = getObjectId(data.sprint);
         }
 
+        if (data?.workflow) {
+            if (
+                !(await Project.findOne({
+                    _id: getObjectId(params.prjId),
+                    "workflow.name": data.workflow,
+                }))
+            ) {
+                throw new ApiError(StatusCodes.NOT_FOUND, "Workflow not found");
+            }
+        }
+
         let foundedIssue = await Issue.findOne({
             project: getObjectId(params.prjId),
             "issues._id": getObjectId(params.issueId),
@@ -91,7 +102,7 @@ const updateIssue = async (params, data) => {
         issue.description = data?.description || issue?.description;
         issue.issueType = data?.issueType || issue?.issueType;
         issue.fields = data?.fields || issue?.fields;
-        issue.workFlow = data?.workFlow || issue?.workFlow;
+        issue.workflow = data?.workflow || issue?.workflow;
         issue.parent = data?.parent || issue?.parent;
         issue.sprint = data?.sprint == "" ? null : data?.sprint || issue?.sprint;
         issue.comments = data?.comments || issue?.comments;
