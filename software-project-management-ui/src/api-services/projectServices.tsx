@@ -30,35 +30,53 @@ export function useFetchProjects() {
 
 	return projects;
 }
-export function CreateProject() {
-	const [projects, setProjects] = useState([]);
+export function CreateProject(projectData: any) {
+	const createProject = async () => {
+		try {
+			const response = await axios.post(
+				"http://localhost:3001/api/project/create",
+				projectData,
+				{
+					headers: {
+						Authorization: `Bearer ${getTokenFromCookie()}`,
+					},
+					withCredentials: true,
+				}
+			);
+			toast.success("Successfully created project!");
+			return response.data;
+		} catch (error) {
+			toast.error("Failed to create project!");
+		}
+	};
 
-	useEffect(() => {
-		const createProject = async () => {
-			try {
-				const projectData = {
-					name: "Faker",
-					key: "faker",
-					img: "https://example.com/sample-project-image.png",
-				};
-				const response = await axios.post(
-					"http://localhost:3001/api/project/create",
-					projectData,
-					{
-						headers: {
-							Authorization: `Bearer ${getTokenFromCookie()}`,
-						},
-						withCredentials: true,
-					}
-				);
-				setProjects(response.data);
-			} catch (error) {
-				console.error("Error creating project:", error);
-			}
-		};
+	return createProject;
+}
 
-		createProject();
-	}, []);
+export function DeleteProject(projectId: string, projectName: string) {
+	const deleteProject = async () => {
+		try {
+			const response = await axios.delete(
+				"http://localhost:3001/api/project/temporary-delete/" + projectId,
+				{
+					data: {
+						projectName: projectName,
+					},
+					headers: {
+						Authorization: `Bearer ${getTokenFromCookie()}`,
+					},
+					withCredentials: true,
+				}
+			);
+			toast.success("Successfully deleted project!");
+			return response.data;
+		} catch (error) {
+			toast.error("Failed to delete project!");
+			console.log(error);
+			console.log(projectId);
+			console.log(projectName);
+		}
+	};
 
-	return projects;
+	return deleteProject;
 }

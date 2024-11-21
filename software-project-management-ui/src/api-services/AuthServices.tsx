@@ -13,7 +13,7 @@ export const CheckCookieServices = async () => {
 			window.location.href = "/your-work";
 			toast.success("You have already logged in!");
 		} else {
-			toast.success("Please Input your email and password!");
+			window.location.href = "/authentication/sign-in/";
 		}
 	} catch (error) {
 		window.location.href = "/authentication/sign-in/";
