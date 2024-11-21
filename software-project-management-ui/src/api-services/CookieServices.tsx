@@ -1,9 +1,6 @@
-"use client";
-
-import { useCookies } from "next-client-cookies";
-
-export const useFetchCookie = () => {
-	const cookies = useCookies();
-
-	return cookies.get("accessToken");
+export const getTokenFromCookie = () => {
+	return document.cookie
+		.split("; ")
+		.find((row) => row.startsWith("accessToken="))
+		?.split("=")[1];
 };

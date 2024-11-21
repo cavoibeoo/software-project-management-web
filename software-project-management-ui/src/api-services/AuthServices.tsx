@@ -1,4 +1,4 @@
-import { authRequest } from "@/utils/request";
+import { authRequest, NextRequest } from "@/utils/request";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -10,13 +10,14 @@ export const CheckCookieServices = async () => {
 			withCredentials: true,
 		});
 		if (response.data.isAuthenticated) {
-			toast.success("You have already logged in!");
 			window.location.href = "/your-work";
+			toast.success("You have already logged in!");
 		} else {
-			window.location.href = "/authentication/sign-in/";
+			toast.success("Please Input your email and password!");
 		}
 	} catch (error) {
 		window.location.href = "/authentication/sign-in/";
+		toast.success("Access Has Expired!");
 	}
 };
 
@@ -30,8 +31,14 @@ export const FormLoginServices = async (email: any, password: any) => {
 			},
 			{ withCredentials: true }
 		);
-		console.log(response.data);
-
+		console.log(response);
+		await NextRequest.post(
+			"/api/auth",
+			{
+				response: response,
+			},
+			{ withCredentials: true }
+		);
 		window.location.href = "/your-work";
 		toast.success("Sucessful signing in!");
 	} catch (error) {
@@ -76,9 +83,13 @@ export const GGLoginServices = async () => {
 
 export const LogoutServices = async () => {
 	try {
-		const response = await axios.get("http://localhost:3001/api/auth/logout", {
+		await authRequest.get("/logout", {
 			withCredentials: true,
 		});
+		document.cookie =
+			"accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+		document.cookie =
+			"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
 
 		window.location.href = "/authentication/logout/";
 		toast.success("Sucessful logout!");

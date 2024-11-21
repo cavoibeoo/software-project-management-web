@@ -1,32 +1,32 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useFetchCookie } from "./CookieServices";
+import { toast } from "react-toastify";
+import { getTokenFromCookie } from "./CookieServices";
 
 export function useFetchProjects() {
 	const [projects, setProjects] = useState([]);
-	const token = useFetchCookie();
 
 	useEffect(() => {
 		const fetchProjects = async () => {
 			try {
-				console.log(token);
 				const response = await axios.get(
 					"http://localhost:3001/api/project/my-projects",
 					{
 						headers: {
-							Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzNiMjBlNmRhNWI4NTAzY2QxODQ3NzIiLCJyb2xlIjoidXNlciIsImlhdCI6MTczMjA4OTk3MywiZXhwIjoxNzMyMDkwODczfQ.QHbtLCXa3YN71uXH9bDVDLYI8W-bzdsSnD1DmDevI3Q`,
+							Authorization: `Bearer ${getTokenFromCookie()}`,
 						},
 						withCredentials: true,
 					}
 				);
 				setProjects(response.data);
 			} catch (error) {
-				console.error("Error fetching projects:", error);
+				toast.error("Please login again!");
+				window.location.href = "/authentication/sign-in/";
 			}
 		};
 
 		fetchProjects();
-	}, [token]);
+	}, []);
 
 	return projects;
 }
@@ -46,7 +46,7 @@ export function CreateProject() {
 					projectData,
 					{
 						headers: {
-							Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`,
+							Authorization: `Bearer ${getTokenFromCookie()}`,
 						},
 						withCredentials: true,
 					}
