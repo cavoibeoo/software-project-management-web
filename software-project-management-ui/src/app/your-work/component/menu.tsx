@@ -35,7 +35,11 @@ import {
 	Grid,
 	Button,
 	TextField,
+	InputLabel,
+	Input,
 } from "@mui/material";
+import { DeleteProject } from "@/api-services/projectServices";
+import { toast } from "react-toastify";
 
 interface BootstrapDialogTitleProps {
 	children?: React.ReactNode;
@@ -74,13 +78,18 @@ function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
 		</DialogTitle>
 	);
 }
-
 BootstrapDialogTitle.propTypes = {
 	children: PropTypes.node,
 	onClose: PropTypes.func.isRequired,
 };
 
-export default function FadeMenu() {
+export default function FadeMenu({
+	_id,
+	projectName,
+}: {
+	_id: string;
+	projectName: string;
+}) {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -98,10 +107,16 @@ export default function FadeMenu() {
 	const handleCloseNotification = () => {
 		setOpenNotification(false);
 	};
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const [projectInput, setProjectInput] = useState("");
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// const data = new FormData(event.currentTarget);
-		// console.log();
+		if (projectInput === projectName) {
+			const deleteProject = DeleteProject(_id, projectName);
+			await deleteProject();
+			handleCloseNotification();
+		} else {
+			toast.error("Project name does not match!");
+		}
 	};
 
 	return (
@@ -181,7 +196,26 @@ export default function FadeMenu() {
 								className="bg-white"
 							>
 								<Grid container alignItems="center" spacing={2}>
-									<Grid item xs={12} mt={1}>
+									<Typography>
+										Please input <strong>{projectName}</strong> to Temporary
+										Delete
+									</Typography>
+									<TextField
+										sx={{ mt: 2 }}
+										label="Project Name"
+										variant="outlined"
+										fullWidth
+										value={projectInput}
+										onChange={(e) => setProjectInput(e.target.value)}
+									/>
+
+									<Grid
+										item
+										xs={12}
+										mt={1}
+										display="flex"
+										justifyContent="flex-end"
+									>
 										<Box
 											sx={{
 												display: "flex",
@@ -207,6 +241,7 @@ export default function FadeMenu() {
 											<Button
 												type="submit"
 												variant="contained"
+												component="button"
 												sx={{
 													textTransform: "capitalize",
 													borderRadius: "8px",

@@ -36,7 +36,10 @@ import {
 } from "@mui/material";
 import { ProjectNameContext } from "@/providers/ProjectNameProvider";
 import axios from "axios";
-import { useFetchProjects } from "../../../api-services/projectServices";
+import {
+	CreateProject,
+	useFetchProjects,
+} from "../../../api-services/projectServices";
 
 interface Data {
 	id: number;
@@ -391,7 +394,7 @@ export default function EnhancedTable() {
 						(row.lead && row.lead.toLowerCase().includes(search.toLowerCase()))
 				)
 				.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-		[sortedProjects, page, rowsPerPage, search]
+		[sortedProjects, page, rowsPerPage, search, projects]
 	);
 
 	// Modal
@@ -402,9 +405,21 @@ export default function EnhancedTable() {
 	const handleClose = () => {
 		setOpen(false);
 	};
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+	const fetchProjects = () => {
+		const fetchedProjects = useFetchProjects();
+		setSortedProjects([...fetchedProjects].sort(getComparator(order, orderBy)));
+	};
+
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// const data = new FormData(event.currentTarget);
+		const projectData = {
+			name: event.currentTarget.projectName.value,
+			key: event.currentTarget.projectKey.value,
+			img: "https://example.com/sample-project-image.png",
+		};
+		const createProject = CreateProject(projectData);
+		await createProject();
+		handleClose();
 	};
 
 	const projectName = useContext(ProjectNameContext);
@@ -435,8 +450,8 @@ export default function EnhancedTable() {
 					className={styles.inputSearch}
 					id="searchboxColor"
 					placeholder="Search here..."
-					value={search} // Đảm bảo rằng giá trị của ô tìm kiếm được liên kết với trạng thái
-					onChange={handleSearch} // Gọi hàm handleSearch khi có sự thay đổi
+					value={search}
+					onChange={handleSearch}
 					style={{
 						padding: "5px 38px 8px 10px",
 						border: "1px solid #a6adba",
@@ -483,7 +498,7 @@ export default function EnhancedTable() {
 												<Checkbox
 													onClick={(event) => handleClick(event, project.id)}
 													color="primary"
-													checked={isItemSelected} // Sử dụng checked để kiểm soát trạng thái
+													checked={isItemSelected}
 													inputProps={{
 														"aria-labelledby": labelId,
 													}}
@@ -524,7 +539,10 @@ export default function EnhancedTable() {
 											</TableCell>
 											<TableCell align="right">{project.author.name}</TableCell>
 											<TableCell align="right">
-												<FadeMenu />
+												<FadeMenu
+													_id={project._id}
+													projectName={project.name}
+												/>
 											</TableCell>
 										</TableRow>
 									);
