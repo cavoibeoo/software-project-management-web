@@ -38,7 +38,7 @@ import {
 	InputLabel,
 	Input,
 } from "@mui/material";
-import { DeleteProject } from "@/api-services/projectServices";
+import { MoveToTrash } from "@/api-services/projectServices";
 import { toast } from "react-toastify";
 
 interface BootstrapDialogTitleProps {
@@ -111,8 +111,8 @@ export default function FadeMenu({
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (projectInput === projectName) {
-			const deleteProject = DeleteProject(_id, projectName);
-			await deleteProject();
+			const moveToTrash = MoveToTrash(_id, projectName);
+			await moveToTrash();
 			handleCloseNotification();
 		} else {
 			toast.error("Project name does not match!");
