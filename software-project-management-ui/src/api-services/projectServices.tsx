@@ -22,8 +22,6 @@ export function useFetchProjects() {
 				setProjects(response.data);
 			} catch (error) {
 				await handleTokenExpired(error);
-				toast.error("Please login again!");
-				window.location.href = "/authentication/sign-in/";
 			}
 		};
 
