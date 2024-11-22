@@ -1,6 +1,7 @@
-import { authRequest, NextRequest } from "@/utils/request";
+import { authRequest } from "@/utils/request";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { getRefreshTokenFromCookie } from "./CookieServices";
 
 // -----------------------Login Services-----------------------
 
@@ -23,19 +24,11 @@ export const CheckCookieServices = async () => {
 
 export const FormLoginServices = async (email: any, password: any) => {
 	try {
-		const response = await authRequest.post(
+		await authRequest.post(
 			"/login",
 			{
 				email: email,
 				password: password,
-			},
-			{ withCredentials: true }
-		);
-		console.log(response);
-		await NextRequest.post(
-			"/api/auth",
-			{
-				response: response,
 			},
 			{ withCredentials: true }
 		);
@@ -101,20 +94,31 @@ export const LogoutServices = async () => {
 	}
 };
 
-export const getAccessToken = () => {
-	const name = "accessToken=";
-	const decodedCookie = decodeURIComponent(document.cookie);
-	const cookies = decodedCookie.split(";");
-	for (let i = 0; i < cookies.length; i++) {
-		let cookie = cookies[i];
-		while (cookie.charAt(0) === " ") {
-			cookie = cookie.substring(1);
-		}
-		if (cookie.indexOf(name) === 0) {
-			return cookie.substring(name.length, cookie.length);
+export const handleTokenExpired = async (error: any) => {
+	if (axios.isAxiosError(error) && error.response) {
+		const statusCode = error.response.status;
+		if (statusCode === 401) {
+			await RefreshToken();
 		}
 	}
-	return "";
+};
+
+export const RefreshToken = async () => {
+	try {
+		await authRequest.get("/refresh", {
+			headers: {
+				Authorization: `Bearer ${getRefreshTokenFromCookie()}`,
+			},
+			withCredentials: true,
+		});
+	} catch (error) {
+		document.cookie =
+			"accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+		document.cookie =
+			"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+		toast.error("Please login again!");
+		window.location.href = "/authentication/sign-in/";
+	}
 };
 
 // -----------------------Register Services-----------------------

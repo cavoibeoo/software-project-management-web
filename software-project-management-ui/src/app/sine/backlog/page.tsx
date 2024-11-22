@@ -58,10 +58,20 @@ import { toast } from "react-toastify";
 
 export default function Page({ projectName }: { projectName: string }) {
 	const breadcrumbs = [
-		<Link className="hover-underlined" key="1" color="inherit" href="">
+		<Link
+			className="hover-underlined"
+			key="1"
+			color="inherit"
+			href="/your-work/"
+		>
 			Projects
 		</Link>,
-		<Link className="hover-underlined" key="2" color="inherit" href="">
+		<Link
+			className="hover-underlined"
+			key="2"
+			color="inherit"
+			href="/sine/board/"
+		>
 			Sine_SPM
 		</Link>,
 		<Typography key="3" color="text.primary">
@@ -295,11 +305,7 @@ export default function Page({ projectName }: { projectName: string }) {
 					</Box>
 					<FormControlLabel
 						control={
-							<Switch
-								defaultChecked
-								checked={isEpicVisible}
-								onChange={handleSwitchChange}
-							/>
+							<Switch checked={isEpicVisible} onChange={handleSwitchChange} />
 						}
 						label="Epic"
 					></FormControlLabel>
