@@ -77,6 +77,17 @@ const changeActorRole = async (req, res, next) => {
     }
 };
 
+const updateProject = async (req, res, next) => {
+    try {
+        if (req?.file) req.body.img = req?.file;
+
+        let result = await projectService.updateProject(req.params, req.body);
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
 const archivedProject = async (req, res, next) => {
     try {
         let result = await projectService.changeProjectStatus(req.params, req.body, 2);
@@ -128,4 +139,5 @@ export {
     recoverDeletedProject,
     archivedProject,
     createDefaultProject,
+    updateProject,
 };

@@ -1,13 +1,16 @@
 "use strict";
 
 import Project from "./../models/project.js";
+import User from "./../models/user.js";
+import Issue from "../models/issue.js";
+import Sprint from "../models/sprint.js";
+
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../config/environment.js";
 import uploadImg from "../utils/uploadFirebaseImg.js";
-import User from "./../models/user.js";
 import getObjectId from "../utils/getObjectId.js";
 import Permission from "../utils/permission.js";
 
@@ -144,6 +147,39 @@ const addActor = async (project, data, isAdded) => {
     }
 };
 
+const updateProject = async (project, data) => {
+    try {
+        let prjId = getObjectId(project.prjId);
+
+        // upload img if exists then update the data in db
+        let uploadedImg = data?.img
+            ? await uploadImg(data?.img, "project", project._id)
+            : project.img;
+
+        let updateProject = await Project.findOneAndUpdate(
+            { _id: prjId },
+            {
+                $set: {
+                    name: data.name,
+                    key: data.key,
+                    img: uploadedImg,
+                },
+            },
+            { new: true }
+        )
+            .populate("author", "name email avatar ")
+            .populate("actors.user", "name email avatar");
+
+        if (!updateProject) {
+            throw new ApiError(StatusCodes.NOT_FOUND, `Project '${project.prjId}' not found!`);
+        }
+
+        return updateProject ? updateProject : null;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const changeProjectStatus = async (project, data, status) => {
     try {
         let prjId = getObjectId(project.prjId);
@@ -192,6 +228,10 @@ const hardDeleteProject = async (user, project, data) => {
         }
 
         let result = await Project.deleteOne({ _id: prjId });
+
+        await Issue.deleteMany({ project: prjId });
+        await Sprint.deleteMany({ project: prjId });
+
         return result.deletedCount > 0 ? { message: "Project deleted successfully" } : null;
     } catch (error) {
         throw error;
@@ -206,4 +246,5 @@ export {
     addActor,
     changeProjectStatus,
     hardDeleteProject,
+    updateProject,
 };

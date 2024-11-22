@@ -34,7 +34,7 @@ const updateIssueType = async (req, res, next) => {
     try {
         if (req?.file) req.body.img = req?.file;
 
-      let result = await issueTypeService.updateIssueType(req.params, req.body);
+        let result = await issueTypeService.updateIssueType(req.params, req.body);
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         next(error);
