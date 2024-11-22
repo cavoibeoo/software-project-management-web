@@ -20,7 +20,7 @@ const IssueSchema = mongoose.Schema(
                     name: { type: String, required: true },
                 },
                 fields: { type: mongoose.Schema.Types.Mixed },
-
+                assignee: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
                 workflow: {
                     // ref Workflow
                     type: String,
@@ -37,7 +37,10 @@ const IssueSchema = mongoose.Schema(
                 comments: [
                     {
                         comment: String,
-                        user: String,
+                        user: {
+                            type: mongoose.Schema.Types.ObjectId,
+                            ref: "User",
+                        },
                         createdAt: Date,
                     },
                 ],
