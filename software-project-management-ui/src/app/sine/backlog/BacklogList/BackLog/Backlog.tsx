@@ -7,6 +7,7 @@ import {
 	styled,
 	SelectChangeEvent,
 	Box,
+	Button,
 } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -20,6 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import "./Backlog.css";
 import CheckBox from "@mui/icons-material/CheckBox";
 import { Height, Opacity } from "@mui/icons-material";
+import IssueDetailDialog from "../../Dialogs/IssueDetailDialog/IssueDetailDialog";
 
 export const Backlog: React.FC<{
 	id: string;
@@ -160,9 +162,7 @@ export const Backlog: React.FC<{
 										</div>
 									</TableCell>
 									<TableCell style={{ border: "none" }} sx={{ width: "50%" }}>
-										<Link className="hover-underlined" color="inherit" href="">
-											{description}
-										</Link>
+										<IssueDetailDialog description={description} />
 									</TableCell>
 									<TableCell
 										style={{

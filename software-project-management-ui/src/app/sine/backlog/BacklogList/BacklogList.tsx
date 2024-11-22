@@ -1,6 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Input, LinearProgress, Paper, styled } from "@mui/material";
+import {
+	Button,
+	Input,
+	LinearProgress,
+	Paper,
+	styled,
+	Select,
+	MenuItem,
+	SelectChangeEvent,
+} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,10 +26,18 @@ export const BacklogList: React.FC<{
 		description: string;
 	}[];
 }> = ({ backlogs }) => {
-	const [newbacklogs, setNewBacklogs] = React.useState<string[]>([]);
-
+	const [createBacklogForm, setCreateBacklogForm] = React.useState<string[]>(
+		[]
+	);
+	const [showCreateBacklogButton, setShowCreateBacklogButton] =
+		React.useState(true);
 	const handleCreateBacklog = () => {
-		setNewBacklogs((prev) => [...prev, `Backlog ${prev.length + 1}`]);
+		setCreateBacklogForm((prev) => [...prev, `Backlog ${prev.length + 1}`]);
+		setShowCreateBacklogButton(false);
+	};
+	const handleRemoveBacklog = () => {
+		setCreateBacklogForm((prev) => prev.slice(0, -1));
+		setShowCreateBacklogButton(true);
 	};
 
 	const Item = styled(Paper)(({ theme }) => ({
@@ -40,8 +57,20 @@ export const BacklogList: React.FC<{
 		setLoading(true);
 		setTimeout(() => {
 			toast.success("Create Backlog Successful!");
+			handleRemoveBacklog();
 			setLoading(false);
 		}, 2000);
+		setShowCreateBacklogButton(true);
+	};
+
+	const [epicValue, setEpicValue] = useState<string>("0");
+	const [issueTypeValue, setIssueTypeValue] = useState<string>("0");
+
+	const handleEpicValueChange = (event: SelectChangeEvent) => {
+		setEpicValue(event.target.value as string);
+	};
+	const handleIssueTypeValueChange = (event: SelectChangeEvent) => {
+		setIssueTypeValue(event.target.value as string);
 	};
 
 	return (
@@ -56,7 +85,7 @@ export const BacklogList: React.FC<{
 					></Backlog>
 				))}
 			</SortableContext>
-			{newbacklogs.map((newbacklog, index) => (
+			{createBacklogForm.map((createBacklog, index) => (
 				<>
 					<Item className="backlogItem" style={{ padding: "0px 0px 0px 0px" }}>
 						<Table
@@ -75,57 +104,159 @@ export const BacklogList: React.FC<{
 									>
 										<div
 											style={{
-												paddingTop: "5px",
+												paddingTop: "6px",
 												display: "flex",
 												justifyContent: "center",
 											}}
 										>
-											<svg
-												width="20px"
-												height="20px"
-												style={{
-													marginRight: "5px",
+											<Select
+												labelId="product-type-label"
+												className="ItemSelectBg"
+												id="product-type"
+												size="small"
+												value={issueTypeValue}
+												onChange={handleIssueTypeValueChange}
+												sx={{
+													"& fieldset": {},
+													"& .MuiSelect-select": {
+														overflow: "hidden",
+														textOverflow: "ellipsis",
+														whiteSpace: "nowrap",
+													},
+													alignItems: "center",
 												}}
-												viewBox="0 0 16 16"
-												version="1.1"
-												xmlns="http://www.w3.org/2000/svg"
 											>
-												<defs></defs>
-												<g
-													id="Page-1"
-													stroke="none"
-													strokeWidth="1"
-													fill="none"
-													fillRule="evenodd"
-												>
-													<g id="task">
+												<MenuItem value={0}>
+													<svg
+														width="20px"
+														height="20px"
+														style={{
+															paddingTop: "6px",
+														}}
+														viewBox="0 0 16 16"
+														version="1.1"
+														xmlns="http://www.w3.org/2000/svg"
+													>
+														<defs></defs>
 														<g
-															id="Task"
-															transform="translate(1.000000, 1.000000)"
+															id="Page-1"
+															stroke="none"
+															strokeWidth="1"
+															fill="none"
+															fillRule="evenodd"
 														>
-															<rect
-																id="Rectangle-36"
-																fill="#4BADE8"
-																x="0"
-																y="0"
-																width="14"
-																height="14"
-																rx="2"
-															></rect>
-															<g
-																id="Page-1"
-																transform="translate(4.000000, 4.500000)"
-																stroke="#FFFFFF"
-																strokeWidth="2"
-																strokeLinecap="round"
-															>
-																<path d="M2,5 L6,0" id="Stroke-1"></path>
-																<path d="M2,5 L0,3" id="Stroke-3"></path>
+															<g id="task">
+																<g
+																	id="Task"
+																	transform="translate(1.000000, 1.000000)"
+																>
+																	<rect
+																		id="Rectangle-36"
+																		fill="#4BADE8"
+																		x="0"
+																		y="0"
+																		width="14"
+																		height="14"
+																		rx="2"
+																	></rect>
+																	<g
+																		id="Page-1"
+																		transform="translate(4.000000, 4.500000)"
+																		stroke="#FFFFFF"
+																		strokeWidth="2"
+																		strokeLinecap="round"
+																	>
+																		<path d="M2,5 L6,0" id="Stroke-1"></path>
+																		<path d="M2,5 L0,3" id="Stroke-3"></path>
+																	</g>
+																</g>
 															</g>
 														</g>
-													</g>
-												</g>
-											</svg>
+													</svg>
+												</MenuItem>
+												<MenuItem value={1}>
+													<svg
+														width="20px"
+														height="20px"
+														style={{
+															paddingTop: "6px",
+														}}
+														viewBox="0 0 16 16"
+														version="1.1"
+														xmlns="http://www.w3.org/2000/svg"
+													>
+														<g
+															id="Page-1"
+															stroke="none"
+															strokeWidth="1"
+															fill="none"
+															fillRule="evenodd"
+														>
+															<g id="story">
+																<g
+																	id="Story"
+																	transform="translate(1.000000, 1.000000)"
+																>
+																	<rect
+																		id="Rectangle-36"
+																		fill="#63BA3C"
+																		x="0"
+																		y="0"
+																		width="14"
+																		height="14"
+																		rx="2"
+																	></rect>
+																	<path
+																		d="M9,3 L5,3 C4.448,3 4,3.448 4,4 L4,10.5 C4,10.776 4.224,11 4.5,11 C4.675,11 4.821,10.905 4.91,10.769 L4.914,10.77 L6.84,8.54 C6.92,8.434 7.08,8.434 7.16,8.54 L9.086,10.77 L9.09,10.769 C9.179,10.905 9.325,11 9.5,11 C9.776,11 10,10.776 10,10.5 L10,4 C10,3.448 9.552,3 9,3"
+																		id="Page-1"
+																		fill="#FFFFFF"
+																	></path>
+																</g>
+															</g>
+														</g>
+													</svg>
+												</MenuItem>
+												<MenuItem value={2}>
+													<svg
+														width="20px"
+														height="20px"
+														style={{
+															paddingTop: "6px",
+														}}
+														viewBox="0 0 16 16"
+														version="1.1"
+														xmlns="http://www.w3.org/2000/svg"
+													>
+														<g
+															id="Page-1"
+															stroke="none"
+															strokeWidth="1"
+															fill="none"
+															fillRule="evenodd"
+														>
+															<g
+																id="Bug"
+																transform="translate(1.000000, 1.000000)"
+															>
+																<rect
+																	id="Rectangle-36"
+																	fill="#E5493A"
+																	x="0"
+																	y="0"
+																	width="14"
+																	height="14"
+																	rx="2"
+																></rect>
+																<path
+																	d="M10,7 C10,8.657 8.657,10 7,10 C5.343,10 4,8.657 4,7 C4,5.343 5.343,4 7,4 C8.657,4 10,5.343 10,7"
+																	id="Fill-2"
+																	fill="#FFFFFF"
+																></path>
+															</g>
+														</g>
+													</svg>
+												</MenuItem>
+											</Select>
 										</div>
 									</TableCell>
 									<TableCell style={{ border: "none" }}>
@@ -168,9 +299,11 @@ export const BacklogList: React.FC<{
 					</Item>
 				</>
 			))}
-			<Button className="createIssueBtn" onClick={handleCreateBacklog}>
-				+ Create Issue
-			</Button>
+			{showCreateBacklogButton ? (
+				<Button className="createIssueBtn" onClick={handleCreateBacklog}>
+					+ Create Issue
+				</Button>
+			) : null}
 		</Stack>
 	);
 };
