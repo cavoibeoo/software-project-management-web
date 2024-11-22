@@ -410,7 +410,6 @@ const IssueDetailDialog: React.FC<{ description: string }> = ({
 						<RichTextEditor
 							value={descriptionValue}
 							onChange={setDescriptionValue}
-							onBlur={() => setIsEditingDescription(false)}
 						/>
 					) : (
 						<TextField
@@ -571,7 +570,6 @@ const IssueDetailDialog: React.FC<{ description: string }> = ({
 							<RichTextEditor
 								value={commentValue}
 								onChange={setCommentValue}
-								onBlur={() => setIsEditingComment(false)}
 							/>
 						) : (
 							<TextField
