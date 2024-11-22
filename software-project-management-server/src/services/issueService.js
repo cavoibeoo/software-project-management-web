@@ -12,7 +12,14 @@ const getAllIssue = async (data) => {
         let complexIssues = await Issue.find(
             { project: getObjectId(data?.prjId) },
             { issues: 1, _id: 0 }
-        );
+        ).populate({
+            path: "issues",
+            populate: [
+                { path: "assignee", model: User },
+                { path: "comments.user", model: User },
+            ],
+            select: "name img",
+        });
         let issues = [];
 
         complexIssues.forEach((is) => {
@@ -31,8 +38,14 @@ const getIssueById = async (data) => {
         let complexIssues = await Issue.findOne(
             { project: getObjectId(data.prjId), "issues._id": getObjectId(data.issueId) }
             // { issues: { $elemMatch: { key: data.issueTypeId } } }
-        );
-        console.log(complexIssues);
+        ).populate({
+            path: "issues",
+            populate: [
+                { path: "assignee", model: User },
+                { path: "comments.user", model: User },
+            ],
+            select: "name img",
+        });
         return complexIssues ? complexIssues.issues[0] : {};
     } catch (error) {
         throw error;
@@ -89,6 +102,20 @@ const updateIssue = async (params, data) => {
             ) {
                 throw new ApiError(StatusCodes.NOT_FOUND, "Workflow not found");
             }
+        }
+
+        if (data?.assignee) {
+            let project = await Project.findOne({
+                _id: getObjectId(params.prjId),
+                actors: getObjectId(data.assignee),
+            });
+            if (!project) {
+                throw new ApiError(
+                    StatusCodes.FORBIDDEN,
+                    "Assignee is not an actor of the project"
+                );
+            }
+            data.assignee = getObjectId(data.assignee);
         }
 
         let foundedIssue = await Issue.findOne({

@@ -28,6 +28,7 @@ const updateSchema = Joi.object({
     workflow: Joi.string().optional(),
     parent: Joi.string().optional(),
     sprint: Joi.string().allow("").optional(),
+    assignee: Joi.string().optional(),
     comments: Joi.array()
         .items(
             Joi.object({
