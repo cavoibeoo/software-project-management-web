@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { getTokenFromCookie } from "./CookieServices";
+import { getAccessTokenFromCookie } from "./CookieServices";
+import { handleTokenExpired } from "./AuthServices";
 
 export function useFetchProjects() {
 	const [projects, setProjects] = useState([]);
@@ -13,13 +14,14 @@ export function useFetchProjects() {
 					"http://localhost:3001/api/project/my-projects",
 					{
 						headers: {
-							Authorization: `Bearer ${getTokenFromCookie()}`,
+							Authorization: `Bearer ${getAccessTokenFromCookie()}`,
 						},
 						withCredentials: true,
 					}
 				);
 				setProjects(response.data);
 			} catch (error) {
+				await handleTokenExpired(error);
 				toast.error("Please login again!");
 				window.location.href = "/authentication/sign-in/";
 			}
@@ -38,7 +40,7 @@ export function CreateProject(projectData: any) {
 				projectData,
 				{
 					headers: {
-						Authorization: `Bearer ${getTokenFromCookie()}`,
+						Authorization: `Bearer ${getAccessTokenFromCookie()}`,
 					},
 					withCredentials: true,
 				}
@@ -46,6 +48,7 @@ export function CreateProject(projectData: any) {
 			toast.success("Successfully created project!");
 			return response.data;
 		} catch (error) {
+			await handleTokenExpired(error);
 			toast.error("Failed to create project!");
 		}
 	};
@@ -63,7 +66,7 @@ export function DeleteProject(projectId: string, projectName: string) {
 						projectName: projectName,
 					},
 					headers: {
-						Authorization: `Bearer ${getTokenFromCookie()}`,
+						Authorization: `Bearer ${getAccessTokenFromCookie()}`,
 					},
 					withCredentials: true,
 				}
@@ -71,10 +74,8 @@ export function DeleteProject(projectId: string, projectName: string) {
 			toast.success("Successfully deleted project!");
 			return response.data;
 		} catch (error) {
+			await handleTokenExpired(error);
 			toast.error("Failed to delete project!");
-			console.log(error);
-			console.log(projectId);
-			console.log(projectName);
 		}
 	};
 

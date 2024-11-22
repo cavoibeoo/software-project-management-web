@@ -1,6 +1,7 @@
-import { authRequest, NextRequest } from "@/utils/request";
+import { authRequest } from "@/utils/request";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { getRefreshTokenFromCookie } from "./CookieServices";
 
 // -----------------------Login Services-----------------------
 
@@ -90,6 +91,32 @@ export const LogoutServices = async () => {
 		} else {
 			toast.error("Logout Không Thành Công!");
 		}
+	}
+};
+
+export const handleTokenExpired = async (error: any) => {
+	if (axios.isAxiosError(error) && error.response) {
+		const statusCode = error.response.status;
+		if (statusCode === 401) {
+			await RefreshToken();
+		}
+	}
+};
+
+export const RefreshToken = async () => {
+	try {
+		await authRequest.get("/refresh", {
+			headers: {
+				Authorization: `Bearer ${getRefreshTokenFromCookie()}`,
+			},
+			withCredentials: true,
+		});
+	} catch (error) {
+		document.cookie =
+			"accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+		document.cookie =
+			"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+		window.location.href = "/authentication/sign-in/";
 	}
 };
 
