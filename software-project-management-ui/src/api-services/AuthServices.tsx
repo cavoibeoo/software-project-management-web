@@ -106,9 +106,6 @@ export const handleTokenExpired = async (error: any) => {
 export const RefreshToken = async () => {
 	try {
 		await authRequest.get("/refresh", {
-			headers: {
-				Authorization: `Bearer ${getRefreshTokenFromCookie()}`,
-			},
 			withCredentials: true,
 		});
 	} catch (error) {
@@ -138,7 +135,6 @@ export const FormRegisterServices = async (
 			},
 			{ withCredentials: true }
 		);
-		console.log(response.data);
 		toast.success("Sucessful signing up!");
 	} catch (error) {
 		if (axios.isAxiosError(error) && error.response) {
