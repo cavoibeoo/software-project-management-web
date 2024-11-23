@@ -116,7 +116,7 @@ const SignInForm: React.FC = () => {
 								>
 									<Typography
 										variant="h1"
-										className="text-black"
+										className="text-all-black"
 										sx={{
 											fontSize: { xs: "22px", sm: "25px", lg: "28px" },
 											mb: "7px",
@@ -143,7 +143,7 @@ const SignInForm: React.FC = () => {
 								>
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -161,7 +161,7 @@ const SignInForm: React.FC = () => {
 
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -178,7 +178,7 @@ const SignInForm: React.FC = () => {
 
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -205,7 +205,7 @@ const SignInForm: React.FC = () => {
 													mb: "10px",
 													display: "block",
 												}}
-												className="text-black"
+												className="text-all-black"
 											>
 												Email Address
 											</Typography>
@@ -259,7 +259,7 @@ const SignInForm: React.FC = () => {
 													mb: "10px",
 													display: "block",
 												}}
-												className="text-black"
+												className="text-all-black"
 											>
 												Password
 											</Typography>
