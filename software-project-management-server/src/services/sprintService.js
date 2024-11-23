@@ -25,7 +25,7 @@ const getById = async (data) => {
             "issues.sprint": getObjectId(data?.sprintId),
             project: getObjectId(data?.prjId),
         });
-        console.log("complexIssues", complexIssues);
+        // console.log("complexIssues", complexIssues);
         foundSprint = foundSprint.toObject();
         foundSprint.issues = [];
 

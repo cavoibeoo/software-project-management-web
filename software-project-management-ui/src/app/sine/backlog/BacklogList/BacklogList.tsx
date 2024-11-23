@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import {
 	Button,
 	Input,
@@ -19,6 +19,8 @@ import { toast } from "react-toastify";
 import { Backlog } from "./BackLog/Backlog";
 import { SortableContext } from "@dnd-kit/sortable";
 
+import * as issueService from "@/api-services/issueServices";
+
 export const BacklogList: React.FC<{
 	backlogs: {
 		id: string;
@@ -31,6 +33,8 @@ export const BacklogList: React.FC<{
 	);
 	const [showCreateBacklogButton, setShowCreateBacklogButton] =
 		React.useState(true);
+	const [issueName, setIssueName] = useState<string>("");
+
 	const handleCreateBacklog = () => {
 		setCreateBacklogForm((prev) => [...prev, `Backlog ${prev.length + 1}`]);
 		setShowCreateBacklogButton(false);
@@ -53,8 +57,10 @@ export const BacklogList: React.FC<{
 
 	const [loading, setLoading] = useState(false);
 
-	const handleBacklogSubmit = () => {
+	const handleBacklogSubmit = async () => {
 		setLoading(true);
+		let issue = await issueService.createIssue({ summary: issueName });
+		console.log(issue);
 		setTimeout(() => {
 			toast.success("Create Backlog Successful!");
 			handleRemoveBacklog();
@@ -270,12 +276,15 @@ export const BacklogList: React.FC<{
 											/>
 										) : (
 											<Input
+												id="issueName"
 												placeholder="Backlog name.."
 												sx={{
 													width: "100%",
 													color: "white",
 												}}
 												aria-label="Name"
+												value={issueName}
+												onChange={(event) => setIssueName(event.target.value)}
 												onKeyDown={(event) => {
 													if (event.key === "Enter") {
 														handleBacklogSubmit();
@@ -283,6 +292,7 @@ export const BacklogList: React.FC<{
 														handleRemoveBacklog();
 													}
 												}}
+												autoFocus
 											/>
 										)}
 									</TableCell>

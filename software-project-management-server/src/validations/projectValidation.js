@@ -42,7 +42,11 @@ const createProject = Joi.object({
     ),
 }).strict();
 
-const updateProject = Joi.object({}).strict();
+const updateProject = Joi.object({
+    key: Joi.string().optional(),
+    name: Joi.string().optional(),
+    img: Joi.string().optional(),
+});
 const addMember = Joi.object({
     email: Joi.string().email().required().max(50).trim().strict(),
     role: Joi.string().required(),

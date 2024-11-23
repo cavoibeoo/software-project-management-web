@@ -8,6 +8,8 @@ import * as validationSchema from "../validations/projectValidation.js";
 import checkPermission from "../middlewares/checkProjectPermission.js";
 import Permission from "../utils/permission.js";
 import checkStatus from "../middlewares/checkProjectStatus.js";
+import { upload } from "../middlewares/uploadImgMiddleware.js";
+
 const router = express.Router();
 
 router.get("/", authorization(["admin"]), controller.getAllProject);
@@ -36,6 +38,16 @@ router.put(
     checkPermission(Permission.EDIT_ACTOR_ROLE),
     validation(validationSchema.addMember),
     controller.changeActorRole
+);
+
+router.put(
+    "/update/:prjId",
+    checkStatus,
+    checkPermission(Permission.UPDATE_PROJECT),
+    validation(validationSchema.updateProject),
+    upload.single("img"),
+
+    controller.updateProject
 );
 
 router.delete(

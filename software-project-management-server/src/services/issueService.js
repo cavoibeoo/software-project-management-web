@@ -12,7 +12,10 @@ const getAllIssue = async (data) => {
         let complexIssues = await Issue.find(
             { project: getObjectId(data?.prjId) },
             { issues: 1, _id: 0 }
-        );
+        )
+            .populate("issues.assignee", "_id name email avatar")
+            .populate("issues.comments.user", "_id name email avatar")
+            .populate("issues.sprint", "_id name");
         let issues = [];
 
         complexIssues.forEach((is) => {
@@ -31,8 +34,11 @@ const getIssueById = async (data) => {
         let complexIssues = await Issue.findOne(
             { project: getObjectId(data.prjId), "issues._id": getObjectId(data.issueId) }
             // { issues: { $elemMatch: { key: data.issueTypeId } } }
-        );
-        console.log(complexIssues);
+        )
+            .populate("issues.assignee", "_id name email avatar")
+            .populate("issues.comments.user", "_id name email avatar")
+            .populate("issues.sprint", "_id name");
+
         return complexIssues ? complexIssues.issues[0] : {};
     } catch (error) {
         throw error;
@@ -43,8 +49,6 @@ const createIssue = async (project, data) => {
     let projectId = getObjectId(project?.prjId);
     let dbProject = await Project.findOne({ _id: projectId });
     let dbIssues = await Issue.find({ project: projectId }).sort({ count: 1 });
-
-    console.log(data);
 
     let issue = {
         summary: data?.summary,
@@ -73,8 +77,12 @@ const createIssue = async (project, data) => {
 const updateIssue = async (params, data) => {
     try {
         if (data?.sprint) {
-            let sprint = await Sprint.findOne({ _id: getObjectId(data.sprint) });
-            if (!data.sprint) {
+            if (
+                !(await Sprint.findOne({
+                    project: params.prjId,
+                    _id: getObjectId(data.sprint),
+                }))
+            ) {
                 throw new ApiError(StatusCodes.NOT_FOUND, "Sprint not found");
             }
             data.sprint = getObjectId(data.sprint);
@@ -91,10 +99,27 @@ const updateIssue = async (params, data) => {
             }
         }
 
+        if (data?.assignee) {
+            let project = await Project.findOne({
+                _id: getObjectId(params.prjId),
+                actors: getObjectId(data.assignee),
+            });
+            if (!project) {
+                throw new ApiError(
+                    StatusCodes.FORBIDDEN,
+                    "Assignee is not an actor of the project"
+                );
+            }
+            data.assignee = getObjectId(data.assignee);
+        }
+
         let foundedIssue = await Issue.findOne({
             project: getObjectId(params.prjId),
             "issues._id": getObjectId(params.issueId),
         });
+        if (!foundedIssue) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Issue not found");
+        }
         let issue = foundedIssue.issues[0];
 
         issue.key = data?.key || issue?.key;
