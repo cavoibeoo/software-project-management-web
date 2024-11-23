@@ -36,7 +36,8 @@ import {
 } from "@mui/material";
 import { ProjectNameContext } from "@/providers/ProjectNameProvider";
 import axios from "axios";
-import { CreateProject, useFetchProjects } from "../../../api-services/projectServices";
+import { createProject } from "../../../api-services/projectServices";
+import * as projectService from "../../../api-services/projectServices";
 import { RefreshToken } from "@/api-services/AuthServices";
 
 interface Data {
@@ -78,9 +79,23 @@ export default function EnhancedTable() {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [search, setSearch] = React.useState("");
+    const [projects, setProjects] = useState([]);
 
-    const projects = useFetchProjects();
+    const [update, setUpdate] = useState(false);
     const [sortedProjects, setSortedProjects] = useState<Data[]>([]);
+
+    useEffect(() => {
+        const fetchAPI = async () => {
+            const result = await projectService.fetchAllProjects();
+            console.log(result);
+            setProjects(result);
+        };
+        fetchAPI();
+    }, [update]);
+
+    const handleDeleteSuccess = () => {
+        setUpdate(!update); // Refresh projects after deletion
+    };
 
     useEffect(() => {
         if (projects) {
@@ -382,10 +397,6 @@ export default function EnhancedTable() {
     const handleClose = () => {
         setOpen(false);
     };
-    const fetchProjects = () => {
-        const fetchedProjects = useFetchProjects();
-        setSortedProjects([...fetchedProjects].sort(getComparator(order, orderBy)));
-    };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -394,9 +405,9 @@ export default function EnhancedTable() {
             key: event.currentTarget.projectKey.value,
             img: "https://example.com/sample-project-image.png",
         };
-        const createProject = CreateProject(projectData);
-        await createProject();
+        await createProject(projectData);
         handleClose();
+        setUpdate(!update);
     };
 
     const projectName = useContext(ProjectNameContext);
@@ -452,7 +463,7 @@ export default function EnhancedTable() {
                                 orderBy={orderBy}
                                 onSelectAllClick={handleSelectAllClick}
                                 onRequestSort={handleRequestSort}
-                                rowCount={projects.length}
+                                rowCount={projects?.length || 0}
                             />
                             <TableBody>
                                 {visibleRows.map((project: any, index: any) => {
@@ -521,6 +532,7 @@ export default function EnhancedTable() {
                                                 <FadeMenu
                                                     _id={project._id}
                                                     projectName={project.name}
+                                                    onDeleteSuccess={handleDeleteSuccess}
                                                 />
                                             </TableCell>
                                         </TableRow>
@@ -532,7 +544,7 @@ export default function EnhancedTable() {
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
-                        count={projects.length}
+                        count={projects?.length || 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}

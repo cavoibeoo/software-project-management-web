@@ -68,6 +68,7 @@ type Issue = {
 
 export default function Page({ projectName }: { projectName: string }) {
     const [issue, setIssue] = useState<Issue[]>([]);
+    const [update, setUpdate] = useState(false);
 
     useEffect(() => {
         const fetchAPI = async () => {
@@ -75,7 +76,7 @@ export default function Page({ projectName }: { projectName: string }) {
             setIssue(result);
         };
         fetchAPI();
-    }, [issue]);
+    }, [update]);
 
     useEffect(() => {
         const mappedBacklogs = issue.map((item) => ({
