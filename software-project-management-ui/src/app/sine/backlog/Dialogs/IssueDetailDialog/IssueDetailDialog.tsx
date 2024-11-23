@@ -30,7 +30,7 @@ import { deepPurple } from "@mui/material/colors";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
-import MoreOption from "./Component/moreOption";
+import MoreOption from "./Component/MoreOption";
 
 const IssueDetailDialog: React.FC<{ description: string }> = ({
 	description,
@@ -567,10 +567,7 @@ const IssueDetailDialog: React.FC<{ description: string }> = ({
 							</Avatar>
 						</StyledBadge>
 						{isEditingComment ? (
-							<RichTextEditor
-								value={commentValue}
-								onChange={setCommentValue}
-							/>
+							<RichTextEditor value={commentValue} onChange={setCommentValue} />
 						) : (
 							<TextField
 								label="Add a comment"

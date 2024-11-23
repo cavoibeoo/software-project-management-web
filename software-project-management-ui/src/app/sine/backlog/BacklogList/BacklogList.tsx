@@ -279,6 +279,8 @@ export const BacklogList: React.FC<{
 												onKeyDown={(event) => {
 													if (event.key === "Enter") {
 														handleBacklogSubmit();
+													} else if (event.key === "Escape") {
+														handleRemoveBacklog();
 													}
 												}}
 											/>
