@@ -49,8 +49,9 @@ const getById = async (data, user) => {
 
 const getCurrentUserProjects = async (user, data, status) => {
     try {
+        console.log(data);
         let userId = getObjectId(user?.userId);
-        let pageSize = data?.pageSize ? data.pageSize : 10;
+        let pageSize = data?.pageSize ? data.pageSize : 100;
         let page = data?.page ? data.page : 1;
 
         let result = await Project.find({ "actors.user": userId, status: status })
@@ -87,6 +88,7 @@ const createProject = async (user, data) => {
 
         project = new Project({
             ...data,
+            img: defaultProject.img,
             author: userId,
             actors: [{ user: userId, role: "Admin" }],
             roles: data.roles ? data.roles : defaultProject.roles,
@@ -152,9 +154,7 @@ const updateProject = async (project, data) => {
         let prjId = getObjectId(project.prjId);
 
         // upload img if exists then update the data in db
-        let uploadedImg = data?.img
-            ? await uploadImg(data?.img, "project", project._id)
-            : project.img;
+        let uploadedImg = data?.img ? await uploadImg(data?.img, "project", prjId) : project.img;
 
         let updateProject = await Project.findOneAndUpdate(
             { _id: prjId },
