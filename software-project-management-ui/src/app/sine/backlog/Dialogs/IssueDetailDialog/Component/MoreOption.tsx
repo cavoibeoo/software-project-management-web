@@ -3,43 +3,20 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
 import React, { useState, FormEvent } from "react";
-import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import NextLink from "next/link";
-import { alpha } from "@mui/material/styles";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Tooltip from "@mui/material/Tooltip";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { visuallyHidden } from "@mui/utils";
-import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
-import { SelectChangeEvent } from "@mui/material/Select";
 import {
 	Box,
 	Typography,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TablePagination,
-	TableRow,
-	Paper,
 	IconButton,
-	TableHead,
-	Checkbox,
 	Dialog,
 	DialogTitle,
 	Grid,
 	Button,
-	TextField,
-	InputLabel,
-	Input,
 } from "@mui/material";
-import { MoveToTrash } from "@/api-services/projectServices";
-import { toast } from "react-toastify";
 
 interface BootstrapDialogTitleProps {
 	children?: React.ReactNode;
@@ -83,13 +60,7 @@ BootstrapDialogTitle.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-export default function FadeMenu({
-	_id,
-	projectName,
-}: {
-	_id: string;
-	projectName: string;
-}) {
+export default function MoreOption() {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -107,16 +78,9 @@ export default function FadeMenu({
 	const handleCloseNotification = () => {
 		setOpenNotification(false);
 	};
-	const [projectInput, setProjectInput] = useState("");
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		if (projectInput === projectName) {
-			const moveToTrash = MoveToTrash(_id, projectName);
-			await moveToTrash();
-			handleCloseNotification();
-		} else {
-			toast.error("Project name does not match!");
-		}
+		handleCloseNotification();
 	};
 
 	return (
@@ -141,12 +105,10 @@ export default function FadeMenu({
 					onClose={handleClose}
 					TransitionComponent={Fade}
 				>
+					<MenuItem onClick={handleClickOpenNotification}>Delete</MenuItem>
 					<NextLink href="/your-work/project-setting/">
-						<MenuItem>Project settings</MenuItem>
+						<MenuItem>Configure</MenuItem>
 					</NextLink>
-					<MenuItem onClick={handleClickOpenNotification}>
-						Move to trash
-					</MenuItem>
 				</Menu>
 			</div>
 			<BootstrapDialog
@@ -176,7 +138,7 @@ export default function FadeMenu({
 							}}
 							className="text-black"
 						>
-							Move to Trash
+							Delete Baclog
 						</Typography>
 
 						<IconButton
@@ -198,19 +160,6 @@ export default function FadeMenu({
 								className="bg-white"
 							>
 								<Grid container alignItems="center" spacing={2}>
-									<Typography>
-										Please input <strong>{projectName}</strong> to Temporary
-										Delete
-									</Typography>
-									<TextField
-										sx={{ mt: 2 }}
-										label="Project Name"
-										variant="outlined"
-										fullWidth
-										value={projectInput}
-										onChange={(e) => setProjectInput(e.target.value)}
-									/>
-
 									<Grid
 										item
 										xs={12}
@@ -253,7 +202,7 @@ export default function FadeMenu({
 													color: "#fff !important",
 												}}
 											>
-												Move
+												Delete
 											</Button>
 										</Box>
 									</Grid>

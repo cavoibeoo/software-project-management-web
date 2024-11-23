@@ -62,6 +62,9 @@
 .dark-theme .bg-white {
 	background-color: #0c1427 !important;
 }
+.dark-theme .allwhite {
+	background-color: #fff !important;
+}
 .dark-theme .text-black {
 	color: var(--whiteColor) !important;
 }
@@ -412,6 +415,16 @@
 }
 .dark-theme .progressSelectBg:hover {
 	background-color: #0bb4b2fa;
+	color: #fff;
+}
+
+.dark-theme .ItemSelectBg {
+	background-color: #15334a;
+	color: #fff;
+	border: none;
+}
+.dark-theme .ItemSelectBg:hover {
+	background-color: #193f5b;
 	color: #fff;
 }
 
