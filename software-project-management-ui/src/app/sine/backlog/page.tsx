@@ -56,7 +56,8 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { Backlog } from "./BacklogList/BackLog/Backlog";
 import { toast } from "react-toastify";
 
-import { fetchIssue } from "@/api-services/issueServices";
+import * as issueService from "@/api-services/issueServices";
+import * as sprintService from "@/api-services/sprintService";
 import { set } from "react-hook-form";
 
 type Issue = {
@@ -69,10 +70,24 @@ type Issue = {
 export default function Page({ projectName }: { projectName: string }) {
     const [issue, setIssue] = useState<Issue[]>([]);
     const [update, setUpdate] = useState(false);
+    const [fetchedSprint, setFetchedSprint] = useState([]);
+    const [issueName, setIssueName] = useState("");
+    useEffect(() => {
+        const fetchAPI = async () => {
+            const result = await sprintService.fetchAllSprint();
+            setFetchedSprint(result);
+        };
+        fetchAPI();
+    }, [update]);
+
+    useEffect(() => {
+        const sprintNames = fetchedSprint.map((sprint) => sprint?.name);
+        setSprints(sprintNames);
+    }, [fetchedSprint]);
 
     useEffect(() => {
         const fetchAPI = async () => {
-            const result = await fetchIssue();
+            const result = await issueService.fetchIssue();
             setIssue(result);
         };
         fetchAPI();
@@ -86,6 +101,11 @@ export default function Page({ projectName }: { projectName: string }) {
         }));
         setBacklogs(mappedBacklogs);
     }, [issue]);
+
+    const handleDeleteSprint = async () => {
+        await sprintService.deleteSprint("1");
+        setUpdate(!update);
+    };
 
     const breadcrumbs = [
         <Link className="hover-underlined" key="1" color="inherit" href="/your-work/">
@@ -144,8 +164,11 @@ export default function Page({ projectName }: { projectName: string }) {
         );
     };
 
-    const handleCreateSprint = () => {
-        setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
+    const handleCreateSprint = async () => {
+        let sprint = await sprintService.createSprint();
+        console.log(sprint);
+        setUpdate(!update);
+        // setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
     };
 
     const handleCreateBacklog = () => {
@@ -154,11 +177,13 @@ export default function Page({ projectName }: { projectName: string }) {
 
     const [loading, setLoading] = useState(false);
 
-    const handleBacklogSubmit = () => {
+    const handleBacklogSubmit = async () => {
         setLoading(true);
+        let issue = await issueService.createIssue({ summary: issueName });
         setTimeout(() => {
             toast.success("Create Backlog Successful!");
             setLoading(false);
+            setIssueName(""); // Clear the input after submission
         }, 2000);
     };
 
@@ -604,7 +629,7 @@ export default function Page({ projectName }: { projectName: string }) {
                         lg={isEpicVisible ? 8 : 12}
                         xl={isEpicVisible ? 9 : 12}
                     >
-                        <Card
+                        {/* <Card
                             sx={{
                                 boxShadow: "none",
                                 borderRadius: "7px",
@@ -653,7 +678,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                 </Box>
                             </Box>
 
-                            <Accordion
+                            { <Accordion
                                 expanded={
                                     Array.isArray(expanded)
                                         ? expanded.includes("panel4")
@@ -682,8 +707,8 @@ export default function Page({ projectName }: { projectName: string }) {
                                     sx={{ fontWeight: "500", fontSize: "15px" }}
                                 >
                                     FP Sprint 1
-                                </AccordionSummary>
-                                <AccordionDetails>
+                                </AccordionSummary> */}
+                        {/* <AccordionDetails>
                                     <Stack spacing={1}>
                                         <AccordionDetails>
                                             <DndContext
@@ -900,7 +925,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                         </AccordionDetails>
                                     </Stack>
                                 </AccordionDetails>
-                            </Accordion>
+                            </Accordion> }
                             <BootstrapDialog
                                 onClose={handleCloseNotification}
                                 aria-labelledby="customized-dialog-title"
@@ -995,7 +1020,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                     </Box>
                                 </Box>
                             </BootstrapDialog>
-                        </Card>
+                        </Card> */}
                         <Box>
                             <DndContext
                                 modifiers={[restrictToVerticalAxis]}
@@ -1218,12 +1243,25 @@ export default function Page({ projectName }: { projectName: string }) {
                                                                                                     />
                                                                                                 ) : (
                                                                                                     <Input
+                                                                                                        id="issueName"
                                                                                                         placeholder="Backlog name.."
                                                                                                         sx={{
                                                                                                             width: "100%",
                                                                                                             color: "white",
                                                                                                         }}
                                                                                                         aria-label="Name"
+                                                                                                        value={
+                                                                                                            issueName
+                                                                                                        }
+                                                                                                        onChange={(
+                                                                                                            event
+                                                                                                        ) =>
+                                                                                                            setIssueName(
+                                                                                                                event
+                                                                                                                    .target
+                                                                                                                    .value
+                                                                                                            )
+                                                                                                        }
                                                                                                         onKeyDown={(
                                                                                                             event
                                                                                                         ) => {
@@ -1234,6 +1272,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                                                                                 handleBacklogSubmit();
                                                                                                             }
                                                                                                         }}
+                                                                                                        autoFocus
                                                                                                     />
                                                                                                 )}
                                                                                             </TableCell>

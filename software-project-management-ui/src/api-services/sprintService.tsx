@@ -6,10 +6,10 @@ import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
-export const fetchIssue = async () => {
+export const fetchAllSprint = async () => {
     try {
         // await RefreshToken();
-        const response = await axios.get("/issue/get-all/673f4fde2856710bc3634f7e", {
+        const response = await axios.get("/sprint/get-all/673f4fde2856710bc3634f7e", {
             headers: {
                 Authorization: `Bearer ${getAccessTokenFromCookie()}`,
             },
@@ -22,18 +22,12 @@ export const fetchIssue = async () => {
     }
 };
 
-export const createIssue = async (data: any) => {
+export const createSprint = async () => {
     try {
-        let { summary } = data;
-        let issueType = data?.issueType || "Story";
-
         // await RefreshToken();
         const response = await axios.post(
-            "/issue/673f4fde2856710bc3634f7e",
-            {
-                issueType,
-                summary,
-            },
+            "/sprint/673f4fde2856710bc3634f7e",
+            {},
             {
                 headers: {
                     Authorization: `Bearer ${getAccessTokenFromCookie()}`,
@@ -41,6 +35,22 @@ export const createIssue = async (data: any) => {
                 withCredentials: true,
             }
         );
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        await handleTokenExpired(error);
+    }
+};
+
+export const deleteSprint = async (sprintId: string) => {
+    try {
+        // await RefreshToken();
+        const response = await axios.delete(`/sprint/673f4fde2856710bc3634f7e/${sprintId}`, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+            },
+            withCredentials: true,
+        });
         return response.data;
     } catch (error) {
         console.log(error);
