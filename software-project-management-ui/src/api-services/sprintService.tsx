@@ -45,12 +45,13 @@ export const createSprint = async (projectId: any) => {
 export const deleteSprint = async (sprintId: string) => {
     try {
         // await RefreshToken();
-        const response = await axios.delete(`/sprint/673f4fde2856710bc3634f7e/${sprintId}`, {
+        const response = await axios.delete(`/sprint/6740b872a950648ea070aa07/${sprintId}`, {
             headers: {
                 Authorization: `Bearer ${getAccessTokenFromCookie()}`,
             },
             withCredentials: true,
         });
+        console.log(sprintId);
         return response.data;
     } catch (error) {
         console.log(error);

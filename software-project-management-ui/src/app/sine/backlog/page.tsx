@@ -9,13 +9,10 @@ import {
     Dialog,
     Fade,
     IconButton,
-    Input,
-    LinearProgress,
     Link,
     Select,
     Menu,
     MenuItem,
-    Paper,
     Table,
     TableBody,
     TableCell,
@@ -23,6 +20,7 @@ import {
     Tooltip,
     FormControlLabel,
     Switch,
+    LinearProgress,
 } from "@mui/material";
 import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
 import { Card, Typography, Avatar, Badge, styled, Box } from "@mui/material";
@@ -51,7 +49,6 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 import { arrayMove } from "@dnd-kit/sortable";
-import ExampleDND from "../drag&drop/page";
 import "../drag&drop/component/Column/Column.css";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { toast } from "react-toastify";
@@ -59,6 +56,7 @@ import { toast } from "react-toastify";
 import * as issueService from "@/api-services/issueServices";
 import * as sprintService from "@/api-services/sprintService";
 import * as projectService from "@/api-services/projectServices";
+import { CreateBacklog } from "./CreateBacklog/CreateBacklog";
 
 type Issue = {
     _id: string;
@@ -135,9 +133,13 @@ export default function Page({ projectName }: { projectName: string }) {
         }
     }, [issue]);
 
-    const handleDeleteSprint = async () => {
-        await sprintService.deleteSprint("1");
-        setUpdate(!update);
+    const handleDeleteSprint = async (sprintId: string) => {
+        if (sprintId) {
+            setOpenNotification(false);
+            await sprintService.deleteSprint(sprintId);
+            toast.success("Delete Sprint Successful!");
+            setUpdate(!update);
+        }
     };
 
     const breadcrumbs = [
@@ -227,17 +229,6 @@ export default function Page({ projectName }: { projectName: string }) {
             setIssueName(""); // Clear the input after submission
         }, 2000);
     };
-
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: "#fff",
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: "center",
-        color: theme.palette.text.secondary,
-        ...theme.applyStyles("dark", {
-            backgroundColor: "#1A2027",
-        }),
-    }));
     React.useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
             if (event.key === "`") {
@@ -743,14 +734,16 @@ export default function Page({ projectName }: { projectName: string }) {
                                         <Accordion
                                             expanded={
                                                 Array.isArray(expanded)
-                                                    ? expanded.includes(sprint)
-                                                    : expanded === sprint
+                                                    ? expanded.includes(sprint.name)
+                                                    : expanded === sprint.name
                                             }
-                                            onChange={handleAccordionChange(sprint)}
+                                            onChange={handleAccordionChange(sprint.name)}
                                             className="accordionItem"
                                             sx={{
                                                 backgroundColor:
-                                                    expanded === sprint ? "#e9ebee" : "inherit",
+                                                    expanded === sprint.name
+                                                        ? "#e9ebee"
+                                                        : "inherit",
                                                 "&:hover": {
                                                     backgroundColor: "#e9ebee",
                                                 },
@@ -766,15 +759,29 @@ export default function Page({ projectName }: { projectName: string }) {
                                                 id="panel4-header"
                                                 sx={{ fontWeight: "500", fontSize: "15px" }}
                                             >
-                                                {sprint?.name}
+                                                {sprint.name}
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <Stack spacing={1}>
-                                                    <BacklogList
-                                                        backlogs={sprint?.issues || []}
-                                                        callUpdate={callUpdate}
-                                                        projectId={projectId}
-                                                    ></BacklogList>
+                                                    <AccordionDetails>
+                                                        <DndContext
+                                                            modifiers={[restrictToVerticalAxis]}
+                                                            sensors={sensors}
+                                                            collisionDetection={closestCorners}
+                                                            onDragEnd={(event) =>
+                                                                handleDragEnd(
+                                                                    event as {
+                                                                        active: { id: string };
+                                                                        over: { id: string };
+                                                                    }
+                                                                )
+                                                            }
+                                                        >
+                                                            <Stack spacing={1}>
+                                                                <CreateBacklog />
+                                                            </Stack>
+                                                        </DndContext>
+                                                    </AccordionDetails>
                                                 </Stack>
                                             </AccordionDetails>
                                         </Accordion>
@@ -863,6 +870,11 @@ export default function Page({ projectName }: { projectName: string }) {
                                                                         </Button>
 
                                                                         <Button
+                                                                            onClick={() =>
+                                                                                handleDeleteSprint(
+                                                                                    sprint._id
+                                                                                )
+                                                                            }
                                                                             type="submit"
                                                                             variant="contained"
                                                                             sx={{

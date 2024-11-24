@@ -1,37 +1,21 @@
 import React, { useState } from "react";
-import {
-    Link,
-    MenuItem,
-    Select,
-    Paper,
-    styled,
-    SelectChangeEvent,
-    Box,
-    Button,
-} from "@mui/material";
+import { MenuItem, Select, SelectChangeEvent, Box } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import AssignMemberDialog from "../../Dialogs/AssignMemberDialog/AssignMemberDialog";
-import { toast } from "react-toastify";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import "./Backlog.css";
-import CheckBox from "@mui/icons-material/CheckBox";
-import { Height, Opacity } from "@mui/icons-material";
 import IssueDetailDialog from "../../Dialogs/IssueDetailDialog/IssueDetailDialog";
-
-import * as issueService from "@/api-services/issueServices";
 
 export const Backlog: React.FC<{
     id: string;
     title: string;
     description: string;
 }> = ({ id, title, description }) => {
-    const [backlogs, setBacklogs] = React.useState<string[]>([]);
-
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id,
     });
@@ -41,21 +25,6 @@ export const Backlog: React.FC<{
         transform: CSS.Transform.toString(transform),
         heigh: "100%",
         opacity: isDragging ? 0.3 : undefined,
-    };
-
-    const handleCreateBacklog = () => {
-        setBacklogs((prev) => [...prev, `Backlog ${prev.length + 1}`]);
-    };
-
-    const [loading, setLoading] = useState(false);
-
-    const handleBacklogSubmit = async () => {
-        setLoading(true);
-        let issue = await issueService.createIssue({ summary: "New Issue" });
-        setTimeout(() => {
-            toast.success("Create Backlog Successful!");
-            setLoading(false);
-        }, 2000);
     };
 
     const [epicValue, setEpicValue] = useState<string>("0");
@@ -68,16 +37,6 @@ export const Backlog: React.FC<{
         setProgressValue(event.target.value as string);
     };
 
-    const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: "#fff",
-        ...theme.typography.body2,
-        padding: theme.spacing(1),
-        textAlign: "center",
-        color: theme.palette.text.secondary,
-        ...theme.applyStyles("dark", {
-            backgroundColor: "#1A2027",
-        }),
-    }));
     return (
         <>
             <Box
