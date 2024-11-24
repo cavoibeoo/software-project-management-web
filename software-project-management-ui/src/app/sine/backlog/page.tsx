@@ -56,7 +56,6 @@ import { toast } from "react-toastify";
 import * as issueService from "@/api-services/issueServices";
 import * as sprintService from "@/api-services/sprintService";
 import * as projectService from "@/api-services/projectServices";
-import { CreateBacklog } from "./CreateBacklog/CreateBacklog";
 
 type Issue = {
     _id: string;
@@ -762,27 +761,11 @@ export default function Page({ projectName }: { projectName: string }) {
                                                 {sprint.name}
                                             </AccordionSummary>
                                             <AccordionDetails>
-                                                <Stack spacing={1}>
-                                                    <AccordionDetails>
-                                                        <DndContext
-                                                            modifiers={[restrictToVerticalAxis]}
-                                                            sensors={sensors}
-                                                            collisionDetection={closestCorners}
-                                                            onDragEnd={(event) =>
-                                                                handleDragEnd(
-                                                                    event as {
-                                                                        active: { id: string };
-                                                                        over: { id: string };
-                                                                    }
-                                                                )
-                                                            }
-                                                        >
-                                                            <Stack spacing={1}>
-                                                                <CreateBacklog />
-                                                            </Stack>
-                                                        </DndContext>
-                                                    </AccordionDetails>
-                                                </Stack>
+                                                <BacklogList
+                                                    backlogs={sprint.issues || []}
+                                                    projectId={projectId}
+                                                    callUpdate={callUpdate}
+                                                ></BacklogList>
                                             </AccordionDetails>
                                         </Accordion>
                                         <BootstrapDialog
@@ -967,8 +950,8 @@ export default function Page({ projectName }: { projectName: string }) {
                                                 <AccordionDetails>
                                                     <BacklogList
                                                         backlogs={backlogs || []}
-                                                        callUpdate={callUpdate}
                                                         projectId={projectId}
+                                                        callUpdate={callUpdate}
                                                     ></BacklogList>
                                                 </AccordionDetails>
                                             </Accordion>

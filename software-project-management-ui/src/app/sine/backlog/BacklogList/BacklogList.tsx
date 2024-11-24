@@ -14,7 +14,9 @@ export const BacklogList: React.FC<{
         title: string;
         description: string;
     }[];
-}> = ({ backlogs }) => {
+    projectId: any;
+    callUpdate: () => void;
+}> = ({ backlogs, projectId, callUpdate }) => {
     return (
         <Stack spacing={1}>
             <SortableContext items={backlogs}>
@@ -27,7 +29,7 @@ export const BacklogList: React.FC<{
                     ></Backlog>
                 ))}
             </SortableContext>
-            <CreateBacklog />
+            <CreateBacklog projectId={projectId} callUpdate={callUpdate} />
         </Stack>
     );
 };
