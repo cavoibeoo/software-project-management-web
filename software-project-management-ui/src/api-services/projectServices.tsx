@@ -20,6 +20,20 @@ export const fetchAllProjects = async () => {
     }
 };
 
+export const fetchById = async (projectId: any) => {
+    try {
+        const response = await axios.get(`/project/${projectId}`, {
+            headers: { Authorization: `Bearer ${getAccessTokenFromCookie()}` },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error: any) {
+        if (error?.response?.status === 401) {
+            await handleTokenExpired(error);
+        }
+    }
+};
+
 export const createProject = async (projectData: any) => {
     try {
         const response = await axios.post("/project/create", projectData, {

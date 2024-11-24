@@ -6,10 +6,10 @@ import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
-export const fetchAllSprint = async () => {
+export const fetchAllSprint = async (projectId: any) => {
     try {
         // await RefreshToken();
-        const response = await axios.get("/sprint/get-all/673f4fde2856710bc3634f7e", {
+        const response = await axios.get(`/sprint/get-all/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${getAccessTokenFromCookie()}`,
             },
@@ -22,11 +22,11 @@ export const fetchAllSprint = async () => {
     }
 };
 
-export const createSprint = async () => {
+export const createSprint = async (projectId: any) => {
     try {
         // await RefreshToken();
         const response = await axios.post(
-            "/sprint/673f4fde2856710bc3634f7e",
+            `/sprint/${projectId}`,
             {},
             {
                 headers: {

@@ -48,17 +48,17 @@ import {
     defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 import { arrayMove } from "@dnd-kit/sortable";
 import ExampleDND from "../drag&drop/page";
 import "../drag&drop/component/Column/Column.css";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { Backlog } from "./BacklogList/BackLog/Backlog";
 import { toast } from "react-toastify";
 
 import * as issueService from "@/api-services/issueServices";
 import * as sprintService from "@/api-services/sprintService";
-import { set } from "react-hook-form";
+import * as projectService from "@/api-services/projectServices";
 
 type Issue = {
     _id: string;
@@ -67,39 +67,72 @@ type Issue = {
     // Add other properties if necessary
 };
 
+type Sprint = {
+    _id: string;
+    name: string;
+    status: string;
+    startDate: Date;
+    endDate: Date;
+    sprintGoal: string;
+    issues: [any];
+};
+
 export default function Page({ projectName }: { projectName: string }) {
+    // Fetch sprint onloading
     const [issue, setIssue] = useState<Issue[]>([]);
     const [update, setUpdate] = useState(false);
-    const [fetchedSprint, setFetchedSprint] = useState([]);
-    const [issueName, setIssueName] = useState("");
+    const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
+    const [project, setProject] = useState<any>();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const projectId = searchParams.get("projectId");
+
+    const callUpdate = () => {
+        setUpdate(!update);
+    };
+
+    useEffect(() => {
+        const fetchProject = async () => {
+            const result = await projectService.fetchById(projectId);
+            setProject(result);
+        };
+        fetchProject();
+    }, []);
+
     useEffect(() => {
         const fetchAPI = async () => {
-            const result = await sprintService.fetchAllSprint();
+            const result = await sprintService.fetchAllSprint(projectId);
+            console.log(result);
             setFetchedSprint(result);
         };
         fetchAPI();
     }, [update]);
 
     useEffect(() => {
-        const sprintNames = fetchedSprint.map((sprint) => sprint?.name);
-        setSprints(sprintNames);
+        if (fetchedSprint.length > 0) {
+            const sprintNames = fetchedSprint.map((sprint) => sprint);
+            setSprints(sprintNames);
+        }
     }, [fetchedSprint]);
 
+    const [issueName, setIssueName] = useState("");
     useEffect(() => {
         const fetchAPI = async () => {
-            const result = await issueService.fetchIssue();
+            const result = await issueService.fetchIssue(projectId);
             setIssue(result);
         };
         fetchAPI();
     }, [update]);
 
     useEffect(() => {
-        const mappedBacklogs = issue.map((item) => ({
-            id: item.key, // Use the same ID
-            title: item.key, // Map summary to title
-            description: item.summary, // Example mapping for description
-        }));
-        setBacklogs(mappedBacklogs);
+        if (issue.length > 0) {
+            const mappedBacklogs = issue.map((item) => ({
+                id: item.key, // Use the same ID
+                title: item.key, // Map summary to title
+                description: item.summary, // Example mapping for description
+            }));
+            setBacklogs(mappedBacklogs);
+        }
     }, [issue]);
 
     const handleDeleteSprint = async () => {
@@ -149,7 +182,7 @@ export default function Page({ projectName }: { projectName: string }) {
 
     const [isEpicVisible, setIsEpicVisible] = React.useState(true);
     const [expanded, setExpanded] = React.useState<string | string[]>([]);
-    const [sprints, setSprints] = React.useState<string[]>([]);
+    const [sprints, setSprints] = React.useState<any[]>([]);
     const [newbacklogs, setNewBacklogs] = React.useState<string[]>([]);
 
     const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent) => {
@@ -165,7 +198,7 @@ export default function Page({ projectName }: { projectName: string }) {
     };
 
     const handleCreateSprint = async () => {
-        let sprint = await sprintService.createSprint();
+        let sprint = await sprintService.createSprint(projectId);
         console.log(sprint);
         setUpdate(!update);
         // setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
@@ -173,13 +206,21 @@ export default function Page({ projectName }: { projectName: string }) {
 
     const handleCreateBacklog = () => {
         setNewBacklogs((prev) => [...prev, `Backlog ${prev.length + 1}`]);
+        setShowCreateBacklogButton(false);
     };
 
     const [loading, setLoading] = useState(false);
+    const [showCreateBacklogButton, setShowCreateBacklogButton] = React.useState(true);
+
+    const handleRemoveBacklog = () => {
+        setNewBacklogs((prev) => prev.slice(0, -1));
+        setShowCreateBacklogButton(true);
+    };
 
     const handleBacklogSubmit = async () => {
         setLoading(true);
-        let issue = await issueService.createIssue({ summary: issueName });
+        let issue = await issueService.createIssue({ projectId: project._id, summary: issueName });
+        setUpdate(!update);
         setTimeout(() => {
             toast.success("Create Backlog Successful!");
             setLoading(false);
@@ -629,398 +670,6 @@ export default function Page({ projectName }: { projectName: string }) {
                         lg={isEpicVisible ? 8 : 12}
                         xl={isEpicVisible ? 9 : 12}
                     >
-                        {/* <Card
-                            sx={{
-                                boxShadow: "none",
-                                borderRadius: "7px",
-                                mb: "10px",
-                                padding: { xs: "8px", sm: "10px", lg: "15px" },
-                            }}
-                            className="rmui-card"
-                        >
-                            <Box display="flex" alignItems="center" justifyContent="space-between">
-                                <Box display="flex">
-                                    <StartSprintDialog />
-                                </Box>
-                                <Box
-                                    display="flex"
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                    }}
-                                >
-                                    <Button
-                                        id="fade-button"
-                                        aria-controls={open ? "fade-menu" : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? "true" : undefined}
-                                        onClick={handleClick}
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            more_horiz
-                                        </span>
-                                    </Button>
-                                    <Menu
-                                        id="fade-menu"
-                                        MenuListProps={{
-                                            "aria-labelledby": "fade-button",
-                                        }}
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleClose}
-                                        TransitionComponent={Fade}
-                                    >
-                                        <MenuItem onClick={handleClose}>Project settings</MenuItem>
-                                        <MenuItem onClick={handleClickOpenNotification}>
-                                            Move to trash
-                                        </MenuItem>
-                                    </Menu>
-                                </Box>
-                            </Box>
-
-                            { <Accordion
-                                expanded={
-                                    Array.isArray(expanded)
-                                        ? expanded.includes("panel4")
-                                        : expanded === "panel4"
-                                }
-                                onChange={handleAccordionChange("panel4")}
-                                className="accordionItem"
-                                sx={{
-                                    backgroundColor:
-                                        Array.isArray(expanded) && expanded.includes("panel4")
-                                            ? "#e9ebee"
-                                            : "inherit",
-                                    "&:hover": {
-                                        backgroundColor: "#e9ebee",
-                                    },
-                                    boxShadow: "none",
-                                    border: "none",
-                                    padding: { xs: "0px", sm: "0px", lg: "0px" },
-                                    flexGrow: 1, // Đảm bảo accordion chiếm không gian còn lại
-                                }}
-                            >
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel4-content"
-                                    id="panel4-header"
-                                    sx={{ fontWeight: "500", fontSize: "15px" }}
-                                >
-                                    FP Sprint 1
-                                </AccordionSummary> */}
-                        {/* <AccordionDetails>
-                                    <Stack spacing={1}>
-                                        <AccordionDetails>
-                                            <DndContext
-                                                modifiers={[restrictToVerticalAxis]}
-                                                sensors={sensors}
-                                                collisionDetection={closestCorners}
-                                                onDragStart={handleOnDragStart}
-                                                onDragEnd={(event) =>
-                                                    handleDragEnd(
-                                                        event as {
-                                                            active: { id: string };
-                                                            over: { id: string };
-                                                        }
-                                                    )
-                                                }
-                                            >
-                                                <BacklogList backlogs={backlogs}></BacklogList>
-                                                <DragOverlay dropAnimation={dropAnimation}>
-                                                    {!activeDragItemData && null}
-                                                    {
-                                                        <div
-                                                            className="backlogItem"
-                                                            style={{ padding: "0px 0px 0px 0px" }}
-                                                        >
-                                                            <Table
-                                                                sx={{
-                                                                    borderBottom: "none !important",
-                                                                }}
-                                                            >
-                                                                <TableBody>
-                                                                    <TableRow>
-                                                                        <TableCell
-                                                                            style={{
-                                                                                border: "none",
-                                                                                alignItems:
-                                                                                    "center",
-                                                                                justifyContent:
-                                                                                    "center",
-                                                                            }}
-                                                                        >
-                                                                            <div
-                                                                                style={{
-                                                                                    paddingTop:
-                                                                                        "5px",
-                                                                                    display: "flex",
-                                                                                    justifyContent:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                <svg
-                                                                                    width="20px"
-                                                                                    height="20px"
-                                                                                    style={{
-                                                                                        marginRight:
-                                                                                            "5px",
-                                                                                    }}
-                                                                                    viewBox="0 0 16 16"
-                                                                                    version="1.1"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                >
-                                                                                    <defs></defs>
-                                                                                    <g
-                                                                                        id="Page-1"
-                                                                                        stroke="none"
-                                                                                        strokeWidth="1"
-                                                                                        fill="none"
-                                                                                        fillRule="evenodd"
-                                                                                    >
-                                                                                        <g id="task">
-                                                                                            <g
-                                                                                                id="Task"
-                                                                                                transform="translate(1.000000, 1.000000)"
-                                                                                            >
-                                                                                                <rect
-                                                                                                    id="Rectangle-36"
-                                                                                                    fill="#4BADE8"
-                                                                                                    x="0"
-                                                                                                    y="0"
-                                                                                                    width="14"
-                                                                                                    height="14"
-                                                                                                    rx="2"
-                                                                                                ></rect>
-                                                                                                <g
-                                                                                                    id="Page-1"
-                                                                                                    transform="translate(4.000000, 4.500000)"
-                                                                                                    stroke="#FFFFFF"
-                                                                                                    strokeWidth="2"
-                                                                                                    strokeLinecap="round"
-                                                                                                >
-                                                                                                    <path
-                                                                                                        d="M2,5 L6,0"
-                                                                                                        id="Stroke-1"
-                                                                                                    ></path>
-                                                                                                    <path
-                                                                                                        d="M2,5 L0,3"
-                                                                                                        id="Stroke-3"
-                                                                                                    ></path>
-                                                                                                </g>
-                                                                                            </g>
-                                                                                        </g>
-                                                                                    </g>
-                                                                                </svg>
-                                                                            </div>
-                                                                        </TableCell>
-                                                                        <TableCell
-                                                                            style={{
-                                                                                border: "none",
-                                                                            }}
-                                                                            sx={{ width: "50%" }}
-                                                                        >
-                                                                            <Link
-                                                                                className="hover-underlined"
-                                                                                color="inherit"
-                                                                                href=""
-                                                                            ></Link>
-                                                                        </TableCell>
-                                                                        <TableCell
-                                                                            style={{
-                                                                                border: "none",
-                                                                                display: "flex",
-                                                                                flexDirection:
-                                                                                    "row",
-                                                                            }}
-                                                                        >
-                                                                            <Select
-                                                                                labelId="product-type-label"
-                                                                                id="product-type"
-                                                                                className="epicSelectBg"
-                                                                                size="small"
-                                                                                style={{
-                                                                                    marginRight:
-                                                                                        "5px",
-                                                                                }}
-                                                                                sx={{
-                                                                                    "& fieldset": {
-                                                                                        maxWidth:
-                                                                                            "120px",
-                                                                                    },
-                                                                                    "& .MuiSelect-select":
-                                                                                        {
-                                                                                            overflow:
-                                                                                                "hidden",
-                                                                                            textOverflow:
-                                                                                                "ellipsis",
-                                                                                            whiteSpace:
-                                                                                                "nowrap",
-                                                                                        },
-                                                                                }}
-                                                                            >
-                                                                                <MenuItem value={0}>
-                                                                                    epic
-                                                                                </MenuItem>
-                                                                                <MenuItem value={1}>
-                                                                                    1
-                                                                                </MenuItem>
-                                                                                <MenuItem value={2}>
-                                                                                    2
-                                                                                </MenuItem>
-                                                                                <MenuItem value={3}>
-                                                                                    3
-                                                                                </MenuItem>
-                                                                                <MenuItem value={4}>
-                                                                                    4
-                                                                                </MenuItem>
-                                                                            </Select>
-                                                                            <Select
-                                                                                labelId="product-type-label"
-                                                                                className="progressSelectBg"
-                                                                                id="product-type"
-                                                                                size="small"
-                                                                                sx={{
-                                                                                    "& fieldset":
-                                                                                        {},
-                                                                                    "& .MuiSelect-select":
-                                                                                        {
-                                                                                            overflow:
-                                                                                                "hidden",
-                                                                                            textOverflow:
-                                                                                                "ellipsis",
-                                                                                            whiteSpace:
-                                                                                                "nowrap",
-                                                                                        },
-                                                                                }}
-                                                                            >
-                                                                                <MenuItem value={0}>
-                                                                                    progress
-                                                                                </MenuItem>
-                                                                                <MenuItem value={1}>
-                                                                                    1
-                                                                                </MenuItem>
-                                                                                <MenuItem value={2}>
-                                                                                    2
-                                                                                </MenuItem>
-                                                                                <MenuItem value={3}>
-                                                                                    3
-                                                                                </MenuItem>
-                                                                                <MenuItem value={4}>
-                                                                                    4
-                                                                                </MenuItem>
-                                                                            </Select>
-                                                                        </TableCell>
-                                                                        <TableCell
-                                                                            style={{
-                                                                                border: "none",
-                                                                            }}
-                                                                        ></TableCell>
-                                                                    </TableRow>
-                                                                </TableBody>
-                                                            </Table>
-                                                        </div>
-                                                    }
-                                                </DragOverlay>
-                                            </DndContext>
-                                        </AccordionDetails>
-                                    </Stack>
-                                </AccordionDetails>
-                            </Accordion> }
-                            <BootstrapDialog
-                                onClose={handleCloseNotification}
-                                aria-labelledby="customized-dialog-title"
-                                open={openNotification}
-                                className="rmu-modal"
-                            >
-                                <Box>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            background: "#ff6666",
-                                            padding: { xs: "15px 20px", md: "25px" },
-                                        }}
-                                        className="rmu-modal-header"
-                                    >
-                                        <Typography
-                                            id="modal-modal-title"
-                                            variant="h6"
-                                            sx={{
-                                                fontWeight: "600",
-                                                fontSize: { xs: "16px", md: "18px" },
-                                                color: "#fff !important",
-                                            }}
-                                            className="text-black"
-                                        >
-                                            Move to Trash
-                                        </Typography>
-
-                                        <IconButton
-                                            aria-label="remove"
-                                            size="small"
-                                            onClick={handleCloseNotification}
-                                        >
-                                            <ClearIcon />
-                                        </IconButton>
-                                    </Box>
-
-                                    <Box className="rmu-modal-content">
-                                        <Box component="form" noValidate onSubmit={handleSubmit}>
-                                            <Box
-                                                sx={{
-                                                    padding: "25px",
-                                                    borderRadius: "8px",
-                                                }}
-                                                className="bg-white"
-                                            >
-                                                <Grid container alignItems="center" spacing={2}>
-                                                    <Grid item xs={12} mt={1}>
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                alignItems: "center",
-                                                                gap: "10px",
-                                                            }}
-                                                        >
-                                                            <Button
-                                                                onClick={handleCloseNotification}
-                                                                variant="outlined"
-                                                                color="error"
-                                                                sx={{
-                                                                    textTransform: "capitalize",
-                                                                    borderRadius: "8px",
-                                                                    fontWeight: "500",
-                                                                    fontSize: "13px",
-                                                                    padding: "11px 30px",
-                                                                }}
-                                                            >
-                                                                Cancel
-                                                            </Button>
-
-                                                            <Button
-                                                                type="submit"
-                                                                variant="contained"
-                                                                sx={{
-                                                                    textTransform: "capitalize",
-                                                                    borderRadius: "8px",
-                                                                    fontWeight: "500",
-                                                                    fontSize: "13px",
-                                                                    padding: "11px 30px",
-                                                                    color: "#fff !important",
-                                                                }}
-                                                            >
-                                                                Move
-                                                            </Button>
-                                                        </Box>
-                                                    </Grid>
-                                                </Grid>
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </BootstrapDialog>
-                        </Card> */}
                         <Box>
                             <DndContext
                                 modifiers={[restrictToVerticalAxis]}
@@ -1117,197 +766,15 @@ export default function Page({ projectName }: { projectName: string }) {
                                                 id="panel4-header"
                                                 sx={{ fontWeight: "500", fontSize: "15px" }}
                                             >
-                                                {sprint}
+                                                {sprint?.name}
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <Stack spacing={1}>
-                                                    <AccordionDetails>
-                                                        <DndContext
-                                                            modifiers={[restrictToVerticalAxis]}
-                                                            sensors={sensors}
-                                                            collisionDetection={closestCorners}
-                                                            onDragEnd={(event) =>
-                                                                handleDragEnd(
-                                                                    event as {
-                                                                        active: { id: string };
-                                                                        over: { id: string };
-                                                                    }
-                                                                )
-                                                            }
-                                                        >
-                                                            <Stack spacing={1}>
-                                                                {newbacklogs.map(
-                                                                    (newbacklog, index) => (
-                                                                        <>
-                                                                            <Item
-                                                                                className="backlogItem"
-                                                                                style={{
-                                                                                    padding:
-                                                                                        "0px 0px 0px 0px",
-                                                                                }}
-                                                                            >
-                                                                                <Table
-                                                                                    sx={{
-                                                                                        borderBottom:
-                                                                                            "none !important",
-                                                                                    }}
-                                                                                >
-                                                                                    <TableBody>
-                                                                                        <TableRow>
-                                                                                            <TableCell
-                                                                                                style={{
-                                                                                                    border: "none",
-                                                                                                    alignItems:
-                                                                                                        "center",
-                                                                                                    justifyContent:
-                                                                                                        "center",
-                                                                                                }}
-                                                                                            >
-                                                                                                <div
-                                                                                                    style={{
-                                                                                                        paddingTop:
-                                                                                                            "5px",
-                                                                                                        display:
-                                                                                                            "flex",
-                                                                                                        justifyContent:
-                                                                                                            "center",
-                                                                                                    }}
-                                                                                                >
-                                                                                                    <svg
-                                                                                                        width="20px"
-                                                                                                        height="20px"
-                                                                                                        style={{
-                                                                                                            marginRight:
-                                                                                                                "5px",
-                                                                                                        }}
-                                                                                                        viewBox="0 0 16 16"
-                                                                                                        version="1.1"
-                                                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                                                    >
-                                                                                                        <defs></defs>
-                                                                                                        <g
-                                                                                                            id="Page-1"
-                                                                                                            stroke="none"
-                                                                                                            strokeWidth="1"
-                                                                                                            fill="none"
-                                                                                                            fillRule="evenodd"
-                                                                                                        >
-                                                                                                            <g id="task">
-                                                                                                                <g
-                                                                                                                    id="Task"
-                                                                                                                    transform="translate(1.000000, 1.000000)"
-                                                                                                                >
-                                                                                                                    <rect
-                                                                                                                        id="Rectangle-36"
-                                                                                                                        fill="#4BADE8"
-                                                                                                                        x="0"
-                                                                                                                        y="0"
-                                                                                                                        width="14"
-                                                                                                                        height="14"
-                                                                                                                        rx="2"
-                                                                                                                    ></rect>
-                                                                                                                    <g
-                                                                                                                        id="Page-1"
-                                                                                                                        transform="translate(4.000000, 4.500000)"
-                                                                                                                        stroke="#FFFFFF"
-                                                                                                                        strokeWidth="2"
-                                                                                                                        strokeLinecap="round"
-                                                                                                                    >
-                                                                                                                        <path
-                                                                                                                            d="M2,5 L6,0"
-                                                                                                                            id="Stroke-1"
-                                                                                                                        ></path>
-                                                                                                                        <path
-                                                                                                                            d="M2,5 L0,3"
-                                                                                                                            id="Stroke-3"
-                                                                                                                        ></path>
-                                                                                                                    </g>
-                                                                                                                </g>
-                                                                                                            </g>
-                                                                                                        </g>
-                                                                                                    </svg>
-                                                                                                </div>
-                                                                                            </TableCell>
-                                                                                            <TableCell
-                                                                                                style={{
-                                                                                                    border: "none",
-                                                                                                }}
-                                                                                            >
-                                                                                                {loading ? (
-                                                                                                    <LinearProgress
-                                                                                                        sx={{
-                                                                                                            width: "100vh",
-                                                                                                            color: "white",
-                                                                                                        }}
-                                                                                                        color="secondary"
-                                                                                                    />
-                                                                                                ) : (
-                                                                                                    <Input
-                                                                                                        id="issueName"
-                                                                                                        placeholder="Backlog name.."
-                                                                                                        sx={{
-                                                                                                            width: "100%",
-                                                                                                            color: "white",
-                                                                                                        }}
-                                                                                                        aria-label="Name"
-                                                                                                        value={
-                                                                                                            issueName
-                                                                                                        }
-                                                                                                        onChange={(
-                                                                                                            event
-                                                                                                        ) =>
-                                                                                                            setIssueName(
-                                                                                                                event
-                                                                                                                    .target
-                                                                                                                    .value
-                                                                                                            )
-                                                                                                        }
-                                                                                                        onKeyDown={(
-                                                                                                            event
-                                                                                                        ) => {
-                                                                                                            if (
-                                                                                                                event.key ===
-                                                                                                                "Enter"
-                                                                                                            ) {
-                                                                                                                handleBacklogSubmit();
-                                                                                                            }
-                                                                                                        }}
-                                                                                                        autoFocus
-                                                                                                    />
-                                                                                                )}
-                                                                                            </TableCell>
-                                                                                            <TableCell
-                                                                                                style={{
-                                                                                                    border: "none",
-                                                                                                    display:
-                                                                                                        "flex",
-                                                                                                    flexDirection:
-                                                                                                        "row",
-                                                                                                    alignItems:
-                                                                                                        "center",
-                                                                                                }}
-                                                                                            ></TableCell>
-                                                                                            <TableCell
-                                                                                                style={{
-                                                                                                    border: "none",
-                                                                                                }}
-                                                                                            ></TableCell>
-                                                                                        </TableRow>
-                                                                                    </TableBody>
-                                                                                </Table>
-                                                                            </Item>
-                                                                        </>
-                                                                    )
-                                                                )}
-                                                                <Button
-                                                                    className="createIssueBtn"
-                                                                    onClick={handleCreateBacklog}
-                                                                >
-                                                                    + Create Issue
-                                                                </Button>
-                                                            </Stack>
-                                                        </DndContext>
-                                                    </AccordionDetails>
+                                                    <BacklogList
+                                                        backlogs={sprint?.issues || []}
+                                                        callUpdate={callUpdate}
+                                                        projectId={projectId}
+                                                    ></BacklogList>
                                                 </Stack>
                                             </AccordionDetails>
                                         </Accordion>
@@ -1486,7 +953,11 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     Backlog
                                                 </AccordionSummary>
                                                 <AccordionDetails>
-                                                    <BacklogList backlogs={backlogs}></BacklogList>
+                                                    <BacklogList
+                                                        backlogs={backlogs || []}
+                                                        callUpdate={callUpdate}
+                                                        projectId={projectId}
+                                                    ></BacklogList>
                                                 </AccordionDetails>
                                             </Accordion>
                                         </Typography>

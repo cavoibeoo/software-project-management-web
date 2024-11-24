@@ -52,7 +52,6 @@ export const Backlog: React.FC<{
     const handleBacklogSubmit = async () => {
         setLoading(true);
         let issue = await issueService.createIssue({ summary: "New Issue" });
-        console.log(issue);
         setTimeout(() => {
             toast.success("Create Backlog Successful!");
             setLoading(false);

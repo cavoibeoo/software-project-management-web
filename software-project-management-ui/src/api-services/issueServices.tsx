@@ -6,10 +6,10 @@ import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
-export const fetchIssue = async () => {
+export const fetchIssue = async (projectId: any) => {
     try {
         // await RefreshToken();
-        const response = await axios.get("/issue/get-all/673f4fde2856710bc3634f7e", {
+        const response = await axios.get(`/issue/get-all/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${getAccessTokenFromCookie()}`,
             },
@@ -24,12 +24,12 @@ export const fetchIssue = async () => {
 
 export const createIssue = async (data: any) => {
     try {
-        let { summary } = data;
+        let { summary, projectId } = data;
         let issueType = data?.issueType || "Story";
 
         // await RefreshToken();
         const response = await axios.post(
-            "/issue/673f4fde2856710bc3634f7e",
+            `/issue/${projectId}`,
             {
                 issueType,
                 summary,

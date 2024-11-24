@@ -22,12 +22,10 @@ import { SortableContext } from "@dnd-kit/sortable";
 import * as issueService from "@/api-services/issueServices";
 
 export const BacklogList: React.FC<{
-    backlogs: {
-        id: string;
-        title: string;
-        description: string;
-    }[];
-}> = ({ backlogs }) => {
+    backlogs: any[];
+    callUpdate: () => void;
+    projectId: any;
+}> = ({ backlogs, callUpdate, projectId }) => {
     const [createBacklogForm, setCreateBacklogForm] = React.useState<string[]>([]);
     const [showCreateBacklogButton, setShowCreateBacklogButton] = React.useState(true);
     const [issueName, setIssueName] = useState<string>("");
@@ -56,8 +54,9 @@ export const BacklogList: React.FC<{
 
     const handleBacklogSubmit = async () => {
         setLoading(true);
-        let issue = await issueService.createIssue({ summary: issueName });
-        console.log(issue);
+        console.log(projectId);
+        let issue = await issueService.createIssue({ summary: issueName, projectId: projectId });
+        callUpdate();
         setTimeout(() => {
             toast.success("Create Backlog Successful!");
             handleRemoveBacklog();
@@ -79,14 +78,16 @@ export const BacklogList: React.FC<{
     return (
         <Stack spacing={1}>
             <SortableContext items={backlogs}>
-                {backlogs.map((backlog) => (
-                    <Backlog
-                        key={backlog.id}
-                        id={backlog.id}
-                        title={backlog.title}
-                        description={backlog.description}
-                    ></Backlog>
-                ))}
+                {backlogs
+                    ? backlogs.map((backlog) => (
+                          <Backlog
+                              key={backlog.id}
+                              id={backlog.id}
+                              title={backlog.title}
+                              description={backlog.description}
+                          ></Backlog>
+                      ))
+                    : null}
             </SortableContext>
             {createBacklogForm.map((createBacklog, index) => (
                 <>
