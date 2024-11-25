@@ -10,14 +10,16 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import "./Backlog.css";
 import IssueDetailDialog from "../../Dialogs/IssueDetailDialog/IssueDetailDialog";
+import * as issueService from "@/api-services/issueServices";
 
 export const Backlog: React.FC<{
-    id: string;
-    title: string;
-    description: string;
-}> = ({ id, title, description }) => {
+    issue: any;
+    projectId: any;
+    workflows: any[];
+    callUpdate: () => void;
+}> = ({ issue, projectId, workflows, callUpdate }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-        id,
+        id: issue._id,
     });
 
     const dndKitColumnStyles = {
@@ -28,13 +30,15 @@ export const Backlog: React.FC<{
     };
 
     const [epicValue, setEpicValue] = useState<string>("0");
-    const [progressValue, setProgressValue] = useState<string>("0");
+    const [progressValue, setProgressValue] = useState<string>("");
 
     const handleEpicValueChange = (event: SelectChangeEvent) => {
         setEpicValue(event.target.value as string);
     };
-    const handleProgressValueChange = (event: SelectChangeEvent) => {
+    const handleProgressValueChange = async (event: SelectChangeEvent, issueId: any) => {
         setProgressValue(event.target.value as string);
+        await issueService.updateIssue({ projectId, issueId, workflow: event.target.value });
+        // callUpdate();
     };
 
     return (
@@ -69,63 +73,21 @@ export const Backlog: React.FC<{
                                                 justifyContent: "center",
                                             }}
                                         >
-                                            <svg
+                                            <img
                                                 width="20px"
                                                 height="20px"
                                                 style={{
                                                     marginRight: "5px",
                                                 }}
-                                                viewBox="0 0 16 16"
-                                                version="1.1"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <defs></defs>
-                                                <g
-                                                    id="Page-1"
-                                                    stroke="none"
-                                                    strokeWidth="1"
-                                                    fill="none"
-                                                    fillRule="evenodd"
-                                                >
-                                                    <g id="task">
-                                                        <g
-                                                            id="Task"
-                                                            transform="translate(1.000000, 1.000000)"
-                                                        >
-                                                            <rect
-                                                                id="Rectangle-36"
-                                                                fill="#4BADE8"
-                                                                x="0"
-                                                                y="0"
-                                                                width="14"
-                                                                height="14"
-                                                                rx="2"
-                                                            ></rect>
-                                                            <g
-                                                                id="Page-1"
-                                                                transform="translate(4.000000, 4.500000)"
-                                                                stroke="#FFFFFF"
-                                                                strokeWidth="2"
-                                                                strokeLinecap="round"
-                                                            >
-                                                                <path
-                                                                    d="M2,5 L6,0"
-                                                                    id="Stroke-1"
-                                                                ></path>
-                                                                <path
-                                                                    d="M2,5 L0,3"
-                                                                    id="Stroke-3"
-                                                                ></path>
-                                                            </g>
-                                                        </g>
-                                                    </g>
-                                                </g>
-                                            </svg>
-                                            {title}
+                                                src={issue?.issueType.img}
+                                                alt="Issue Logo"
+                                                className="icon_issue"
+                                            />
+                                            {issue.key}
                                         </div>
                                     </TableCell>
                                     <TableCell style={{ border: "none" }} sx={{ width: "50%" }}>
-                                        <IssueDetailDialog description={description} />
+                                        <IssueDetailDialog description={issue.summary} />
                                     </TableCell>
                                     <TableCell
                                         style={{
@@ -134,7 +96,7 @@ export const Backlog: React.FC<{
                                             flexDirection: "row",
                                         }}
                                     >
-                                        <Select
+                                        {/* <Select
                                             labelId="product-type-label"
                                             id="product-type"
                                             className="epicSelectBg"
@@ -158,16 +120,19 @@ export const Backlog: React.FC<{
                                             <MenuItem value={2}>2</MenuItem>
                                             <MenuItem value={3}>3</MenuItem>
                                             <MenuItem value={4}>4</MenuItem>
-                                        </Select>
+                                        </Select> */}
                                         <Select
                                             labelId="product-type-label"
                                             className="progressSelectBg"
-                                            id="product-type"
+                                            id={`workflow-${issue._id}`}
                                             size="small"
-                                            value={progressValue}
-                                            onChange={handleProgressValueChange}
+                                            value={progressValue || issue.workflow}
+                                            onChange={(event: SelectChangeEvent) => {
+                                                handleProgressValueChange(event, issue._id);
+                                            }}
                                             sx={{
-                                                "& fieldset": {},
+                                                "& fieldset": {
+                                                },
                                                 "& .MuiSelect-select": {
                                                     overflow: "hidden",
                                                     textOverflow: "ellipsis",
@@ -175,11 +140,11 @@ export const Backlog: React.FC<{
                                                 },
                                             }}
                                         >
-                                            <MenuItem value={0}>progress</MenuItem>
-                                            <MenuItem value={1}>1</MenuItem>
-                                            <MenuItem value={2}>2</MenuItem>
-                                            <MenuItem value={3}>3</MenuItem>
-                                            <MenuItem value={4}>4</MenuItem>
+                                            {workflows?.map((workflow, index) => (
+                                                <MenuItem key={index} value={workflow.name}>
+                                                    {workflow?.name}
+                                                </MenuItem>
+                                            ))}
                                         </Select>
                                     </TableCell>
                                     <TableCell style={{ border: "none" }}>

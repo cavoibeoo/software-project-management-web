@@ -122,7 +122,7 @@ const updateIssue = async (params, data) => {
         if (!foundedIssue) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Issue not found");
         }
-        let issue = foundedIssue.issues[0];
+        let issue = foundedIssue.issues.id(getObjectId(params.issueId));
 
         issue.key = data?.key || issue?.key;
         issue.summary = data?.summary || issue?.summary;

@@ -45,3 +45,26 @@ export const createIssue = async (data: any) => {
         await handleTokenExpired(error);
     }
 };
+
+export const updateIssue = async (data: any) => {
+    try {
+        let { projectId, issueId } = data;
+        let issueType = data?.issueType || "Story";
+        let processedData = {
+            ...(data?.workflow && { workflow: data.workflow }),
+            ...(data?.sprint && { sprint: data.sprint }),
+        };
+
+        // await RefreshToken();
+        const response = await axios.put(`/issue/${projectId}/${issueId}`, processedData, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+            },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        await handleTokenExpired(error);
+    }
+};

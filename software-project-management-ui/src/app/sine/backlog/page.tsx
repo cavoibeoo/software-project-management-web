@@ -56,6 +56,7 @@ import { toast } from "react-toastify";
 import * as issueService from "@/api-services/issueServices";
 import * as sprintService from "@/api-services/sprintService";
 import * as projectService from "@/api-services/projectServices";
+import * as workflowService from "@/api-services/workflowService";
 
 type Issue = {
     _id: string;
@@ -77,14 +78,12 @@ type Sprint = {
 export default function Page({ projectName }: { projectName: string }) {
     // Fetch sprint onloading
     const [issue, setIssue] = useState<Issue[]>([]);
-    const [update, setUpdate] = useState(false);
     const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
     const [project, setProject] = useState<any>();
-    const [currentDeleteSprint, setCurrentDeleteSprint] = useState<string | null>(null);
+    const [workflow, setWorkflow] = useState<any>();
 
-    useEffect(() => {
-        console.log(currentDeleteSprint);
-    }, [currentDeleteSprint]);
+    const [update, setUpdate] = useState(false);
+    const [currentDeleteSprint, setCurrentDeleteSprint] = useState<string | null>(null);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -104,8 +103,14 @@ export default function Page({ projectName }: { projectName: string }) {
 
     useEffect(() => {
         const fetchAPI = async () => {
-            const result = await sprintService.fetchAllSprint(projectId);
-            setFetchedSprint(result);
+            const sprints = await sprintService.fetchAllSprint(projectId);
+            setFetchedSprint(sprints);
+
+            const issues = await issueService.fetchIssue(projectId);
+            setIssue(issues);
+
+            const workflow = await workflowService.fetchWorkflow(projectId);
+            setWorkflow(workflow);
         };
         fetchAPI();
     }, [update]);
@@ -118,28 +123,16 @@ export default function Page({ projectName }: { projectName: string }) {
     }, [fetchedSprint]);
 
     const [issueName, setIssueName] = useState("");
-    useEffect(() => {
-        const fetchAPI = async () => {
-            const result = await issueService.fetchIssue(projectId);
-            setIssue(result);
-        };
-        fetchAPI();
-    }, [update]);
 
     useEffect(() => {
         if (issue.length > 0) {
-            const mappedBacklogs = issue.map((item) => ({
-                id: item.key, // Use the same ID
-                title: item.key, // Map summary to title
-                description: item.summary, // Example mapping for description
-            }));
+            const mappedBacklogs = issue.map((item) => item);
             setBacklogs(mappedBacklogs);
         }
     }, [issue]);
 
     const handleDeleteSprint = async () => {
         if (currentDeleteSprint) {
-            console.log(currentDeleteSprint);
             setOpenNotification(false);
             await sprintService.deleteSprint({ projectId, currentDeleteSprint });
             toast.success("Delete Sprint Successful!");
@@ -278,23 +271,7 @@ export default function Page({ projectName }: { projectName: string }) {
         event.preventDefault();
     };
 
-    const [backlogs, setBacklogs] = useState([
-        {
-            id: "1",
-            title: `${issue[0]?.summary}`,
-            description: "Import syllabus/ syllabus importing screen",
-        },
-        {
-            id: "2",
-            title: "SINES-52",
-            description: "Another task description",
-        },
-        {
-            id: "3",
-            title: "SINES-52",
-            description: "AAnother task description",
-        },
-    ]);
+    const [backlogs, setBacklogs] = useState<any[]>([]);
 
     const getTaskPos = (id: string) => backlogs.findIndex((backlog) => backlog.id === id);
 
@@ -779,6 +756,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     projectId={projectId}
                                                     callUpdate={callUpdate}
                                                     sprintId={sprint._id}
+                                                    workflow={workflow}
                                                 ></BacklogList>
                                             </AccordionDetails>
                                         </Accordion>
@@ -965,6 +943,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                         projectId={projectId}
                                                         callUpdate={callUpdate}
                                                         sprintId={null}
+                                                        workflow={workflow}
                                                     ></BacklogList>
                                                 </AccordionDetails>
                                             </Accordion>

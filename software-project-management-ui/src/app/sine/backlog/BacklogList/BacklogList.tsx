@@ -13,16 +13,17 @@ export const BacklogList: React.FC<{
     projectId: any;
     callUpdate: () => void;
     sprintId: any;
-}> = ({ backlogs, projectId, callUpdate, sprintId }) => {
+    workflow: any;
+}> = ({ backlogs, projectId, callUpdate, sprintId, workflow }) => {
     return (
         <Stack spacing={1}>
             <SortableContext items={backlogs}>
                 {backlogs.map((backlog) => (
                     <Backlog
-                        key={backlog.id || backlog._id}
-                        id={backlog.id || backlog._id}
-                        title={backlog.title || backlog.key}
-                        description={backlog.description || backlog.summary}
+                        issue={backlog}
+                        workflows={workflow}
+                        projectId={projectId}
+                        callUpdate={callUpdate}
                     ></Backlog>
                 ))}
             </SortableContext>
