@@ -50,6 +50,7 @@ const StartSprintDialog: React.FC = () => {
 					marginBottom: "5px",
 					padding: "2px 2px !important",
 				}}
+				sx={{ color: "#fff" }}
 				onClick={handleClickOpen}
 			>
 				Start Sprint

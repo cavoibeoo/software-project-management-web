@@ -1,38 +1,49 @@
 import * as React from "react";
 import NextLink from "next/link";
-import ToDoList from "@/components/Apps/ToDoList";
-import { Breadcrumbs, Typography, Link } from "@mui/material";
+import { Breadcrumbs, Typography, Link, Grid } from "@mui/material";
+import ToDo from "@/components/Apps/KanbanBoard/ToDo";
+import Doing from "@/components/Apps/KanbanBoard/Doing";
+import Done from "@/components/Apps/KanbanBoard/Done";
+import { closestCorners, DndContext } from "@dnd-kit/core";
 
 export default function Page() {
-	const breadcrumbs = [
-		<Link
-			className="hover-underlined"
-			key="1"
-			color="inherit"
-			href="/your-work/"
-		>
-			Projects
-		</Link>,
-		<Link
-			className="hover-underlined"
-			key="2"
-			color="inherit"
-			href="/sine/board/"
-		>
-			Sine_SPM
-		</Link>,
-		<Typography key="3" color="text.primary">
-			Board
-		</Typography>,
-	];
 	return (
-		<>
-			<div style={{ minHeight: "78vh" }}>
-				<Breadcrumbs separator="›" aria-label="breadcrumb">
-					{breadcrumbs}
-				</Breadcrumbs>
-				<div className="breadcrumb-card"></div>
+		// <DndContext collisionDetection={closestCorners}>
+		<div style={{ minHeight: "78vh" }}>
+			<div className="breadcrumb-card">
+				<h5>Kanban Board</h5>
+
+				<ul className="breadcrumb">
+					<li>
+						<NextLink href="/your-work/">
+							<i className="material-symbols-outlined">home</i>
+							Projects
+						</NextLink>
+					</li>
+					<li>
+						<NextLink href="/sine/board/">
+							<i className="material-symbols-outlined">dataset</i>
+							Sine_SPM
+						</NextLink>
+					</li>
+					<li>Kanban Board</li>
+				</ul>
 			</div>
-		</>
+
+			<Grid container columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}>
+				<Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
+					<ToDo />
+				</Grid>
+
+				<Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
+					<Doing />
+				</Grid>
+
+				<Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
+					<Done />
+				</Grid>
+			</Grid>
+		</div>
+		// </DndContext>
 	);
 }

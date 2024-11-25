@@ -34,6 +34,7 @@ import StartSprintDialog from "./Dialogs/StartSprintDialog/StartSprintDialog";
 import { FormEvent, useState, useEffect } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import { BacklogList } from "./BacklogList/BacklogList";
+import NextLink from "next/link";
 import {
 	DndContext,
 	KeyboardSensor,
@@ -113,28 +114,6 @@ export default function Page({ projectName }: { projectName: string }) {
 			setUpdate(!update);
 		}
 	};
-
-	const breadcrumbs = [
-		<Link
-			className="hover-underlined"
-			key="1"
-			color="inherit"
-			href="/your-work/"
-		>
-			Projects
-		</Link>,
-		<Link
-			className="hover-underlined"
-			key="2"
-			color="inherit"
-			href="/sine/board/"
-		>
-			Sine_SPM
-		</Link>,
-		<Typography key="3" color="text.primary">
-			Backlog
-		</Typography>,
-	];
 	const StyledBadge = styled(Badge)(({ theme }) => ({
 		"& .MuiBadge-badge": {
 			backgroundColor: "#44b700",
@@ -310,9 +289,25 @@ export default function Page({ projectName }: { projectName: string }) {
 	return (
 		<>
 			<div style={{ minHeight: "78vh" }}>
-				<Breadcrumbs separator="›" aria-label="breadcrumb">
-					{breadcrumbs}
-				</Breadcrumbs>
+				<div className="breadcrumb-card">
+					<h5>Kanban Board</h5>
+
+					<ul className="breadcrumb">
+						<li>
+							<NextLink href="/your-work/">
+								<i className="material-symbols-outlined">home</i>
+								Projects
+							</NextLink>
+						</li>
+						<li>
+							<NextLink href="/sine/board/">
+								<i className="material-symbols-outlined">dataset</i>
+								Sine_SPM
+							</NextLink>
+						</li>
+						<li>Kanban Board</li>
+					</ul>
+				</div>
 				<Typography
 					variant="h5"
 					gutterBottom

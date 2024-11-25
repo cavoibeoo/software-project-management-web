@@ -10,7 +10,7 @@ export const fetchIssue = async () => {
 	try {
 		// await RefreshToken();
 		const response = await axios.get(
-			"/issue/get-all/6740b872a950648ea070aa07",
+			"/issue/get-all/6742167e4dea9ed68a6c3b9d",
 			{
 				headers: {
 					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
@@ -32,7 +32,7 @@ export const createIssue = async (data: any) => {
 
 		// await RefreshToken();
 		const response = await axios.post(
-			"/issue/6740b872a950648ea070aa07",
+			"/issue/6742167e4dea9ed68a6c3b9d",
 			{
 				issueType,
 				summary,
