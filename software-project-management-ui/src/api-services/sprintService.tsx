@@ -6,61 +6,56 @@ import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
-export const fetchAllSprint = async () => {
-	try {
-		// await RefreshToken();
-		const response = await axios.get(
-			"/sprint/get-all/6740b872a950648ea070aa07",
-			{
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-				withCredentials: true,
-			}
-		);
-		return response.data;
-	} catch (error) {
-		console.log(error);
-		await handleTokenExpired(error);
-	}
+export const fetchAllSprint = async (projectId: any) => {
+    try {
+        // await RefreshToken();
+        const response = await axios.get(`/sprint/get-all/${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+            },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        await handleTokenExpired(error);
+    }
 };
 
-export const createSprint = async () => {
-	try {
-		// await RefreshToken();
-		const response = await axios.post(
-			"/sprint/6740b872a950648ea070aa07",
-			{},
-			{
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-				withCredentials: true,
-			}
-		);
-		return response.data;
-	} catch (error) {
-		console.log(error);
-		await handleTokenExpired(error);
-	}
+export const createSprint = async (projectId: any) => {
+    try {
+        // await RefreshToken();
+        const response = await axios.post(
+            `/sprint/${projectId}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+                },
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        await handleTokenExpired(error);
+    }
 };
 
-export const deleteSprint = async (sprintId: string) => {
-	try {
-		// await RefreshToken();
-		const response = await axios.delete(
-			`/sprint/6740b872a950648ea070aa07/${sprintId}`,
-			{
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-				withCredentials: true,
-			}
-		);
-		console.log(sprintId);
-		return response.data;
-	} catch (error) {
-		console.log(error);
-		await handleTokenExpired(error);
-	}
+export const deleteSprint = async (data: any) => {
+    try {
+        let { sprintId, projectId } = data;
+        // await RefreshToken();
+        const response = await axios.delete(`/sprint/${projectId}/${sprintId}`, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+            },
+            withCredentials: true,
+        });
+        console.log(sprintId);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        await handleTokenExpired(error);
+    }
 };

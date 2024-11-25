@@ -6,18 +6,15 @@ import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
-export const fetchIssue = async () => {
+export const fetchIssue = async (projectId: any) => {
 	try {
 		// await RefreshToken();
-		const response = await axios.get(
-			"/issue/get-all/6742167e4dea9ed68a6c3b9d",
-			{
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-				withCredentials: true,
-			}
-		);
+		const response = await axios.get(`/issue/get-backlog/${projectId}`, {
+			headers: {
+				Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+			},
+			withCredentials: true,
+		});
 		return response.data;
 	} catch (error) {
 		console.log(error);
@@ -27,16 +24,41 @@ export const fetchIssue = async () => {
 
 export const createIssue = async (data: any) => {
 	try {
-		let { summary } = data;
+		let { summary, projectId } = data;
 		let issueType = data?.issueType || "Story";
+		let processedData = {
+			summary,
+			issueType,
+			...(data?.sprint && { sprint: data.sprint }),
+		};
 
 		// await RefreshToken();
-		const response = await axios.post(
-			"/issue/6742167e4dea9ed68a6c3b9d",
-			{
-				issueType,
-				summary,
+		const response = await axios.post(`/issue/${projectId}`, processedData, {
+			headers: {
+				Authorization: `Bearer ${getAccessTokenFromCookie()}`,
 			},
+			withCredentials: true,
+		});
+		return response.data;
+	} catch (error) {
+		console.log(error);
+		await handleTokenExpired(error);
+	}
+};
+
+export const updateIssue = async (data: any) => {
+	try {
+		let { projectId, issueId } = data;
+		let issueType = data?.issueType || "Story";
+		let processedData = {
+			...(data?.workflow && { workflow: data.workflow }),
+			...(data?.sprint && { sprint: data.sprint }),
+		};
+
+		// await RefreshToken();
+		const response = await axios.put(
+			`/issue/${projectId}/${issueId}`,
+			processedData,
 			{
 				headers: {
 					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
@@ -44,8 +66,6 @@ export const createIssue = async (data: any) => {
 				withCredentials: true,
 			}
 		);
-		console.log(issueType);
-		console.log(summary);
 		return response.data;
 	} catch (error) {
 		console.log(error);
