@@ -80,6 +80,12 @@ export default function Page({ projectName }: { projectName: string }) {
     const [update, setUpdate] = useState(false);
     const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
     const [project, setProject] = useState<any>();
+    const [currentDeleteSprint, setCurrentDeleteSprint] = useState<string | null>(null);
+
+    useEffect(() => {
+        console.log(currentDeleteSprint);
+    }, [currentDeleteSprint]);
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const projectId = searchParams.get("projectId");
@@ -99,7 +105,6 @@ export default function Page({ projectName }: { projectName: string }) {
     useEffect(() => {
         const fetchAPI = async () => {
             const result = await sprintService.fetchAllSprint(projectId);
-            console.log(result);
             setFetchedSprint(result);
         };
         fetchAPI();
@@ -132,10 +137,11 @@ export default function Page({ projectName }: { projectName: string }) {
         }
     }, [issue]);
 
-    const handleDeleteSprint = async (sprintId: string) => {
-        if (sprintId) {
+    const handleDeleteSprint = async () => {
+        if (currentDeleteSprint) {
+            console.log(currentDeleteSprint);
             setOpenNotification(false);
-            await sprintService.deleteSprint(sprintId);
+            await sprintService.deleteSprint({ projectId, currentDeleteSprint });
             toast.success("Delete Sprint Successful!");
             setUpdate(!update);
         }
@@ -200,7 +206,6 @@ export default function Page({ projectName }: { projectName: string }) {
 
     const handleCreateSprint = async () => {
         let sprint = await sprintService.createSprint(projectId);
-        console.log(sprint);
         setUpdate(!update);
         // setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
     };
@@ -254,7 +259,8 @@ export default function Page({ projectName }: { projectName: string }) {
         setAnchorEl(null);
     };
     const [openNotification, setOpenNotification] = useState(false);
-    const handleClickOpenNotification = () => {
+    const handleClickOpenNotification = (sprintId: any) => {
+        setCurrentDeleteSprint(sprintId);
         setOpenNotification(true);
     };
     const handleCloseNotification = () => {
@@ -676,6 +682,7 @@ export default function Page({ projectName }: { projectName: string }) {
                             >
                                 {sprints.map((sprint, index) => (
                                     <Card
+                                        key={sprint._id}
                                         sx={{
                                             boxShadow: "none",
                                             borderRadius: "7px",
@@ -711,7 +718,8 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     </span>
                                                 </Button>
                                                 <Menu
-                                                    id="fade-menu"
+                                                    key={sprint._id}
+                                                    id={`fade-menu-${sprint._id}`}
                                                     MenuListProps={{
                                                         "aria-labelledby": "fade-button",
                                                     }}
@@ -723,8 +731,13 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     <MenuItem onClick={handleClose}>
                                                         Project settings
                                                     </MenuItem>
-                                                    <MenuItem onClick={handleClickOpenNotification}>
-                                                        Move to trash
+                                                    <MenuItem
+                                                        onClick={(event) => {
+                                                            setCurrentDeleteSprint(sprint._id);
+                                                            handleClickOpenNotification(sprint._id);
+                                                        }}
+                                                    >
+                                                        Delete sprint
                                                     </MenuItem>
                                                 </Menu>
                                             </Box>
@@ -765,6 +778,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     backlogs={sprint.issues || []}
                                                     projectId={projectId}
                                                     callUpdate={callUpdate}
+                                                    sprintId={sprint._id}
                                                 ></BacklogList>
                                             </AccordionDetails>
                                         </Accordion>
@@ -795,7 +809,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                         }}
                                                         className="text-black"
                                                     >
-                                                        Move to Trash
+                                                        Delete sprint
                                                     </Typography>
 
                                                     <IconButton
@@ -854,9 +868,7 @@ export default function Page({ projectName }: { projectName: string }) {
 
                                                                         <Button
                                                                             onClick={() =>
-                                                                                handleDeleteSprint(
-                                                                                    sprint._id
-                                                                                )
+                                                                                handleDeleteSprint()
                                                                             }
                                                                             type="submit"
                                                                             variant="contained"
@@ -871,7 +883,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                                                 color: "#fff !important",
                                                                             }}
                                                                         >
-                                                                            Move
+                                                                            Delete
                                                                         </Button>
                                                                     </Box>
                                                                 </Grid>
@@ -952,6 +964,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                         backlogs={backlogs || []}
                                                         projectId={projectId}
                                                         callUpdate={callUpdate}
+                                                        sprintId={null}
                                                     ></BacklogList>
                                                 </AccordionDetails>
                                             </Accordion>

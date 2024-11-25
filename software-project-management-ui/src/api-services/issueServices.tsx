@@ -9,7 +9,7 @@ import { handleTokenExpired, RefreshToken } from "./AuthServices";
 export const fetchIssue = async (projectId: any) => {
     try {
         // await RefreshToken();
-        const response = await axios.get(`/issue/get-all/${projectId}`, {
+        const response = await axios.get(`/issue/get-backlog/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${getAccessTokenFromCookie()}`,
             },
@@ -26,21 +26,19 @@ export const createIssue = async (data: any) => {
     try {
         let { summary, projectId } = data;
         let issueType = data?.issueType || "Story";
+        let processedData = {
+            summary,
+            issueType,
+            ...(data?.sprint && { sprint: data.sprint }),
+        };
 
         // await RefreshToken();
-        const response = await axios.post(
-            `/issue/${projectId}`,
-            {
-                issueType,
-                summary,
+        const response = await axios.post(`/issue/${projectId}`, processedData, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-                },
-                withCredentials: true,
-            }
-        );
+            withCredentials: true,
+        });
         return response.data;
     } catch (error) {
         console.log(error);

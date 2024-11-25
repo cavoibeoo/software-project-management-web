@@ -20,7 +20,8 @@ import { toast } from "react-toastify";
 export const CreateBacklog: React.FC<{
     projectId: any;
     callUpdate: () => void;
-}> = ({ projectId, callUpdate }) => {
+    sprintId: any;
+}> = ({ projectId, callUpdate, sprintId }) => {
     const [createBacklogForm, setCreateBacklogForm] = React.useState<string[]>([]);
     const [showCreateBacklogButton, setShowCreateBacklogButton] = React.useState(true);
 
@@ -60,6 +61,7 @@ export const CreateBacklog: React.FC<{
             let issue = await issueService.createIssue({
                 projectId: projectId,
                 summary: issueName,
+                sprint: sprintId,
                 // issueType: issueTypeValue,
             });
             toast.success("Create Backlog Successful!");
