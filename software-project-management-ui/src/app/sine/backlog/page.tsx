@@ -232,9 +232,9 @@ export default function Page({ projectName }: { projectName: string }) {
     };
     React.useEffect(() => {
         const handleKeyPress = (event: KeyboardEvent) => {
-            if (event.key === "`") {
-                setIsEpicVisible((prev) => !prev);
-            }
+            // if (event.key === "`") {
+            //     setIsEpicVisible((prev) => !prev);
+            // }
         };
 
         window.addEventListener("keydown", handleKeyPress);
@@ -762,6 +762,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     sprintId={sprint._id}
                                                     workflow={workflow}
                                                     issueType={issueType}
+                                                    sprints={sprints}
                                                 ></BacklogList>
                                             </AccordionDetails>
                                         </Accordion>
@@ -950,6 +951,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                         sprintId={null}
                                                         workflow={workflow}
                                                         issueType={issueType}
+                                                        sprints={sprints}
                                                     ></BacklogList>
                                                 </AccordionDetails>
                                             </Accordion>

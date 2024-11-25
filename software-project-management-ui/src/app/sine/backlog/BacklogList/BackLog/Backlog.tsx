@@ -16,11 +16,13 @@ export const Backlog: React.FC<{
     issue: any;
     projectId: any;
     workflows: any[];
+    sprints: any[];
     callUpdate: () => void;
     issueType: any;
-}> = ({ issue, projectId, workflows, callUpdate, issueType }) => {
+    index: any;
+}> = ({ issue, projectId, workflows, callUpdate, issueType, index, sprints }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-        id: issue._id,
+        id: index,
     });
 
     const dndKitColumnStyles = {
@@ -88,13 +90,16 @@ export const Backlog: React.FC<{
                                         </div>
                                     </TableCell>
                                     <TableCell style={{ border: "none" }} sx={{ width: "50%" }}>
-                                        <IssueDetailDialog
-                                            issue={issue}
-                                            projectId={projectId}
-                                            workflows={workflows}
-                                            issueType={issueType}
-                                            callUpdate={callUpdate}
-                                        />
+                                        {issueType && issue ? (
+                                            <IssueDetailDialog
+                                                issue={issue}
+                                                projectId={projectId}
+                                                workflows={workflows}
+                                                issueType={issueType}
+                                                callUpdate={callUpdate}
+                                                sprints={sprints}
+                                            />
+                                        ) : null}
                                     </TableCell>
                                     <TableCell
                                         style={{

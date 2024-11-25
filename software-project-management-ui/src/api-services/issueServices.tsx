@@ -51,9 +51,15 @@ export const updateIssue = async (data: any) => {
         let { projectId, issueId } = data;
         let issueType = data?.issueType || "Story";
         let processedData = {
-            ...(data?.workflow && { workflow: data.workflow }),
-            ...(data?.sprint && { sprint: data.sprint }),
+            ...(data?.issueTypeValue && { issueType: data.issueTypeValue }),
+            ...(data?.workflowValue && { workflow: data.workflowValue }),
+            ...(data?.descriptionValue && { description: data.descriptionValue }),
+            ...(data?.issueField && { fields: data.issueField }),
+            ...(data?.sprintValue && { sprint: data.sprintValue }),
+            ...(data?.assignee && { assignee: data.assignee }),
         };
+
+        console.log(processedData);
 
         // await RefreshToken();
         const response = await axios.put(`/issue/${projectId}/${issueId}`, processedData, {

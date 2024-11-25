@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
     Button,
     DialogActions,
@@ -32,13 +32,17 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import MoreOption from "./Component/MoreOption";
 
+import * as issueService from "@/api-services/issueServices";
+import { toast } from "react-toastify";
+
 const IssueDetailDialog: React.FC<{
     issue: any;
     issueType: any;
     projectId: any;
     workflows: any[];
     callUpdate: () => void;
-}> = ({ issue, projectId, workflows, issueType, callUpdate }) => {
+    sprints: any[];
+}> = ({ issue, projectId, workflows, issueType, callUpdate, sprints }) => {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -48,13 +52,40 @@ const IssueDetailDialog: React.FC<{
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleSaveIssue = async () => {
+        let newIssue = await issueService.updateIssue({
+            projectId,
+            issueId: issue._id,
+            issueTypeValue,
+            workflowValue,
+            descriptionValue,
+            issueField,
+            sprintValue,
+        });
+        if (!newIssue?.error) {
+            toast.success("Update issue successfully");
+            callUpdate();
+        } else toast.error("Update issue failed");
+        setOpen(false);
+    };
     const [sprintDuration, setSprintDuration] = useState<string>("0");
 
     const handleSprintDurationChange = (event: SelectChangeEvent) => {
         setSprintDuration(event.target.value as string);
     };
 
+    const [issueField, setIssueField] = useState<any>(issue?.fields);
+
+    const handleFieldChange = (value: any, field: any) => {
+        setIssueField((prev: any) => ({ ...prev, [field]: value }));
+    };
+
     const [issueTypeValue, setIssueTypeValue] = useState<string>(issue.issueType.name);
+    const [issueTypeObject, setIssueTypeObject] = useState<any>(
+        issueType?.find((type: any) => type?.name === issue?.issueType.name)
+    );
+
     const handleIssueTypeValueChange = (event: SelectChangeEvent) => {
         setIssueTypeValue(event.target.value as string);
     };
@@ -109,7 +140,7 @@ const IssueDetailDialog: React.FC<{
         setAssigneeValue(event.target.value as string);
     };
 
-    const [sprintValue, setSprintValue] = useState<string>("0");
+    const [sprintValue, setSprintValue] = useState<string>(issue.sprint);
     const handleSprintValueChange = (event: SelectChangeEvent) => {
         setSprintValue(event.target.value as string);
     };
@@ -410,7 +441,7 @@ const IssueDetailDialog: React.FC<{
                                 <FormControl fullWidth>
                                     <Select
                                         labelId="product-type-label"
-                                        id="product-type"
+                                        id={`product-type-${issue._id}`}
                                         value={sprintValue}
                                         onChange={handleSprintValueChange}
                                         sx={{
@@ -420,12 +451,51 @@ const IssueDetailDialog: React.FC<{
                                             },
                                         }}
                                     >
-                                        <MenuItem value={0}>Sprint 01</MenuItem>
-                                        <MenuItem value={1}>Sprint 02</MenuItem>
-                                        <MenuItem value={2}>Sprint 03</MenuItem>
+                                        {sprints?.map((sprint) => (
+                                            <MenuItem value={sprint._id}>{sprint.name}</MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             </DialogContentText>
+                            {issueTypeObject?.fields?.map((field: any, index: number) => (
+                                <DialogContentText
+                                    sx={{
+                                        fontWeight: "400",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        paddingTop: "10px",
+                                        justifyContent: "center",
+                                        gap: "10px",
+                                    }}
+                                >
+                                    <strong style={{ width: "80px" }}>
+                                        {field.name}
+                                        {field.isRequired ? (
+                                            <strong style={{ color: "#ae2e24" }}>*</strong>
+                                        ) : null}
+                                    </strong>
+
+                                    <FormControl fullWidth>
+                                        <TextField
+                                            onChange={(event) =>
+                                                handleFieldChange(event.target.value, field.name)
+                                            }
+                                            placeholder={"None"}
+                                            defaultValue={issueField?.[field?.name] || null}
+                                            id={`sprintName-${issue._id}-${field.name}`}
+                                            name="sprintName"
+                                            sx={{
+                                                "& .MuiInputBase-root::before": {
+                                                    border: "none",
+                                                },
+                                                "& .MuiInputBase-root:hover::before": {
+                                                    border: "none",
+                                                },
+                                            }}
+                                        />
+                                    </FormControl>
+                                </DialogContentText>
+                            ))}
                         </AccordionDetails>
                     </Accordion>
 
@@ -495,7 +565,9 @@ const IssueDetailDialog: React.FC<{
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button type="submit">Save</Button>
+                    <Button type="submit" onClick={handleSaveIssue}>
+                        Save
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>
