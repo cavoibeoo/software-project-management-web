@@ -35,7 +35,8 @@ import {
     TextField,
 } from "@mui/material";
 import { ProjectNameContext } from "@/providers/ProjectNameProvider";
-import axios from "axios";
+import Link from "next/link";
+
 import { createProject } from "../../../api-services/projectServices";
 import * as projectService from "../../../api-services/projectServices";
 import { RefreshToken } from "@/api-services/AuthServices";
@@ -501,11 +502,6 @@ export default function EnhancedTable() {
                                             >
                                                 <Typography
                                                     component="a"
-                                                    href={`/sine/backlog/${project._id}`}
-                                                    className="project-link"
-                                                    onClick={() =>
-                                                        projectName?.setProjectName(project.name)
-                                                    }
                                                     sx={{
                                                         display: "flex",
                                                         alignItems: "center",
@@ -513,12 +509,25 @@ export default function EnhancedTable() {
                                                         color: "inherit",
                                                     }}
                                                 >
-                                                    <img
-                                                        src={project.img}
-                                                        alt="Project Logo"
-                                                        className="icon_project"
-                                                    />
-                                                    {project.name}
+                                                    <Link
+                                                        href={{
+                                                            pathname: "/sine/backlog",
+                                                            query: { projectId: `${project._id}` },
+                                                        }}
+                                                        className="project-link"
+                                                        onClick={() =>
+                                                            projectName?.setProjectName(
+                                                                project.name
+                                                            )
+                                                        }
+                                                    >
+                                                        <img
+                                                            src={project.img}
+                                                            alt="Project Logo"
+                                                            className="icon_project"
+                                                        />
+                                                        {project.name}
+                                                    </Link>
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="right">{project.key}</TableCell>
