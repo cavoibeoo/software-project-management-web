@@ -68,3 +68,21 @@ export const updateIssue = async (data: any) => {
         await handleTokenExpired(error);
     }
 };
+
+export const deleteIssue = async (data: any) => {
+    try {
+        let { projectId, issueId } = data;
+
+        // await RefreshToken();
+        const response = await axios.delete(`/issue/${projectId}/${issueId}`, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+            },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        await handleTokenExpired(error);
+    }
+};

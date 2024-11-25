@@ -17,7 +17,8 @@ export const Backlog: React.FC<{
     projectId: any;
     workflows: any[];
     callUpdate: () => void;
-}> = ({ issue, projectId, workflows, callUpdate }) => {
+    issueType: any;
+}> = ({ issue, projectId, workflows, callUpdate, issueType }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: issue._id,
     });
@@ -87,7 +88,13 @@ export const Backlog: React.FC<{
                                         </div>
                                     </TableCell>
                                     <TableCell style={{ border: "none" }} sx={{ width: "50%" }}>
-                                        <IssueDetailDialog description={issue.summary} />
+                                        <IssueDetailDialog
+                                            issue={issue}
+                                            projectId={projectId}
+                                            workflows={workflows}
+                                            issueType={issueType}
+                                            callUpdate={callUpdate}
+                                        />
                                     </TableCell>
                                     <TableCell
                                         style={{
@@ -131,8 +138,7 @@ export const Backlog: React.FC<{
                                                 handleProgressValueChange(event, issue._id);
                                             }}
                                             sx={{
-                                                "& fieldset": {
-                                                },
+                                                "& fieldset": {},
                                                 "& .MuiSelect-select": {
                                                     overflow: "hidden",
                                                     textOverflow: "ellipsis",
