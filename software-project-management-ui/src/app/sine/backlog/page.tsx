@@ -57,7 +57,7 @@ import * as issueService from "@/api-services/issueServices";
 import * as sprintService from "@/api-services/sprintService";
 import * as projectService from "@/api-services/projectServices";
 import * as workflowService from "@/api-services/workflowService";
-
+import * as issueTypeService from "@/api-services/issueTypeService";
 type Issue = {
     _id: string;
     key: string;
@@ -81,6 +81,7 @@ export default function Page({ projectName }: { projectName: string }) {
     const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
     const [project, setProject] = useState<any>();
     const [workflow, setWorkflow] = useState<any>();
+    const [issueType, setIssueType] = useState<any>();
 
     const [update, setUpdate] = useState(false);
     const [currentDeleteSprint, setCurrentDeleteSprint] = useState<string | null>(null);
@@ -111,6 +112,9 @@ export default function Page({ projectName }: { projectName: string }) {
 
             const workflow = await workflowService.fetchWorkflow(projectId);
             setWorkflow(workflow);
+
+            const getIssueType = await issueTypeService.fetchIssueType(projectId);
+            setIssueType(getIssueType);
         };
         fetchAPI();
     }, [update]);
@@ -757,6 +761,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     callUpdate={callUpdate}
                                                     sprintId={sprint._id}
                                                     workflow={workflow}
+                                                    issueType={issueType}
                                                 ></BacklogList>
                                             </AccordionDetails>
                                         </Accordion>
@@ -944,6 +949,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                         callUpdate={callUpdate}
                                                         sprintId={null}
                                                         workflow={workflow}
+                                                        issueType={issueType}
                                                     ></BacklogList>
                                                 </AccordionDetails>
                                             </Accordion>
