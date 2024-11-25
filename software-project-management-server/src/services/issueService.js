@@ -7,7 +7,7 @@ import getObjectId from "../utils/getObjectId.js";
 import Sprint from "../models/sprint.js";
 import mongoose from "mongoose";
 
-const getAllIssue = async (data) => {
+const getAllIssue = async (data, isBacklog = false) => {
     try {
         let complexIssues = await Issue.find(
             { project: getObjectId(data?.prjId) },
@@ -20,6 +20,7 @@ const getAllIssue = async (data) => {
 
         complexIssues.forEach((is) => {
             is.issues.forEach((i) => {
+                if (isBacklog && i.sprint) return;
                 issues.push(i);
             });
         });
@@ -51,6 +52,7 @@ const createIssue = async (project, data) => {
     let dbIssues = await Issue.find({ project: projectId }).sort({ count: 1 });
 
     let issue = {
+        ...data,
         summary: data?.summary,
         project: projectId,
         key: `${dbProject.key}-${dbIssues.reduce((sum, dbIssue) => sum + dbIssue?.count, 0) + 1}`,

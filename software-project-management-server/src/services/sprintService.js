@@ -9,7 +9,21 @@ import getObjectId from "./../utils/getObjectId.js";
 
 const getSprints = async (project) => {
     try {
-        return await Sprint.find({ project: getObjectId(project.prjId) });
+        let sprint = await Sprint.find({ project: getObjectId(project.prjId) });
+        sprint = sprint.map((s) => s.toObject());
+        for (const s of sprint) {
+            s.issues = [];
+            let issues = await Issue.find({
+                "issues.sprint": getObjectId(s._id),
+                project: getObjectId(s.project),
+            });
+            issues.forEach((is) => {
+                is?.issues.forEach((i) => {
+                    if (i.sprint && i?.sprint.equals(s._id)) s.issues.push(i);
+                });
+            });
+        }
+        return sprint;
     } catch (error) {
         throw error;
     }
@@ -25,12 +39,15 @@ const getById = async (data) => {
             "issues.sprint": getObjectId(data?.sprintId),
             project: getObjectId(data?.prjId),
         });
-        // console.log("complexIssues", complexIssues);
+
+        if (!foundSprint) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Sprint not found");
+        }
         foundSprint = foundSprint.toObject();
         foundSprint.issues = [];
 
         complexIssues.forEach((is) => {
-            is.issues.forEach((i) => {
+            is?.issues.forEach((i) => {
                 if (i.sprint == getObjectId(data?.sprintId)) foundSprint.issues.push(i);
             });
         });
@@ -89,9 +106,35 @@ const updateSprint = async (queryParam, sprint) => {
     }
 };
 
-const addIssue = async (queryParam, inputIssue) => {
+const addIssue = async (params, data) => {
     try {
-        return { ple: "ple" };
+        try {
+            if (
+                !(await Sprint.findOne({
+                    project: params.prjId,
+                    _id: getObjectId(params.sprintId),
+                }))
+            ) {
+                throw new ApiError(StatusCodes.NOT_FOUND, "Sprint not found");
+            }
+
+            let foundedIssue = await Issue.findOneAndUpdate(
+                {
+                    project: getObjectId(params.prjId),
+                    "issues._id": getObjectId(data.issueId),
+                },
+                {
+                    $set: { "issues.$.sprint": getObjectId(params.sprintId) },
+                }
+            );
+            if (!foundedIssue) {
+                throw new ApiError(StatusCodes.NOT_FOUND, "Issue not found");
+            }
+
+            return foundedIssue.save();
+        } catch (error) {
+            throw error;
+        }
     } catch (error) {
         throw error;
     }

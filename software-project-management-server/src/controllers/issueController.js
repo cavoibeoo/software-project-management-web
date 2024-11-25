@@ -13,6 +13,15 @@ const getAllIssue = async (req, res, next) => {
     }
 };
 
+const getBacklog = async (req, res, next) => {
+    try {
+        let result = await issueService.getAllIssue(req.params, true);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
 const getById = async (req, res, next) => {
     try {
         let result = await issueService.getIssueById(req.params);
@@ -48,4 +57,4 @@ const deleteIssue = async (req, res, next) => {
     }
 };
 
-export { getAllIssue, getById, createIssue, updateIssue, deleteIssue };
+export { getAllIssue, getById, createIssue, updateIssue, deleteIssue, getBacklog };

@@ -15,6 +15,7 @@ import checkIssueFields from "./../middlewares/checkIssueMiddleware.js";
 const router = express.Router();
 
 router.get("/get-all/:prjId", checkStatus, checkPermission(), controller.getAllIssue);
+router.get("/get-backlog/:prjId", checkStatus, checkPermission(), controller.getBacklog);
 router.get("/get-by-id/:prjId/:issueId", checkStatus, checkPermission(), controller.getById);
 router.post(
     "/:prjId",
