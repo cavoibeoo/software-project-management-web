@@ -15,6 +15,19 @@
 	--darkColor: #212529;
 	--purpleColor: #ad63f6;
 	--orangeColor: #fd5812;
+
+	::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: #0c1427;
+		border-radius: 9999px;
+	}
+
+	::-webkit-scrollbar-horizontal {
+		height: 4px;
+	}
 }
 
 body {
@@ -32,4 +45,13 @@ body {
 
 .backlogCell {
 	border: none !important;
+}
+
+.task-card {
+	border-radius: 0.75rem;
+	outline: none;
+	border-color: rgb(45, 233, 247);
+	border-width: 1px;
+	border-radius: 4px;
+	background-color: #605dff !important;
 }

@@ -12,7 +12,7 @@ export const Task: React.FC<{ id: string; title: string }> = ({
 
 	const style = {
 		transition,
-		transform: CSS.Transform.toString(transform),
+		transform: CSS.Translate.toString(transform),
 	};
 
 	return (

@@ -57,7 +57,7 @@
 .dark-theme .MuiTypography-body2,
 .dark-theme .MuiStepLabel-label,
 .dark-theme .MuiTypography-caption {
-	color: var(--darkBodyColor);
+	color: #dddddd;
 }
 .dark-theme .bg-white {
 	background-color: #0c1427 !important;
@@ -430,4 +430,25 @@
 
 .datePicker {
 	background-color: #0a0e19 !important;
+}
+
+.dark-theme .MuiTypography-caption {
+	color: #dddddd;
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #06b6d4;
+	border-radius: 9999px;
+}
+
+::-webkit-scrollbar-horizontal {
+	height: 2px;
+}
+
+.dark-theme .task-card:hover {
+	border: 1px solid rgb(45, 233, 247);
 }
