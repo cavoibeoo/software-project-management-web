@@ -22,6 +22,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	Typography,
+	IconButton,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -30,9 +31,9 @@ import { deepPurple } from "@mui/material/colors";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
-import MoreOption from "./Component/MoreOption";
-
-const IssueDetailDialog: React.FC<{ description: string }> = ({
+import MoreOption from "./MoreOption";
+import EditIcon from "@mui/icons-material/Edit";
+const EditIssueDialog: React.FC<{ description: string }> = ({
 	description,
 }) => {
 	const [open, setOpen] = React.useState(false);
@@ -113,14 +114,9 @@ const IssueDetailDialog: React.FC<{ description: string }> = ({
 
 	return (
 		<>
-			<Button
-				className="hover-underlined"
-				color="inherit"
-				onClick={handleClickOpen}
-				style={{ textTransform: "none" }}
-			>
-				{description}
-			</Button>
+			<IconButton aria-label="delete" size="small" onClick={handleClickOpen}>
+				<EditIcon fontSize="inherit" />
+			</IconButton>
 			<Dialog
 				open={open}
 				onClose={handleClose}
@@ -605,4 +601,4 @@ const IssueDetailDialog: React.FC<{ description: string }> = ({
 	);
 };
 
-export default IssueDetailDialog;
+export default EditIssueDialog;

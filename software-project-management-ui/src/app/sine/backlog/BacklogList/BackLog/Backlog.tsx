@@ -13,90 +13,104 @@ import IssueDetailDialog from "../../Dialogs/IssueDetailDialog/IssueDetailDialog
 import * as issueService from "@/api-services/issueServices";
 
 export const Backlog: React.FC<{
-    issue: any;
-    projectId: any;
-    workflows: any[];
-    callUpdate: () => void;
+	issue: any;
+	projectId: any;
+	workflows: any[];
+	callUpdate: () => void;
 }> = ({ issue, projectId, workflows, callUpdate }) => {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-        id: issue._id,
-    });
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({
+		id: issue._id,
+	});
 
-    const dndKitColumnStyles = {
-        transition,
-        transform: CSS.Transform.toString(transform),
-        heigh: "100%",
-        opacity: isDragging ? 0.3 : undefined,
-    };
+	const dndKitColumnStyles = {
+		transition,
+		transform: CSS.Translate.toString(transform),
+		heigh: "100%",
+		opacity: isDragging ? 0.3 : undefined,
+	};
 
-    const [epicValue, setEpicValue] = useState<string>("0");
-    const [progressValue, setProgressValue] = useState<string>("");
+	const [epicValue, setEpicValue] = useState<string>("0");
+	const [progressValue, setProgressValue] = useState<string>("");
 
-    const handleEpicValueChange = (event: SelectChangeEvent) => {
-        setEpicValue(event.target.value as string);
-    };
-    const handleProgressValueChange = async (event: SelectChangeEvent, issueId: any) => {
-        setProgressValue(event.target.value as string);
-        await issueService.updateIssue({ projectId, issueId, workflow: event.target.value });
-        // callUpdate();
-    };
+	const handleEpicValueChange = (event: SelectChangeEvent) => {
+		setEpicValue(event.target.value as string);
+	};
+	const handleProgressValueChange = async (
+		event: SelectChangeEvent,
+		issueId: any
+	) => {
+		setProgressValue(event.target.value as string);
+		await issueService.updateIssue({
+			projectId,
+			issueId,
+			workflow: event.target.value,
+		});
+		// callUpdate();
+	};
 
-    return (
-        <>
-            <Box
-                ref={setNodeRef}
-                {...attributes}
-                {...listeners}
-                className="backlog"
-                style={dndKitColumnStyles}
-            >
-                <Box>
-                    <div className="backlogItem" style={{ padding: "0px 0px 0px 0px" }}>
-                        <Table
-                            sx={{
-                                borderBottom: "none !important",
-                            }}
-                        >
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell
-                                        style={{
-                                            border: "none",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                paddingTop: "5px",
-                                                display: "flex",
-                                                justifyContent: "center",
-                                            }}
-                                        >
-                                            <img
-                                                width="20px"
-                                                height="20px"
-                                                style={{
-                                                    marginRight: "5px",
-                                                }}
-                                                src={issue?.issueType.img}
-                                                alt="Issue Logo"
-                                                className="icon_issue"
-                                            />
-                                            {issue.key}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell style={{ border: "none" }} sx={{ width: "50%" }}>
-                                        <IssueDetailDialog description={issue.summary} />
-                                    </TableCell>
-                                    <TableCell
-                                        style={{
-                                            border: "none",
-                                            display: "flex",
-                                            flexDirection: "row",
-                                        }}
-                                    >
-                                        {/* <Select
+	return (
+		<>
+			<Box
+				ref={setNodeRef}
+				{...attributes}
+				{...listeners}
+				className="backlog"
+				style={dndKitColumnStyles}
+			>
+				<Box>
+					<div className="backlogItem" style={{ padding: "0px 0px 0px 0px" }}>
+						<Table
+							sx={{
+								borderBottom: "none !important",
+							}}
+						>
+							<TableBody>
+								<TableRow>
+									<TableCell
+										style={{
+											border: "none",
+											alignItems: "center",
+											justifyContent: "center",
+										}}
+									>
+										<div
+											style={{
+												paddingTop: "5px",
+												display: "flex",
+												justifyContent: "center",
+											}}
+										>
+											<img
+												width="20px"
+												height="20px"
+												style={{
+													marginRight: "5px",
+												}}
+												src={issue?.issueType.img}
+												alt="Issue Logo"
+												className="icon_issue"
+											/>
+											{issue.key}
+										</div>
+									</TableCell>
+									<TableCell style={{ border: "none" }} sx={{ width: "50%" }}>
+										<IssueDetailDialog description={issue.summary} />
+									</TableCell>
+									<TableCell
+										style={{
+											border: "none",
+											display: "flex",
+											flexDirection: "row",
+										}}
+									>
+										{/* <Select
                                             labelId="product-type-label"
                                             id="product-type"
                                             className="epicSelectBg"
@@ -121,41 +135,40 @@ export const Backlog: React.FC<{
                                             <MenuItem value={3}>3</MenuItem>
                                             <MenuItem value={4}>4</MenuItem>
                                         </Select> */}
-                                        <Select
-                                            labelId="product-type-label"
-                                            className="progressSelectBg"
-                                            id={`workflow-${issue._id}`}
-                                            size="small"
-                                            value={progressValue || issue.workflow}
-                                            onChange={(event: SelectChangeEvent) => {
-                                                handleProgressValueChange(event, issue._id);
-                                            }}
-                                            sx={{
-                                                "& fieldset": {
-                                                },
-                                                "& .MuiSelect-select": {
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    whiteSpace: "nowrap",
-                                                },
-                                            }}
-                                        >
-                                            {workflows?.map((workflow, index) => (
-                                                <MenuItem key={index} value={workflow.name}>
-                                                    {workflow?.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell style={{ border: "none" }}>
-                                        <AssignMemberDialog />
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </div>
-                </Box>
-            </Box>
-        </>
-    );
+										<Select
+											labelId="product-type-label"
+											className="progressSelectBg"
+											id={`workflow-${issue._id}`}
+											size="small"
+											value={progressValue || issue.workflow}
+											onChange={(event: SelectChangeEvent) => {
+												handleProgressValueChange(event, issue._id);
+											}}
+											sx={{
+												"& fieldset": {},
+												"& .MuiSelect-select": {
+													overflow: "hidden",
+													textOverflow: "ellipsis",
+													whiteSpace: "nowrap",
+												},
+											}}
+										>
+											{workflows?.map((workflow, index) => (
+												<MenuItem key={index} value={workflow.name}>
+													{workflow?.name}
+												</MenuItem>
+											))}
+										</Select>
+									</TableCell>
+									<TableCell style={{ border: "none" }}>
+										<AssignMemberDialog />
+									</TableCell>
+								</TableRow>
+							</TableBody>
+						</Table>
+					</div>
+				</Box>
+			</Box>
+		</>
+	);
 };
