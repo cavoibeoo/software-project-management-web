@@ -40,9 +40,9 @@ function SimpleDialog({ ...props }: SimpleDialogProps) {
         onClose(selectedValue);
     };
 
-    const handleListItemClick = (value: string) => {
+    const handleListItemClick = async (value: string) => {
         console.log(value, issue);
-        updateIssue({ projectId: issue.project, issueId: issue._id, assignee: value });
+        await updateIssue({ projectId: issue.project, issueId: issue._id, assignee: value });
 
         callUpdate();
         onClose(value);

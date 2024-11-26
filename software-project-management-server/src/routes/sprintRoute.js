@@ -37,7 +37,7 @@ router.put(
     checkStatus,
     checkPermission(Permission.UPDATE_SPRINT),
     validation(validationSchema.updateSprintSchema),
-    controller.updateSprint
+    controller.startSprint
 );
 router.delete(
     "/:prjId/:sprintId",

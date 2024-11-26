@@ -320,7 +320,7 @@ const IssueDetailDialog: React.FC<{
                 >
                     {issue.summary}
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ width: "600px" }}>
                     <strong style={{ color: "#0bb0af", width: "80px", marginRight: "7px" }}>
                         Status
                     </strong>

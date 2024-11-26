@@ -648,7 +648,11 @@ export default function Page({ projectName }: { projectName: string }) {
                                             justifyContent="space-between"
                                         >
                                             <Box display="flex">
-                                                <StartSprintDialog />
+                                                <StartSprintDialog
+                                                    project={project}
+                                                    sprint={sprint}
+                                                    callUpdate={callUpdate}
+                                                />
                                             </Box>
                                             <Box
                                                 display="flex"

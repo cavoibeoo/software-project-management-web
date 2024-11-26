@@ -19,9 +19,10 @@ const addIssueSchema = Joi.object({
 
 const updateSprintSchema = Joi.object({
     name: Joi.string().optional(),
-    startDate: Joi.date().optional(),
-    endDate: Joi.date().optional(),
+    startDate: Joi.optional(),
+    endDate: Joi.optional(),
     sprintGoal: Joi.string().optional(),
-}).strict();
+    status: Joi.string().valid("created", "started", "completed").optional(),
+});
 
 export { sprintValidationSchema, addIssueSchema, updateSprintSchema };

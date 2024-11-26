@@ -18,12 +18,15 @@ const checkIssueFields = async (req, res, next) => {
 
         let project = await Project.findOne({ _id: req.params.prjId });
         let issueType = project?.issueTypes.id(currentIssueTypeId);
-        if (!issueType) throw new ApiError(400, "Issue type not found.");
+        // if (!issueType) throw new ApiError(400, "Issue type not found.");
 
+        console.log(req.body);
         if (req.body.issueType) {
+            console.log(req.body.issueType);
             let newIssueType = project?.issueTypes.find((type) =>
                 [type.name, type._id.toString()].includes(req.body.issueType)
             );
+            if (!newIssueType) throw new ApiError(400, "Issue type not found.");
             req.body.issueType = {
                 _id: newIssueType._id,
                 name: newIssueType.name,

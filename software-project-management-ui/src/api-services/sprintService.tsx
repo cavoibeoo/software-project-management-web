@@ -35,10 +35,43 @@ export const createSprint = async (projectId: any) => {
                 withCredentials: true,
             }
         );
+        toast.success("Create sprint successful");
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        toast.error(error?.response?.data?.message);
         console.log(error);
         await handleTokenExpired(error);
+        return { error: error };
+    }
+};
+
+export const updateSprint = async (data: any) => {
+    try {
+        let { projectId, sprintId } = data;
+        const sprintData = {
+            name: data?.name,
+            startDate: data?.startDate, // Ensure this is a Date object
+            endDate: data?.endDate, // Ensure this is a Date object
+            sprintGoal: data?.goal,
+            status: data?.status,
+        };
+
+        console.log(sprintData.startDate);
+
+        // await RefreshToken();
+        const response = await axios.put(`/sprint/${projectId}/${sprintId}`, sprintData, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+            },
+            withCredentials: true,
+        });
+        toast.success("Start sprint successful");
+        return response.data;
+    } catch (error: any) {
+        toast.error(error?.response?.data?.message);
+        console.log(error);
+        await handleTokenExpired(error);
+        return { error: error };
     }
 };
 
@@ -52,10 +85,12 @@ export const deleteSprint = async (data: any) => {
             },
             withCredentials: true,
         });
-        console.log(sprintId);
+        toast.success("Delete sprint successful");
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        toast.error(error?.response?.data?.message);
         console.log(error);
         await handleTokenExpired(error);
+        return { error: error };
     }
 };

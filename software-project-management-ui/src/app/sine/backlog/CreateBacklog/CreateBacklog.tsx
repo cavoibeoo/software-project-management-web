@@ -65,9 +65,10 @@ export const CreateBacklog: React.FC<{
                 sprint: sprintId,
                 issueType: issueTypeValue,
             });
-            toast.success("Create Backlog Successful!");
-            handleRemoveBacklog();
-            callUpdate();
+            if (!issue.error) {
+                handleRemoveBacklog();
+                callUpdate();
+            }
         } catch (error) {
             toast.error("Failed to create backlog!");
         } finally {

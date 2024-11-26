@@ -90,12 +90,17 @@ const updateSprint = async (queryParam, sprint) => {
             throw new ApiError(StatusCodes.NOT_FOUND, "Sprint not found");
         }
 
-        if (sprint.status && sprint.status === "completed") {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot update a completed sprint");
+        let issue = await Issue.find({
+            "issues.sprint": getObjectId(queryParam?.sprintId),
+            project: getObjectId(queryParam?.prjId),
+        });
+        console.log(issue);
+        if (issue?.length == 0 || !issue) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot start a sprint with no issues");
         }
 
-        if (sprint.status === "started" && !findSprint.issues.length == 0) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot start a sprint with no issues");
+        if (findSprint?.status === "completed") {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot update a completed sprint");
         }
 
         let updatedSprint = await Sprint.findOneAndUpdate(
