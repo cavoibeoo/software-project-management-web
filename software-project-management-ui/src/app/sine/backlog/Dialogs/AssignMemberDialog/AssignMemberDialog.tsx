@@ -1,102 +1,119 @@
 "use client";
 
-import React from "react";
+import React, { use } from "react";
 import {
-	Card,
-	Typography,
-	Box,
-	Button,
-	Avatar,
-	List,
-	ListItem,
-	ListItemAvatar,
-	ListItemButton,
-	ListItemText,
-	DialogTitle,
-	Dialog,
-	IconButton,
+    Card,
+    Typography,
+    Box,
+    Button,
+    Avatar,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemButton,
+    ListItemText,
+    DialogTitle,
+    Dialog,
+    IconButton,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { blue, deepPurple } from "@mui/material/colors";
 
+import { updateIssue } from "@/api-services/issueServices";
+import ProjectLeftSidebarMenu from "@/components/Layout/ProjectLeftSidebarMenu";
+
 const emails = ["Tran Duc Quang", "Tran Binh Phuoc"];
 
 export interface SimpleDialogProps {
-	open: boolean;
-	selectedValue: string;
-	onClose: (value: string) => void;
+    open: boolean;
+    selectedValue: string;
+    onClose: (value: string) => void;
+    actors: any;
+    issue: any;
+    callUpdate: () => void;
 }
 
-function SimpleDialog(props: SimpleDialogProps) {
-	const { onClose, selectedValue, open } = props;
+function SimpleDialog({ ...props }: SimpleDialogProps) {
+    const { actors, issue, callUpdate, onClose, selectedValue, open } = props;
 
-	const handleClose = () => {
-		onClose(selectedValue);
-	};
+    const handleClose = () => {
+        onClose(selectedValue);
+    };
 
-	const handleListItemClick = (value: string) => {
-		onClose(value);
-	};
+    const handleListItemClick = (value: string) => {
+        console.log(value, issue);
+        updateIssue({ projectId: issue.project, issueId: issue._id, assignee: value });
 
-	return (
-		<Dialog onClose={handleClose} open={open}>
-			<DialogTitle>Assign For</DialogTitle>
-			<List sx={{ pt: 0 }}>
-				{emails.map((email) => (
-					<ListItem disableGutters key={email}>
-						<ListItemButton onClick={() => handleListItemClick(email)}>
-							<ListItemAvatar>
-								<Avatar
-									className="avatar-hover"
-									sx={{ bgcolor: deepPurple[500] }}
-								>
-									DQ
-								</Avatar>
-							</ListItemAvatar>
-							<ListItemText primary={email} />
-						</ListItemButton>
-					</ListItem>
-				))}
-				<ListItem disableGutters>
-					<ListItemButton
-						autoFocus
-						onClick={() => handleListItemClick("addAccount")}
-					></ListItemButton>
-				</ListItem>
-			</List>
-		</Dialog>
-	);
+        callUpdate();
+        onClose(value);
+    };
+
+    return (
+        <Dialog onClose={handleClose} open={open}>
+            <DialogTitle>Assign For</DialogTitle>
+            <List sx={{ pt: 0 }}>
+                {actors?.map((actor: any) => (
+                    <ListItem disableGutters key={actor?.user?._id}>
+                        <ListItemButton onClick={() => handleListItemClick(actor?.user?._id)}>
+                            <ListItemAvatar>
+                                <Avatar
+                                    src={actor?.user?.avatar || actor?.user?.name.charAt(0)}
+                                    className="avatar-hover"
+                                    sx={{ bgcolor: deepPurple[500] }}
+                                ></Avatar>
+                            </ListItemAvatar>
+                            <ListItemText primary={actor?.user?.name} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+                <ListItem disableGutters>
+                    <ListItemButton
+                        autoFocus
+                        onClick={() => handleListItemClick("addAccount")}
+                    ></ListItemButton>
+                </ListItem>
+            </List>
+        </Dialog>
+    );
 }
 
-const AssignMemberDialog: React.FC = () => {
-	const [open, setOpen] = React.useState(false);
-	const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+const AssignMemberDialog: React.FC<{
+    actors: any;
+    issue: any;
+    callUpdate: () => void;
+}> = ({ actors, issue, callUpdate }) => {
+    const [open, setOpen] = React.useState(false);
+    const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
 
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
+    const handleClose = (value: string) => {
+        setOpen(false);
+        setSelectedValue(value);
+    };
 
-	const handleClose = (value: string) => {
-		setOpen(false);
-		setSelectedValue(value);
-	};
-
-	return (
-		<>
-			<Box>
-				<IconButton>
-					<span className="material-symbols-outlined" onClick={handleClickOpen}>
-						person
-					</span>
-				</IconButton>
-				<SimpleDialog
-					selectedValue={selectedValue}
-					open={open}
-					onClose={handleClose}
-				/>
-			</Box>
-		</>
-	);
+    return (
+        <>
+            <Box>
+                <Button>
+                    <Avatar
+                        src={issue.assignee?.avatar}
+                        sx={{ bgcolor: deepPurple[500] }}
+                        onClick={handleClickOpen}
+                    ></Avatar>
+                </Button>
+                <SimpleDialog
+                    selectedValue={selectedValue}
+                    open={open}
+                    onClose={handleClose}
+                    actors={actors}
+                    issue={issue}
+                    callUpdate={callUpdate}
+                />
+            </Box>
+        </>
+    );
 };
 
 export default AssignMemberDialog;

@@ -20,7 +20,8 @@ export const Backlog: React.FC<{
     callUpdate: () => void;
     issueType: any;
     index: any;
-}> = ({ issue, projectId, workflows, callUpdate, issueType, index, sprints }) => {
+    project: any;
+}> = ({ issue, projectId, workflows, callUpdate, issueType, index, sprints, project }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: index,
     });
@@ -98,6 +99,7 @@ export const Backlog: React.FC<{
                                                 issueType={issueType}
                                                 callUpdate={callUpdate}
                                                 sprints={sprints}
+                                                project={project}
                                             />
                                         ) : null}
                                     </TableCell>
@@ -159,7 +161,11 @@ export const Backlog: React.FC<{
                                         </Select>
                                     </TableCell>
                                     <TableCell style={{ border: "none" }}>
-                                        <AssignMemberDialog />
+                                        <AssignMemberDialog
+                                            actors={project.actors}
+                                            issue={issue}
+                                            callUpdate={callUpdate}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             </TableBody>

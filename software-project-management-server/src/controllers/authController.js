@@ -27,7 +27,7 @@ const login = async (req, res, next) => {
         let result = await authService.loginService(req.body, false);
         res.cookie("accessToken", result.accessToken, {
             httpOnly: false,
-            maxAge: 15 * 60 * 1000, //15 minutes
+            maxAge: 24 * 60 * 60 * 1000, //15 minutes
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,

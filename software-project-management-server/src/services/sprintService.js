@@ -16,7 +16,10 @@ const getSprints = async (project) => {
             let issues = await Issue.find({
                 "issues.sprint": getObjectId(s._id),
                 project: getObjectId(s.project),
-            });
+            })
+                .populate("issues.assignee", "_id name email avatar")
+                .populate("issues.comments.user", "_id name email avatar")
+                .populate("issues.sprint", "_id name");
             issues.forEach((is) => {
                 is?.issues.forEach((i) => {
                     if (i.sprint && i?.sprint.equals(s._id)) s.issues.push(i);

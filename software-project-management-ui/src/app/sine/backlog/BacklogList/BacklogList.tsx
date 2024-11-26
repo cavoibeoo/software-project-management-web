@@ -16,7 +16,8 @@ export const BacklogList: React.FC<{
     workflow: any;
     issueType: any;
     sprints: any[];
-}> = ({ backlogs, projectId, callUpdate, sprintId, workflow, issueType, sprints }) => {
+    project: any;
+}> = ({ backlogs, projectId, callUpdate, sprintId, workflow, issueType, sprints, project }) => {
     return (
         <Stack spacing={1}>
             <SortableContext items={backlogs}>
@@ -30,6 +31,7 @@ export const BacklogList: React.FC<{
                         issueType={issueType}
                         index={index}
                         sprints={sprints}
+                        project={project}
                     ></Backlog>
                 ))}
             </SortableContext>

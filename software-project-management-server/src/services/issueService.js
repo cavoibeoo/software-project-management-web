@@ -104,7 +104,7 @@ const updateIssue = async (params, data) => {
         if (data?.assignee) {
             let project = await Project.findOne({
                 _id: getObjectId(params.prjId),
-                actors: getObjectId(data.assignee),
+                "actors.user": getObjectId(data.assignee),
             });
             if (!project) {
                 throw new ApiError(
@@ -133,6 +133,8 @@ const updateIssue = async (params, data) => {
         issue.parent = data?.parent || issue?.parent;
         issue.sprint = data?.sprint == "" ? null : data?.sprint || issue?.sprint;
         issue.comments = data?.comments || issue?.comments;
+        issue.assignee = data?.assignee || issue?.assignee;
+        console.log(data?.assignee);
 
         return foundedIssue.save();
     } catch (error) {

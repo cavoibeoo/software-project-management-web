@@ -49,17 +49,16 @@ export const createIssue = async (data: any) => {
 export const updateIssue = async (data: any) => {
     try {
         let { projectId, issueId } = data;
-        let issueType = data?.issueType || "Story";
+        // let issueType = data?.issueType || "Story";
         let processedData = {
-            ...(data?.issueTypeValue && { issueType: data.issueTypeValue }),
-            ...(data?.workflowValue && { workflow: data.workflowValue }),
-            ...(data?.descriptionValue && { description: data.descriptionValue }),
-            ...(data?.issueField && { fields: data.issueField }),
-            ...(data?.sprintValue && { sprint: data.sprintValue }),
+            ...(data?.summary && { summary: data.summary }),
+            ...(data?.issueType && { issueType: data.issueType }),
+            ...(data?.workflow && { workflow: data.workflow }),
+            ...(data?.description && { description: data.description }),
+            ...(data?.fields && { fields: data.fields }),
+            ...(data?.sprint && { sprint: data.sprint }),
             ...(data?.assignee && { assignee: data.assignee }),
         };
-
-        console.log(processedData);
 
         // await RefreshToken();
         const response = await axios.put(`/issue/${projectId}/${issueId}`, processedData, {
@@ -68,10 +67,13 @@ export const updateIssue = async (data: any) => {
             },
             withCredentials: true,
         });
+        toast.success("Update issue successfully!");
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        toast.error(`${error?.response?.data?.message}`);
         console.log(error);
         await handleTokenExpired(error);
+        return { error: error };
     }
 };
 

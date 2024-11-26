@@ -82,6 +82,7 @@ export default function Page({ projectName }: { projectName: string }) {
     const [project, setProject] = useState<any>();
     const [workflow, setWorkflow] = useState<any>();
     const [issueType, setIssueType] = useState<any>();
+    const [actors, setActors] = useState<any>();
 
     const [update, setUpdate] = useState(false);
     const [currentDeleteSprint, setCurrentDeleteSprint] = useState<string | null>(null);
@@ -98,6 +99,7 @@ export default function Page({ projectName }: { projectName: string }) {
         const fetchProject = async () => {
             const result = await projectService.fetchById(projectId);
             setProject(result);
+            setActors(result.actors);
         };
         fetchProject();
     }, []);
@@ -120,7 +122,7 @@ export default function Page({ projectName }: { projectName: string }) {
     }, [update]);
 
     useEffect(() => {
-        if (fetchedSprint.length > 0) {
+        if (fetchedSprint?.length > 0) {
             const sprintNames = fetchedSprint.map((sprint) => sprint);
             setSprints(sprintNames);
         }
@@ -362,52 +364,20 @@ export default function Page({ projectName }: { projectName: string }) {
                         label="Epic"
                     ></FormControlLabel>
                     <Box display="flex" alignItems="center" sx={{ marginBottom: "20px" }}>
-                        <FormDialog></FormDialog>
+                        {project ? (
+                            <FormDialog project={project} callUpdate={callUpdate}></FormDialog>
+                        ) : null}
                         <AvatarGroup max={4}>
-                            <Avatar className="avatar-hover" sx={{ bgcolor: deepOrange[500] }}>
-                                P
-                            </Avatar>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alingItems: "center",
-                                    gap: "10px",
-                                }}
-                            >
-                                <StyledBadge
-                                    overlap="circular"
-                                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                                    variant="dot"
+                            {actors?.map((actor: any) => (
+                                <Avatar
+                                    src={actor?.user?.avatar}
+                                    key={actor.user?._id}
+                                    className="avatar-hover"
+                                    sx={{ bgcolor: deepOrange[500] }}
                                 >
-                                    <Avatar
-                                        className="avatar-hover"
-                                        sx={{ bgcolor: deepPurple[500] }}
-                                    >
-                                        DQ
-                                    </Avatar>
-                                </StyledBadge>
-                            </Box>
-
-                            <Avatar
-                                className="avatar-hover"
-                                alt="Remy Sharp"
-                                src="/images/users/user1.jpg"
-                            />
-                            <Avatar
-                                className="avatar-hover"
-                                alt="Travis Howard"
-                                src="/images/users/user2.jpg"
-                            />
-                            <Avatar
-                                className="avatar-hover"
-                                alt="Cindy Baker"
-                                src="/images/users/user3.jpg"
-                            />
-                            <Avatar
-                                className="avatar-hover"
-                                alt="Agnes Walker"
-                                src="/images/users/user4.jpg"
-                            />
+                                    {actor?.user?.name.charAt(0)}
+                                </Avatar>
+                            ))}
                         </AvatarGroup>
                     </Box>
                 </Box>
@@ -763,6 +733,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     workflow={workflow}
                                                     issueType={issueType}
                                                     sprints={sprints}
+                                                    project={project}
                                                 ></BacklogList>
                                             </AccordionDetails>
                                         </Accordion>
@@ -952,6 +923,7 @@ export default function Page({ projectName }: { projectName: string }) {
                                                         workflow={workflow}
                                                         issueType={issueType}
                                                         sprints={sprints}
+                                                        project={project}
                                                     ></BacklogList>
                                                 </AccordionDetails>
                                             </Accordion>

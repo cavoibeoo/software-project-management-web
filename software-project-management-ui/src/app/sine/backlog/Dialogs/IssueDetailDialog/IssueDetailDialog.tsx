@@ -42,7 +42,8 @@ const IssueDetailDialog: React.FC<{
     workflows: any[];
     callUpdate: () => void;
     sprints: any[];
-}> = ({ issue, projectId, workflows, issueType, callUpdate, sprints }) => {
+    project: any;
+}> = ({ issue, projectId, workflows, issueType, callUpdate, sprints, project }) => {
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -55,22 +56,23 @@ const IssueDetailDialog: React.FC<{
 
     const handleSaveIssue = async () => {
         let newIssue = await issueService.updateIssue({
-            projectId,
+            projectId: project._id,
             issueId: issue._id,
-            issueTypeValue,
-            workflowValue,
-            descriptionValue,
-            issueField,
-            sprintValue,
+            summary: summaryValue,
+            issueType: issueTypeValue,
+            workflow: workflowValue,
+            description: descriptionValue,
+            fields: issueField,
+            sprint: sprintValue,
+            assignee: assigneeValue,
         });
-        if (!newIssue?.error) {
-            toast.success("Update issue successfully");
+        if (!newIssue.error) {
             callUpdate();
-        } else toast.error("Update issue failed");
-        setOpen(false);
+            setOpen(false);
+        }
     };
     const [sprintDuration, setSprintDuration] = useState<string>("0");
-
+    const [summaryValue, setSummaryValue] = useState<string>(issue.summary);
     const handleSprintDurationChange = (event: SelectChangeEvent) => {
         setSprintDuration(event.target.value as string);
     };
@@ -83,8 +85,12 @@ const IssueDetailDialog: React.FC<{
 
     const [issueTypeValue, setIssueTypeValue] = useState<string>(issue.issueType.name);
     const [issueTypeObject, setIssueTypeObject] = useState<any>(
-        issueType?.find((type: any) => type?.name === issue?.issueType.name)
+        project?.issueType?.find((type: any) => type?.name === issue?.issueType.name)
     );
+
+    useEffect(() => {
+        setIssueTypeObject(issueType?.find((type: any) => type?.name === issue?.issueType.name));
+    }, [issueType]);
 
     const handleIssueTypeValueChange = (event: SelectChangeEvent) => {
         setIssueTypeValue(event.target.value as string);
@@ -135,12 +141,16 @@ const IssueDetailDialog: React.FC<{
     const [isEditingDescription, setIsEditingDescription] = useState<boolean>(false);
     const [descriptionValue, setDescriptionValue] = useState<string>(issue.description);
 
-    const [assigneeValue, setAssigneeValue] = useState<string>("0");
+    const [assigneeValue, setAssigneeValue] = useState<string>(issue?.assignee?._id);
     const handleAssigneeValueChange = (event: SelectChangeEvent) => {
         setAssigneeValue(event.target.value as string);
     };
 
-    const [sprintValue, setSprintValue] = useState<string>(issue.sprint);
+    useEffect(() => {
+        console.log(issue);
+    }, [issue]);
+
+    const [sprintValue, setSprintValue] = useState<string>(issue?.sprint?._id);
     const handleSprintValueChange = (event: SelectChangeEvent) => {
         setSprintValue(event.target.value as string);
     };
@@ -421,9 +431,11 @@ const IssueDetailDialog: React.FC<{
                                             },
                                         }}
                                     >
-                                        <MenuItem value={0}>Duc Quang</MenuItem>
-                                        <MenuItem value={1}>Binh Phuoc</MenuItem>
-                                        <MenuItem value={2}>SineVoi</MenuItem>
+                                        {project?.actors.map((actor: any) => (
+                                            <MenuItem value={actor?.user._id}>
+                                                {actor?.user.name}
+                                            </MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             </DialogContentText>
@@ -565,9 +577,7 @@ const IssueDetailDialog: React.FC<{
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button type="submit" onClick={handleSaveIssue}>
-                        Save
-                    </Button>
+                    <Button onClick={handleSaveIssue}>Save</Button>
                 </DialogActions>
             </Dialog>
         </>
