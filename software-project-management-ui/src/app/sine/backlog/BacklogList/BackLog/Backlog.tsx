@@ -28,7 +28,7 @@ export const Backlog: React.FC<{
 
     const dndKitColumnStyles = {
         transition,
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Translate.toString(transform),
         heigh: "100%",
         opacity: isDragging ? 0.3 : undefined,
     };
@@ -41,7 +41,11 @@ export const Backlog: React.FC<{
     };
     const handleProgressValueChange = async (event: SelectChangeEvent, issueId: any) => {
         setProgressValue(event.target.value as string);
-        await issueService.updateIssue({ projectId, issueId, workflow: event.target.value });
+        await issueService.updateIssue({
+            projectId,
+            issueId,
+            workflow: event.target.value,
+        });
         // callUpdate();
     };
 

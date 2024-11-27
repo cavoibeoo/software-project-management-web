@@ -57,7 +57,7 @@
 .dark-theme .MuiTypography-body2,
 .dark-theme .MuiStepLabel-label,
 .dark-theme .MuiTypography-caption {
-	color: var(--darkBodyColor);
+	color: #dddddd;
 }
 .dark-theme .bg-white {
 	background-color: #0c1427 !important;
@@ -430,4 +430,47 @@
 
 .datePicker {
 	background-color: #0a0e19 !important;
+}
+
+.dark-theme .MuiTypography-caption {
+	color: #dddddd;
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #06b6d4;
+	border-radius: 9999px;
+}
+
+::-webkit-scrollbar-horizontal {
+	height: 2px;
+}
+
+.dark-theme .task-card:hover {
+	border: 1px solid rgb(45, 233, 247);
+}
+
+.dark-theme .sidebar-menu-divider {
+	border-top-width: 1px;
+	border-style: solid none none;
+	border-color: #ffffff;
+	margin-bottom: 5px;
+}
+
+.dark-theme .css-1790nmb {
+	width: 200px;
+	height: 200px;
+	display: flex;
+	flex-direction: column;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+	padding: var(--ds-space-200, 15px);
+	position: relative;
+	border-radius: 100%;
+	transition: background-color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }

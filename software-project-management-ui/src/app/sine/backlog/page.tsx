@@ -34,6 +34,7 @@ import StartSprintDialog from "./Dialogs/StartSprintDialog/StartSprintDialog";
 import { FormEvent, useState, useEffect } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import { BacklogList } from "./BacklogList/BacklogList";
+import NextLink from "next/link";
 import {
     DndContext,
     KeyboardSensor,
@@ -85,7 +86,7 @@ export default function Page({ projectName }: { projectName: string }) {
     const [actors, setActors] = useState<any>();
 
     const [update, setUpdate] = useState(false);
-    const [currentDeleteSprint, setCurrentDeleteSprint] = useState<string | null>(null);
+    const [currentDeleteSprintId, setCurrentDeleteSprintId] = useState<string | null>(null);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -137,11 +138,11 @@ export default function Page({ projectName }: { projectName: string }) {
         }
     }, [issue]);
 
-    const handleDeleteSprint = async () => {
-        if (currentDeleteSprint) {
+    const handleDeleteSprint = async (projectId: string) => {
+        let sprintId = currentDeleteSprintId;
+        if (sprintId) {
             setOpenNotification(false);
-            await sprintService.deleteSprint({ projectId, currentDeleteSprint });
-            toast.success("Delete Sprint Successful!");
+            await sprintService.deleteSprint(sprintId, projectId);
             setUpdate(!update);
         }
     };
@@ -204,8 +205,14 @@ export default function Page({ projectName }: { projectName: string }) {
     };
 
     const handleCreateSprint = async () => {
-        let sprint = await sprintService.createSprint(projectId);
-        setUpdate(!update);
+        setLoading(true);
+        await sprintService.createSprint(projectId);
+        // console.log(sprint);
+        setTimeout(() => {
+            setUpdate(!update);
+            setLoading(false);
+        }, 1000);
+        console.log(sprints);
         // setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
     };
 
@@ -258,8 +265,7 @@ export default function Page({ projectName }: { projectName: string }) {
         setAnchorEl(null);
     };
     const [openNotification, setOpenNotification] = useState(false);
-    const handleClickOpenNotification = (sprintId: any) => {
-        setCurrentDeleteSprint(sprintId);
+    const handleClickOpenNotification = (sprintName: any) => {
         setOpenNotification(true);
     };
     const handleCloseNotification = () => {
@@ -666,7 +672,10 @@ export default function Page({ projectName }: { projectName: string }) {
                                                     aria-controls={open ? "fade-menu" : undefined}
                                                     aria-haspopup="true"
                                                     aria-expanded={open ? "true" : undefined}
-                                                    onClick={handleClick}
+                                                    onClick={(event) => {
+                                                        setAnchorEl(event.currentTarget);
+                                                        setCurrentDeleteSprintId(sprint._id);
+                                                    }}
                                                 >
                                                     <span className="material-symbols-outlined">
                                                         more_horiz
@@ -687,9 +696,10 @@ export default function Page({ projectName }: { projectName: string }) {
                                                         Project settings
                                                     </MenuItem>
                                                     <MenuItem
-                                                        onClick={(event) => {
-                                                            setCurrentDeleteSprint(sprint._id);
-                                                            handleClickOpenNotification(sprint._id);
+                                                        onClick={async () => {
+                                                            await handleClickOpenNotification(
+                                                                currentDeleteSprintId
+                                                            );
                                                         }}
                                                     >
                                                         Delete sprint
@@ -827,7 +837,9 @@ export default function Page({ projectName }: { projectName: string }) {
 
                                                                         <Button
                                                                             onClick={() =>
-                                                                                handleDeleteSprint()
+                                                                                handleDeleteSprint(
+                                                                                    project._id
+                                                                                )
                                                                             }
                                                                             type="submit"
                                                                             variant="contained"
@@ -855,14 +867,23 @@ export default function Page({ projectName }: { projectName: string }) {
                                     </Card>
                                 ))}
                                 <Box>
-                                    <Button
-                                        variant="outlined"
-                                        size="medium"
-                                        sx={{ marginBottom: "10px" }}
-                                        onClick={handleCreateSprint}
-                                    >
-                                        Create Sprint
-                                    </Button>
+                                    {loading ? (
+                                        <LinearProgress
+                                            sx={{
+                                                width: "100%",
+                                            }}
+                                            color="success"
+                                        />
+                                    ) : (
+                                        <Button
+                                            variant="outlined"
+                                            size="medium"
+                                            sx={{ marginBottom: "10px" }}
+                                            onClick={handleCreateSprint}
+                                        >
+                                            Create Sprint
+                                        </Button>
+                                    )}
                                 </Box>
                                 <Card
                                     sx={{

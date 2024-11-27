@@ -75,9 +75,8 @@ export const updateSprint = async (data: any) => {
     }
 };
 
-export const deleteSprint = async (data: any) => {
+export const deleteSprint = async (sprintId: string, projectId: string) => {
     try {
-        let { sprintId, projectId } = data;
         // await RefreshToken();
         const response = await axios.delete(`/sprint/${projectId}/${sprintId}`, {
             headers: {
@@ -85,6 +84,7 @@ export const deleteSprint = async (data: any) => {
             },
             withCredentials: true,
         });
+
         toast.success("Delete sprint successful");
         return response.data;
     } catch (error: any) {
