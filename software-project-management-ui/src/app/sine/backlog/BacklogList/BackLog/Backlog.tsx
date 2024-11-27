@@ -76,8 +76,9 @@ export const Backlog: React.FC<{
 									<TableCell
 										style={{
 											border: "none",
-											alignItems: "center",
+											alignItems: "left",
 											justifyContent: "center",
+											width: "20vh",
 										}}
 									>
 										<div
@@ -100,14 +101,22 @@ export const Backlog: React.FC<{
 											{issue.key}
 										</div>
 									</TableCell>
-									<TableCell style={{ border: "none" }} sx={{ width: "50%" }}>
+									<TableCell
+										style={{
+											border: "none",
+											width: "60vh",
+											wordWrap: "break-word",
+										}}
+									>
 										<IssueDetailDialog description={issue.summary} />
 									</TableCell>
 									<TableCell
 										style={{
 											border: "none",
 											display: "flex",
+											alignItems: "center",
 											flexDirection: "row",
+											width: "10vh",
 										}}
 									>
 										{/* <Select

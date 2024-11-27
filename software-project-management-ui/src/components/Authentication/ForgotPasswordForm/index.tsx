@@ -16,7 +16,7 @@ const ForgotPasswordForm: React.FC = () => {
 	return (
 		<>
 			<Box
-				className="auth-main-wrapper forgot-password-area"
+				className="auth-main-wrapper forgot-password-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
 				}}
@@ -64,19 +64,7 @@ const ForgotPasswordForm: React.FC = () => {
 										mb: "23px",
 									}}
 								>
-									<Image
-										src="/images/Sine_logo.png"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
-									<Image
-										src="/images/white-logo.svg"
-										className="d-none"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
+									<Box className="navbar-logo"></Box>
 								</Box>
 
 								<Box
@@ -114,12 +102,13 @@ const ForgotPasswordForm: React.FC = () => {
 													mb: "10px",
 													display: "block",
 												}}
-												className="text-black"
+												className="text-all-black"
 											>
 												Email Address
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="example&#64;sine.com"
 												variant="filled"
 												id="email"

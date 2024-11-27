@@ -43,7 +43,7 @@ const SignUpForm: React.FC = () => {
 	return (
 		<>
 			<Box
-				className="auth-main-wrapper sign-up-area"
+				className="auth-main-wrapper sign-up-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
 					backgroundImage:
@@ -139,7 +139,7 @@ const SignUpForm: React.FC = () => {
 								>
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -156,7 +156,7 @@ const SignUpForm: React.FC = () => {
 
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -173,7 +173,7 @@ const SignUpForm: React.FC = () => {
 
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -206,6 +206,7 @@ const SignUpForm: React.FC = () => {
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="Enter your full name"
 												variant="filled"
 												id="fullName"
@@ -260,6 +261,7 @@ const SignUpForm: React.FC = () => {
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="example&#64;sine.com"
 												variant="filled"
 												id="email"
@@ -314,6 +316,7 @@ const SignUpForm: React.FC = () => {
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="Type Password"
 												variant="filled"
 												type={showPassword ? "text" : "password"}
@@ -383,6 +386,7 @@ const SignUpForm: React.FC = () => {
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="Type Confirm Password"
 												variant="filled"
 												type={showPassword ? "text" : "password"}

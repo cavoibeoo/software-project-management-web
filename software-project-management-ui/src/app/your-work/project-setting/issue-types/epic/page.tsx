@@ -21,6 +21,8 @@ import Dialog from "@mui/material/Dialog";
 import PropTypes from "prop-types";
 import { FormEvent } from "react";
 import ProjectDefaultLogo from "@/app/img/icon/ProjectDefaultLogo";
+import InputAdornment from "@mui/material/InputAdornment";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function Page() {
 	interface BootstrapDialogTitleProps {
@@ -128,14 +130,17 @@ export default function Page() {
 				justifyContent="space-between"
 			>
 				<Breadcrumbs separator="›" aria-label="breadcrumb">
-					<Link className="hover-underlined breadcrumb-link" href="/your-work/">
-						Projects
-					</Link>
-					<Link className="hover-underlined breadcrumb-link" href="/your-work/">
+					<Link className="hover-underlined breadcrumb-link" href="#">
 						Sineizabes
+					</Link>
+					<Link className="hover-underlined breadcrumb-link" href="#">
+						Project Settings
 					</Link>
 					<Link className="breadcrumb-link" href="#">
 						Issue Types
+					</Link>
+					<Link className="breadcrumb-link" href="#">
+						Epic
 					</Link>
 				</Breadcrumbs>
 				<Button
@@ -161,6 +166,205 @@ export default function Page() {
 						Move to trash
 					</MenuItem>
 				</Menu>
+			</Box>
+			<Box marginInline={10}>
+				<Typography
+					variant="h4"
+					display="flex"
+					alignItems="center"
+					gap={1}
+					marginBottom={2}
+				>
+					<img
+						style={{ width: "30px", height: "30px" }}
+						src="/images/issueType/Epic.svg"
+						alt="EpicIcon"
+					/>{" "}
+					Epic
+				</Typography>
+				<Typography variant="subtitle1">
+					Epics track collections of related bugs, stories, and tasks.
+				</Typography>
+				<Box display="flex" flexDirection="column" gap={1} marginTop={3}>
+					<Box display="flex" alignItems="center" gap={1}>
+						<Typography variant="h6">Description fields</Typography>
+						<Tooltip
+							sx={{ background: "#fff", padding: "10px" }}
+							title={
+								<div
+									style={{
+										width: "300px",
+										fontSize: "12px",
+									}}
+								>
+									<p>
+										These fields describe the work that needs to be done. They
+										display prominently in most views.
+									</p>
+									<Link
+										href="https://confluence.atlassian.com/x/Jxm1O"
+										style={{ color: "#32b3ff", textDecoration: "underline" }}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										More about description fields
+									</Link>
+								</div>
+							}
+							placement="right"
+						>
+							<span className="material-symbols-outlined">info</span>
+						</Tooltip>
+					</Box>
+					<Tooltip
+						sx={{ background: "#fff" }}
+						title={
+							<div
+								style={{
+									width: "200px",
+									fontSize: "12px",
+								}}
+							>
+								<p>Sine created this field. You can't:</p>
+								<ul>
+									<li>edit its name</li>
+									<li>change if it's required</li>
+									<li>remove it</li>
+									<li>reorder it</li>
+								</ul>
+							</div>
+						}
+						placement="bottom"
+					>
+						<TextField
+							variant="outlined"
+							sx={{ width: "900px" }}
+							InputProps={{
+								readOnly: true,
+								startAdornment: (
+									<InputAdornment className="text-dark" position="start">
+										<span
+											className="material-symbols-outlined"
+											style={{ marginRight: 10 }}
+										>
+											format_size
+										</span>
+										Summary
+									</InputAdornment>
+								),
+								endAdornment: (
+									<InputAdornment className="text-dark" position="end">
+										<span
+											className="material-symbols-outlined"
+											style={{ marginRight: 10 }}
+										>
+											check
+										</span>
+										<Typography variant="subtitle1">Required</Typography>
+									</InputAdornment>
+								),
+							}}
+						/>
+					</Tooltip>
+
+					<TextField
+						variant="outlined"
+						sx={{ width: "900px" }}
+						InputProps={{
+							readOnly: true,
+							startAdornment: (
+								<InputAdornment className="text-dark" position="start">
+									<span
+										className="material-symbols-outlined"
+										style={{ marginRight: 10 }}
+									>
+										subject
+									</span>
+									Description
+								</InputAdornment>
+							),
+							endAdornment: (
+								<InputAdornment className="text-dark" position="end">
+									<span
+										className="material-symbols-outlined"
+										style={{ marginRight: 10 }}
+									>
+										chevron_right
+									</span>
+								</InputAdornment>
+							),
+						}}
+					/>
+				</Box>
+				<Box display="flex" flexDirection="column" gap={1} marginTop={3}>
+					<Box display="flex" alignItems="center" gap={1}>
+						<Typography variant="h6">Context fields</Typography>
+						<Tooltip
+							sx={{ background: "#fff", padding: "10px" }}
+							title={
+								<div
+									style={{
+										width: "300px",
+										fontSize: "12px",
+									}}
+								>
+									<p>
+										These fields provide context to the work, and help group,
+										filter, and report on similar issues.
+									</p>
+									<Link
+										href="https://support.atlassian.com/jira-software-cloud/docs/customize-an-issues-fields-in-team-managed-projects/"
+										style={{ color: "#32b3ff", textDecoration: "underline" }}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										More about context fields
+									</Link>
+								</div>
+							}
+							placement="right"
+						>
+							<span className="material-symbols-outlined">info</span>
+						</Tooltip>
+					</Box>
+					<TextField
+						placeholder="Status"
+						variant="outlined"
+						sx={{ width: "110px" }}
+						InputProps={{
+							// readOnly: true,
+							startAdornment: (
+								<InputAdornment sx={{ color: "#fff" }} position="start">
+									<span className="material-symbols-outlined">
+										arrow_forward
+									</span>
+								</InputAdornment>
+							),
+						}}
+					/>
+					<TextField
+						placeholder="Description"
+						variant="outlined"
+						sx={{ width: "900px" }}
+						InputProps={{
+							// readOnly: true,
+							startAdornment: (
+								<InputAdornment sx={{ color: "#fff" }} position="start">
+									<span className="material-symbols-outlined">subject</span>
+								</InputAdornment>
+							),
+							endAdornment: (
+								<InputAdornment sx={{ color: "#fff" }} position="end">
+									<Button variant="text" sx={{ padding: 0 }}>
+										<span className="material-symbols-outlined">
+											chevron_right
+										</span>
+									</Button>
+								</InputAdornment>
+							),
+						}}
+					/>
+				</Box>
 			</Box>
 
 			<BootstrapDialog

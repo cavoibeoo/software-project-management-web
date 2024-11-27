@@ -114,7 +114,7 @@ const IssueTypeLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 								className="sidebar-menu-divider"
 								style={{ marginTop: 10, marginBottom: 10 }}
 							></div>
-							<Link
+							{/* <Link
 								href="/your-work/project-setting/issue-types/epic"
 								className="sidebar-menu-link"
 								style={{
@@ -132,7 +132,7 @@ const IssueTypeLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 							<div
 								className="sidebar-menu-divider"
 								style={{ marginTop: 10, marginBottom: 10 }}
-							></div>
+							></div> */}
 							<Link
 								style={{ display: "flex", alignItems: "center", gap: 20 }}
 								href="/your-work/project-setting/issue-types/bug"

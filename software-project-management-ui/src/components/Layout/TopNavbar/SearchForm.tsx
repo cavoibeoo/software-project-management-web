@@ -63,7 +63,10 @@ const SearchForm: React.FC = () => {
 	return (
 		<>
 			<form>
-				<Search className="search-form" sx={{ backgroundColor: "#FFF" }}>
+				<Search
+					className="search-form"
+					sx={{ backgroundColor: "#FFF", borderRadius: "10px !important" }}
+				>
 					<SearchIconWrapper>
 						<SearchIcon />
 					</SearchIconWrapper>

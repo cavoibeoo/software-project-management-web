@@ -32,14 +32,7 @@ const Navbar: React.FC = () => {
 			<div id="navbar" className="fp-navbar-area transition">
 				<div className="container">
 					<nav className="navbar navbar-expand-lg">
-						<Link className="navbar-brand" href="/">
-							<Image
-								src="/images/Sine_logo.png"
-								alt="logo"
-								width={142}
-								height={38}
-							/>
-						</Link>
+						<Box className="navbar-logo"></Box>
 
 						<button className="navbar-toggler">
 							<span className="burger-menu" onClick={handleToggleNavbar}>
@@ -55,7 +48,7 @@ const Navbar: React.FC = () => {
 								className="fp-outlined-btn"
 							>
 								<i className="material-symbols-outlined">login</i>
-								Login
+								Logins
 							</Box>
 
 							<Link href="/authentication/sign-up/" className="fp-btn">

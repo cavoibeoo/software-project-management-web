@@ -1469,3 +1469,23 @@ table tfoot tr p {
 	height: 100%;
 	transition: border-color 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 }
+
+.background-authentication {
+	background-image: url("/images/authentication/LoginBackground_lightTheme.jpg");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	width: 100%;
+	min-height: 100vh;
+}
+
+.authentication-input {
+	border: 1px solid #707070;
+	border-radius: 7px;
+}
+
+.navbar-logo {
+	content: url("/images/Sine_logo.png");
+	width: 143px;
+	height: auto;
+}

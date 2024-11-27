@@ -729,9 +729,6 @@ export default function Page({ projectName }: { projectName: string }) {
 													onClose={handleClose}
 													TransitionComponent={Fade}
 												>
-													<MenuItem onClick={handleClose}>
-														Project settings
-													</MenuItem>
 													<MenuItem
 														onClick={async () => {
 															await handleClickOpenNotification(

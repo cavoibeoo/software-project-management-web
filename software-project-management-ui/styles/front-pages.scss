@@ -287,15 +287,6 @@
 .dark-theme {
     .fp-navbar-area {
         .navbar {
-            .navbar-brand {
-                img {
-                    display: none;
-
-                    &.d-none {
-                        display: inline !important;
-                    }
-                }
-            }
             .navbar-toggler {
                 color: var(--whiteColor);
 

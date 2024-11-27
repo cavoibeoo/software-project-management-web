@@ -39,16 +39,9 @@ const SignInForm: React.FC = () => {
 	return (
 		<>
 			<Box
-				className="auth-main-wrapper sign-in-area"
+				className="auth-main-wrapper sign-in-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
-					backgroundImage:
-						"url('/images/authentication/LoginBackground_darkTheme.jpg')",
-					backgroundSize: "cover",
-					backgroundPosition: "center",
-					backgroundRepeat: "no-repeat",
-					width: "100%",
-					minheight: "100vh",
 				}}
 			>
 				<Box
@@ -94,19 +87,7 @@ const SignInForm: React.FC = () => {
 										mb: "23px",
 									}}
 								>
-									<Image
-										src="/images/Sine_logo.png"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
-									<Image
-										src="/images/white-logo.svg"
-										className="d-none"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
+									<Box className="navbar-logo"></Box>
 								</Box>
 
 								<Box
@@ -212,6 +193,7 @@ const SignInForm: React.FC = () => {
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="example&#64;sine.com"
 												variant="filled"
 												id="email"
@@ -266,6 +248,7 @@ const SignInForm: React.FC = () => {
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="Type Password"
 												variant="filled"
 												type={showPassword ? "text" : "password"}
