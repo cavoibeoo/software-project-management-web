@@ -119,16 +119,18 @@ export default function Page({ projectName }: { projectName: string }) {
 	}, [update]);
 
 	useEffect(() => {
-		if (fetchedSprint.length > 0) {
+		if (fetchedSprint && fetchedSprint.length > 0) {
 			const sprintNames = fetchedSprint.map((sprint) => sprint);
 			setSprints(sprintNames);
+		} else {
+			setSprints([]);
 		}
 	}, [fetchedSprint]);
 
 	const [issueName, setIssueName] = useState("");
 
 	useEffect(() => {
-		if (issue.length > 0) {
+		if (issue && issue.length > 0) {
 			const mappedBacklogs = issue.map((item) => item);
 			setBacklogs(mappedBacklogs);
 		}

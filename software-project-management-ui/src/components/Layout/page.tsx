@@ -1,97 +1,70 @@
 "use client";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Fade from "@mui/material/Fade";
-import React, { useState, FormEvent } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import ClearIcon from "@mui/icons-material/Clear";
+import * as React from "react";
 import NextLink from "next/link";
-import { alpha } from "@mui/material/styles";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Tooltip from "@mui/material/Tooltip";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { visuallyHidden } from "@mui/utils";
-import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
-import { styled } from "@mui/material/styles";
-import CloseIcon from "@mui/icons-material/Close";
-import PropTypes from "prop-types";
-import { SelectChangeEvent } from "@mui/material/Select";
-import {
-	Box,
-	Typography,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TablePagination,
-	TableRow,
-	Paper,
-	IconButton,
-	TableHead,
-	Checkbox,
-	Dialog,
-	DialogTitle,
-	Grid,
-	Button,
-	TextField,
-	InputLabel,
-	Input,
-} from "@mui/material";
-import { moveToTrash } from "@/api-services/projectServices";
+import Link from "next/link";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Fade from "@mui/material/Fade";
+import MenuItem from "@mui/material/MenuItem";
+import { useState } from "react";
+import Menu from "@mui/material/Menu";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import ClearIcon from "@mui/icons-material/Clear";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
 import { toast } from "react-toastify";
+import { DialogTitle } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Dialog from "@mui/material/Dialog";
+import PropTypes from "prop-types";
+import { FormEvent } from "react";
+import ProjectDefaultLogo from "@/app/img/icon/ProjectDefaultLogo";
 
-interface BootstrapDialogTitleProps {
-	children?: React.ReactNode;
-	onClose: () => void;
-}
+export default function Page() {
+	interface BootstrapDialogTitleProps {
+		children?: React.ReactNode;
+		onClose: () => void;
+	}
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-	"& .MuiDialogContent-root": {
-		padding: theme.spacing(2),
-	},
-	"& .MuiDialogActions-root": {
-		padding: theme.spacing(1),
-	},
-}));
+	const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+		"& .MuiDialogContent-root": {
+			padding: theme.spacing(2),
+		},
+		"& .MuiDialogActions-root": {
+			padding: theme.spacing(1),
+		},
+	}));
 
-function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
-	const { children, onClose, ...other } = props;
+	function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
+		const { children, onClose, ...other } = props;
 
-	return (
-		<DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-			{children}
-			{onClose ? (
-				<IconButton
-					aria-label="close"
-					onClick={onClose}
-					sx={{
-						position: "absolute",
-						right: 8,
-						top: 8,
-						color: (theme) => theme.palette.grey[500],
-					}}
-				>
-					<CloseIcon />
-				</IconButton>
-			) : null}
-		</DialogTitle>
-	);
-}
-BootstrapDialogTitle.propTypes = {
-	children: PropTypes.node,
-	onClose: PropTypes.func.isRequired,
-};
+		return (
+			<DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+				{children}
+				{onClose ? (
+					<IconButton
+						aria-label="close"
+						onClick={onClose}
+						sx={{
+							position: "absolute",
+							right: 8,
+							top: 8,
+							color: (theme) => theme.palette.grey[500],
+						}}
+					>
+						<ClearIcon />
+					</IconButton>
+				) : null}
+			</DialogTitle>
+		);
+	}
+	BootstrapDialogTitle.propTypes = {
+		children: PropTypes.node,
+		onClose: PropTypes.func.isRequired,
+	};
 
-export default function FadeMenu({
-	_id,
-	projectName,
-	onDeleteSuccess,
-}: {
-	_id: string;
-	projectName: string;
-	onDeleteSuccess: () => void;
-}) {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -112,17 +85,59 @@ export default function FadeMenu({
 	const [projectInput, setProjectInput] = useState("");
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		if (projectInput === projectName) {
-			await moveToTrash(_id, projectName);
-			onDeleteSuccess();
-		} else {
-			toast.error("Project name does not match!");
+		// if (projectInput === projectName) {
+		// 	await moveToTrash(_id, projectName);
+		// 	onDeleteSuccess();
+		// } else {
+		// 	toast.error("Project name does not match!");
+		// }
+	};
+	const [nameInput, setNameInput] = useState("");
+	const [keyInput, setKeyInput] = useState("");
+	const handleUpdateProject = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		if (nameInput.length <= 2) {
+			toast.error("Project name must be longer than 2 characters.");
+			return;
 		}
+
+		if (!keyInput) {
+			toast.error("Project key cannot be empty.");
+			return;
+		}
+
+		if (keyInput.length > 10) {
+			toast.error("Project key cannot exceed 10 characters.");
+			return;
+		}
+
+		toast.info(
+			"This change would re-index your project, and may break some external integrations."
+		);
+		toast.success("Project updated successfully!");
+
+		// Proceed with the update logic here
 	};
 
 	return (
 		<>
-			<div>
+			<Box
+				marginInline={10}
+				display="flex"
+				alignItems="center"
+				justifyContent="space-between"
+			>
+				<Breadcrumbs separator="›" aria-label="breadcrumb">
+					<Link className="hover-underlined breadcrumb-link" href="/your-work/">
+						Projects
+					</Link>
+					<Link className="hover-underlined breadcrumb-link" href="/your-work/">
+						Sineizabes
+					</Link>
+					<Link className="breadcrumb-link" href="#">
+						Issue Types
+					</Link>
+				</Breadcrumbs>
 				<Button
 					id="fade-button"
 					aria-controls={open ? "fade-menu" : undefined}
@@ -142,14 +157,12 @@ export default function FadeMenu({
 					onClose={handleClose}
 					TransitionComponent={Fade}
 				>
-					<NextLink href="/your-work/project-setting/details/">
-						<MenuItem>Project settings</MenuItem>
-					</NextLink>
 					<MenuItem onClick={handleClickOpenNotification}>
 						Move to trash
 					</MenuItem>
 				</Menu>
-			</div>
+			</Box>
+
 			<BootstrapDialog
 				onClose={handleCloseNotification}
 				aria-labelledby="customized-dialog-title"
@@ -200,7 +213,7 @@ export default function FadeMenu({
 							>
 								<Grid container alignItems="center" spacing={2}>
 									<Typography>
-										Please input <strong>{projectName}</strong> to Temporary
+										Please input <strong>ProjectName</strong> to Temporary
 										Delete
 									</Typography>
 									<TextField

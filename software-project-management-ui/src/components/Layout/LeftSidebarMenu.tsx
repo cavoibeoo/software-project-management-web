@@ -216,27 +216,6 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 									marginBottom: "5px",
 								}}
 							></div>
-							<Link href={`/sine/document-page`} className="sidebar-menu-link">
-								<i className="material-symbols-outlined">
-									<svg
-										width="24"
-										height="24"
-										viewBox="0 0 24 24"
-										role="presentation"
-									>
-										<g fill="currentcolor" fillRule="evenodd">
-											<rect width="8" height="2" x="8" y="6" rx="1"></rect>
-											<rect width="8" height="2" x="8" y="9" rx="1"></rect>
-											<rect width="4" height="2" x="8" y="12" rx="1"></rect>
-											<path
-												fillRule="nonzero"
-												d="M7 4v16h10V4zm-2-.01C5 2.892 5.897 2 7.006 2h9.988C18.102 2 19 2.898 19 3.99v16.02c0 1.099-.897 1.99-2.006 1.99H7.006A2.003 2.003 0 0 1 5 20.01z"
-											></path>
-										</g>
-									</svg>
-								</i>
-								<span className="title">Documents Page</span>
-							</Link>
 							<Link
 								href={`/sine/project-settings/`}
 								className="sidebar-menu-link"

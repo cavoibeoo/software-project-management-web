@@ -7,6 +7,8 @@ import ProjectLeftSidebarMenu from "@/components/Layout/ProjectLeftSidebarMenu";
 import TopNavbar from "./../components/Layout/TopNavbar/index";
 import Footer from "@/components/Layout/Footer";
 import ControlPanel from "@/components/Layout/ControlPanel";
+import ProjectSettingsLeftSidebarMenu from "@/components/Layout/ProjectSettingsLeftSidebarMenu";
+import IssueTypeLeftSidebarMenu from "@/components/Layout/IssueTypeLeftSidebarMenu";
 
 interface LayoutProviderProps {
 	children: ReactNode;
@@ -37,12 +39,17 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 		"/your-work/",
 	].includes(pathname);
 
-	const isProjectPage = [
-		"/your-work/",
-		"/your-work/trash/",
-		"/your-work/project-setting/",
-	].includes(pathname);
+	const isProjectPage = ["/your-work/", "/your-work/trash/"].includes(pathname);
+
+	const isProjectSettingsPage = pathname.startsWith(
+		"/your-work/project-setting/"
+	);
+
 	const isBacklogPage = ["/sine/backlog/"].includes(pathname);
+
+	const isIssueTypePage = pathname.startsWith(
+		"/your-work/project-setting/issue-types/"
+	);
 
 	return (
 		<>
@@ -58,6 +65,18 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 					<>
 						<TopNavbar toggleActive={toggleActive} />
 						<ProjectLeftSidebarMenu toggleActive={toggleActive} />
+					</>
+				)}
+				{isProjectSettingsPage && (
+					<>
+						<TopNavbar toggleActive={toggleActive} />
+						<ProjectSettingsLeftSidebarMenu toggleActive={toggleActive} />
+					</>
+				)}
+				{isIssueTypePage && (
+					<>
+						<TopNavbar toggleActive={toggleActive} />
+						<IssueTypeLeftSidebarMenu toggleActive={toggleActive} />
 					</>
 				)}
 				{isBacklogPage &&
