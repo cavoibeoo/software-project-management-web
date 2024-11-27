@@ -52,7 +52,8 @@ const loginWithGoogle = async (req, res, next) => {
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
         });
 
-        res.status(StatusCodes.OK).send(result);
+        // res.status(StatusCodes.OK).send(result);
+        res.redirect("http://localhost:3000/your-work/");
     } catch (err) {
         next(err);
     }

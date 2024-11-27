@@ -173,7 +173,7 @@ const Profile: React.FC<ProfileProps> = () => {
                     </Link>
                 </MenuItem>
 
-                <MenuItem sx={{ padding: "8px 20px" }}>
+                {/* <MenuItem sx={{ padding: "8px 20px" }}>
                     <Link
                         href="/sine/chat/"
                         className="text-black"
@@ -222,7 +222,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
                         <span style={{ fontSize: "13px" }}>Billing</span>
                     </Link>
-                </MenuItem>
+                </MenuItem> */}
 
                 <Divider sx={{ borderColor: "#F6F7F9" }} />
 
@@ -243,7 +243,7 @@ const Profile: React.FC<ProfileProps> = () => {
                     </Link>
                 </MenuItem>
 
-                <MenuItem sx={{ padding: "8px 20px" }}>
+                {/* <MenuItem sx={{ padding: "8px 20px" }}>
                     <Link
                         href="/faq/"
                         className="text-black"
@@ -275,7 +275,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
                         <span style={{ fontSize: "13px" }}>Lock Screen</span>
                     </Link>
-                </MenuItem>
+                </MenuItem> */}
 
                 <MenuItem sx={{ padding: "8px 20px" }} onClick={handleLogout}>
                     <Box
