@@ -16,7 +16,10 @@ const getSprints = async (project) => {
             let issues = await Issue.find({
                 "issues.sprint": getObjectId(s._id),
                 project: getObjectId(s.project),
-            });
+            })
+                .populate("issues.assignee", "_id name email avatar")
+                .populate("issues.comments.user", "_id name email avatar")
+                .populate("issues.sprint", "_id name");
             issues.forEach((is) => {
                 is?.issues.forEach((i) => {
                     if (i.sprint && i?.sprint.equals(s._id)) s.issues.push(i);
@@ -87,12 +90,17 @@ const updateSprint = async (queryParam, sprint) => {
             throw new ApiError(StatusCodes.NOT_FOUND, "Sprint not found");
         }
 
-        if (sprint.status && sprint.status === "completed") {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot update a completed sprint");
+        let issue = await Issue.find({
+            "issues.sprint": getObjectId(queryParam?.sprintId),
+            project: getObjectId(queryParam?.prjId),
+        });
+        console.log(issue);
+        if (issue?.length == 0 || !issue) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot start a sprint with no issues");
         }
 
-        if (sprint.status === "started" && !findSprint.issues.length == 0) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot start a sprint with no issues");
+        if (findSprint?.status === "completed") {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot update a completed sprint");
         }
 
         let updatedSprint = await Sprint.findOneAndUpdate(

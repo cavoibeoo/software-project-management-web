@@ -27,7 +27,7 @@ const login = async (req, res, next) => {
         let result = await authService.loginService(req.body, false);
         res.cookie("accessToken", result.accessToken, {
             httpOnly: false,
-            maxAge: 15 * 60 * 1000, //15 minutes
+            maxAge: 24 * 60 * 60 * 1000, //15 minutes
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,
@@ -52,7 +52,8 @@ const loginWithGoogle = async (req, res, next) => {
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
         });
 
-        res.status(StatusCodes.OK).send(result);
+        // res.status(StatusCodes.OK).send(result);
+        res.redirect("http://localhost:3000/your-work/");
     } catch (err) {
         next(err);
     }

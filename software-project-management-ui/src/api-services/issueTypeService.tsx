@@ -4,19 +4,12 @@ import { toast } from "react-toastify";
 import { getAccessTokenFromCookie } from "./CookieServices";
 import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
-// -----------------------------------Projects-----------------------------------
+// -----------------------------------Issue-----------------------------------
 
-interface User {
-    avatar: string;
-    name: string;
-    email: string;
-    // Add other fields as needed
-}
-
-export const useFetchUser = async () => {
+export const fetchIssueType = async (projectId: any) => {
     try {
         // await RefreshToken();
-        const response = await axios.get("/user/me", {
+        const response = await axios.get(`/issue-type/get-all/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${getAccessTokenFromCookie()}`,
             },
@@ -24,6 +17,7 @@ export const useFetchUser = async () => {
         });
         return response.data;
     } catch (error) {
+        console.log(error);
         await handleTokenExpired(error);
     }
 };

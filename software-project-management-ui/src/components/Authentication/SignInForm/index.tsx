@@ -15,12 +15,8 @@ import Image from "next/image";
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import {
-	FormLoginServices,
-	GGLoginServices,
-} from "@/api-services/AuthServices";
+import { FormLoginServices, loginGoogle } from "@/api-services/AuthServices";
 import { validateEmail, validatePassword } from "./formValidation";
-import { url } from "inspector";
 
 const SignInForm: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +29,7 @@ const SignInForm: React.FC = () => {
 
 	const handleLoginWithGG = async (event: React.FormEvent) => {
 		event.preventDefault();
-		GGLoginServices();
+		await loginGoogle();
 	};
 
 	return (
@@ -42,6 +38,13 @@ const SignInForm: React.FC = () => {
 				className="auth-main-wrapper sign-in-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
+					backgroundImage:
+						"url('/images/authentication/LoginBackground_darkTheme.jpg')",
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+					backgroundRepeat: "no-repeat",
+					width: "100%",
+					minheight: "100vh",
 				}}
 			>
 				<Box

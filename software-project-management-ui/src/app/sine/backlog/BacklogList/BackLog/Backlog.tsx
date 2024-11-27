@@ -16,8 +16,21 @@ export const Backlog: React.FC<{
 	issue: any;
 	projectId: any;
 	workflows: any[];
+	sprints: any[];
 	callUpdate: () => void;
-}> = ({ issue, projectId, workflows, callUpdate }) => {
+	issueType: any;
+	index: any;
+	project: any;
+}> = ({
+	issue,
+	projectId,
+	workflows,
+	callUpdate,
+	issueType,
+	index,
+	sprints,
+	project,
+}) => {
 	const {
 		attributes,
 		listeners,
@@ -26,7 +39,7 @@ export const Backlog: React.FC<{
 		transition,
 		isDragging,
 	} = useSortable({
-		id: issue._id,
+		id: index,
 	});
 
 	const dndKitColumnStyles = {
@@ -108,7 +121,17 @@ export const Backlog: React.FC<{
 											wordWrap: "break-word",
 										}}
 									>
-										<IssueDetailDialog description={issue.summary} />
+										{issueType && issue ? (
+											<IssueDetailDialog
+												issue={issue}
+												projectId={projectId}
+												workflows={workflows}
+												issueType={issueType}
+												callUpdate={callUpdate}
+												sprints={sprints}
+												project={project}
+											/>
+										) : null}
 									</TableCell>
 									<TableCell
 										style={{
@@ -170,7 +193,11 @@ export const Backlog: React.FC<{
 										</Select>
 									</TableCell>
 									<TableCell style={{ border: "none" }}>
-										<AssignMemberDialog />
+										<AssignMemberDialog
+											actors={project.actors}
+											issue={issue}
+											callUpdate={callUpdate}
+										/>
 									</TableCell>
 								</TableRow>
 							</TableBody>

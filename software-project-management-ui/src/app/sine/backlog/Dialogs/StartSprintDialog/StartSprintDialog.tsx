@@ -13,32 +13,76 @@ import {
 	Select,
 	MenuItem,
 	SelectChangeEvent,
-	Box,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RichTextEditor from "@mantine/rte";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { set } from "react-hook-form";
+import { updateSprint } from "@/api-services/sprintService";
 
-const StartSprintDialog: React.FC = () => {
+const StartSprintDialog: React.FC<{
+	project: any;
+	sprint: any;
+	callUpdate: () => void;
+}> = ({ project, sprint, callUpdate }) => {
 	const [open, setOpen] = React.useState(false);
 
 	const handleClickOpen = () => {
+		console.log(sprint?.status, "vs created");
+		console.log(sprint?.status?.toString() == "created");
+		console.log(
+			sprint?.status?.toString() == "created"
+				? "Start Sprint"
+				: "Complete Sprint"
+		);
 		setOpen(true);
 	};
 
 	const handleClose = () => {
 		setOpen(false);
 	};
-	const [sprintDuration, setSprintDuration] = useState<string>("0");
-	const [state, setState] = useState<string>("");
 
-	const handleSprintDurationChange = (event: SelectChangeEvent) => {
-		setSprintDuration(event.target.value as string);
+	const [nextAction, setNextAction] = useState<string | null>(
+		sprint?.status.toString() != "completed"
+			? sprint?.status?.toString() == "created"
+				? "started"
+				: "completed"
+			: null
+	);
+
+	const [isReadonly, setReadOnly] = useState<boolean>(
+		sprint?.status?.toString() == "completed" ? true : false
+	);
+	const [sprintName, setSprintName] = useState<any>(sprint?.name);
+	const [sprintGoal, setSprintGoal] = useState<any>(sprint?.sprintGoal || "");
+	const [startDate, setStartDate] = useState<Dayjs | null>(
+		dayjs(sprint?.startDate) || dayjs()
+	);
+	const [endDate, setEndDate] = useState<Dayjs | null>(
+		dayjs(sprint.endDate) || null
+	);
+	const handleDurationChange = (event: any) => {
+		if (startDate) {
+			setEndDate(startDate.add(event.target.value, "week"));
+		}
 	};
 
-	const handleStateChange = (event: SelectChangeEvent) => {
-		setState(event.target.value as string);
+	const handleSubmit = async () => {
+		const result = await updateSprint({
+			projectId: sprint.project,
+			sprintId: sprint._id,
+			name: sprintName,
+			startDate: startDate?.toISOString(), // Ensure this is a Date object
+			endDate: endDate?.toISOString(), // Ensure this is a Date object
+			goal: sprintGoal,
+			status: nextAction,
+		});
+		if (!result.error) {
+			callUpdate();
+			handleClose();
+		}
 	};
 
 	return (
@@ -51,10 +95,13 @@ const StartSprintDialog: React.FC = () => {
 					marginBottom: "5px",
 					padding: "2px 2px !important",
 				}}
-				sx={{ color: "#fff" }}
 				onClick={handleClickOpen}
 			>
-				Start Sprint
+				{nextAction
+					? nextAction == "started"
+						? "Start Sprint"
+						: "Complete Sprint"
+					: "Sprint details"}
 			</Button>
 			<Dialog
 				open={open}
@@ -78,15 +125,25 @@ const StartSprintDialog: React.FC = () => {
 				>
 					Start Sprint
 				</DialogTitle>
-				<DialogContent>
+				<DialogContent sx={{ width: "500px" }}>
 					<DialogContentText
 						sx={{
 							fontWeight: "500",
 							paddingBottom: "10px",
 						}}
 					>
-						<strong style={{ color: "green" }}>3</strong> issues will be
-						included in this sprint.
+						{!isReadonly ? (
+							<>
+								<strong style={{ color: "green" }}>
+									{sprint?.issues?.length}
+								</strong>{" "}
+								issues will be included in this sprint.
+							</>
+						) : (
+							<strong style={{ color: "green" }}>
+								"This sprint has been completed."
+							</strong>
+						)}
 					</DialogContentText>
 					<DialogContentText
 						sx={{
@@ -97,10 +154,17 @@ const StartSprintDialog: React.FC = () => {
 					</DialogContentText>
 					<FormControl fullWidth sx={{ margin: "5px 0px 10px 0px" }}>
 						<TextField
-							label="Sprint Name"
+							InputProps={{
+								readOnly: isReadonly,
+							}}
+							// label="Sprint Name"
 							placeholder="E.g. Sine_WebProject"
-							variant="filled"
-							id="sprintName"
+							// variant="filled"
+							id={`sprintName-${sprint._id}`}
+							value={sprintName}
+							onChange={(event: any) => {
+								setSprintName(event.target.value);
+							}}
 							name="sprintName"
 							sx={{
 								"& .MuiInputBase-root": {
@@ -117,34 +181,39 @@ const StartSprintDialog: React.FC = () => {
 							}}
 						/>
 					</FormControl>
-					<DialogContentText
-						sx={{
-							fontWeight: "500",
-							paddingBottom: "10px",
-						}}
-					>
-						Duration <strong style={{ color: "#ae2e24" }}>*</strong>
-					</DialogContentText>
-					<FormControl fullWidth sx={{ paddingBottom: "10px" }}>
-						<Select
-							labelId="product-type-label"
-							id="product-type"
-							value={sprintDuration}
-							onChange={handleSprintDurationChange}
-							sx={{
-								"& fieldset": {
-									border: "1px solid #D5D9E2",
-									borderRadius: "7px",
-								},
-							}}
-						>
-							<MenuItem value={0}>custom</MenuItem>
-							<MenuItem value={1}>1 weeks</MenuItem>
-							<MenuItem value={2}>2 weeks</MenuItem>
-							<MenuItem value={3}>3 weeks</MenuItem>
-							<MenuItem value={4}>4 weeks</MenuItem>
-						</Select>
-					</FormControl>
+					{!isReadonly ? (
+						<>
+							<DialogContentText
+								sx={{
+									fontWeight: "500",
+									paddingBottom: "10px",
+								}}
+							>
+								Duration <strong style={{ color: "#ae2e24" }}>*</strong>
+							</DialogContentText>
+							<FormControl fullWidth sx={{ paddingBottom: "10px" }}>
+								<Select
+									labelId="product-type-label"
+									id="product-type"
+									defaultValue={0}
+									onChange={handleDurationChange}
+									sx={{
+										"& fieldset": {
+											border: "1px solid #D5D9E2",
+											borderRadius: "7px",
+										},
+									}}
+								>
+									<MenuItem value={0}>custom</MenuItem>
+									<MenuItem value={1}>1 weeks</MenuItem>
+									<MenuItem value={2}>2 weeks</MenuItem>
+									<MenuItem value={3}>3 weeks</MenuItem>
+									<MenuItem value={4}>4 weeks</MenuItem>
+								</Select>
+							</FormControl>
+						</>
+					) : null}
+
 					<DialogContentText
 						sx={{
 							fontWeight: "500",
@@ -154,6 +223,11 @@ const StartSprintDialog: React.FC = () => {
 					</DialogContentText>
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DatePicker
+							readOnly={isReadonly}
+							value={startDate}
+							onChange={(event: any) => {
+								setStartDate(event.target.value);
+							}}
 							sx={{
 								width: "100%",
 
@@ -174,7 +248,12 @@ const StartSprintDialog: React.FC = () => {
 					</DialogContentText>
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DatePicker
+							readOnly={isReadonly}
 							className="datePicker"
+							value={endDate}
+							onChange={(event: any) => {
+								setEndDate(event.target.value);
+							}}
 							sx={{
 								width: "100%",
 								backgroundColor: "#0a0e19 !important",
@@ -194,14 +273,25 @@ const StartSprintDialog: React.FC = () => {
 						Sprint Goal
 					</DialogContentText>
 					<RichTextEditor
+						readOnly={isReadonly}
+						value={sprintGoal}
+						onChange={(value: any) => {
+							setSprintGoal(value);
+						}}
 						style={{
 							minHeight: "270px",
 						}}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose}>Cancel</Button>
-					<Button type="submit">Start</Button>
+					{sprint?.status?.toString() != "completed" && (
+						<>
+							<Button onClick={handleClose}>Cancel</Button>
+							<Button onClick={handleSubmit}>
+								{nextAction == "started" ? "Start" : "Complete"}
+							</Button>
+						</>
+					)}
 				</DialogActions>
 			</Dialog>
 		</>

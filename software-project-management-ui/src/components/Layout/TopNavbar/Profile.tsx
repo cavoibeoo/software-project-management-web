@@ -30,7 +30,15 @@ import { useFetchUser } from "@/api-services/userServices";
 interface ProfileProps {}
 
 const Profile: React.FC<ProfileProps> = () => {
-	const user = useFetchUser();
+	const [user, setUser] = React.useState<any>();
+	React.useEffect(() => {
+		const fetchUser = async () => {
+			let user = await useFetchUser();
+			setUser(user);
+			console.log(user);
+		};
+		fetchUser();
+	}, []);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -168,7 +176,109 @@ const Profile: React.FC<ProfileProps> = () => {
 					</Link>
 				</MenuItem>
 
+				{/* <MenuItem sx={{ padding: "8px 20px" }}>
+                    <Link
+                        href="/sine/chat/"
+                        className="text-black"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        <ListItemIcon sx={{ mr: "-10px", mt: "-3px" }}>
+                            <ChatIcon sx={{ fontSize: "20px" }} className="text-black" />
+                        </ListItemIcon>
+
+                        <span style={{ fontSize: "13px" }}>Messages</span>
+                    </Link>
+                </MenuItem>
+
+                <MenuItem sx={{ padding: "8px 20px" }}>
+                    <Link
+                        href="/sine/your-work/"
+                        className="text-black"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        <ListItemIcon sx={{ mr: "-10px", mt: "-3px" }}>
+                            <ListIcon sx={{ fontSize: "20px" }} className="text-black" />
+                        </ListItemIcon>
+
+                        <span style={{ fontSize: "13px" }}>My Task</span>
+                    </Link>
+                </MenuItem>
+
+                <MenuItem sx={{ padding: "8px 20px" }}>
+                    <Link
+                        href="/ecommerce/checkout/"
+                        className="text-black"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        <ListItemIcon sx={{ mr: "-10px", mt: "-3px" }}>
+                            <CreditCardIcon sx={{ fontSize: "20px" }} className="text-black" />
+                        </ListItemIcon>
+
+                        <span style={{ fontSize: "13px" }}>Billing</span>
+                    </Link>
+                </MenuItem> */}
+
 				<Divider sx={{ borderColor: "#F6F7F9" }} />
+
+				<MenuItem sx={{ padding: "8px 20px" }}>
+					<Link
+						href="/settings/"
+						className="text-black"
+						style={{
+							display: "flex",
+							alignItems: "center",
+						}}
+					>
+						<ListItemIcon sx={{ mr: "-10px", mt: "-3px" }}>
+							<SettingsIcon sx={{ fontSize: "20px" }} className="text-black" />
+						</ListItemIcon>
+
+						<span style={{ fontSize: "13px" }}>Settings</span>
+					</Link>
+				</MenuItem>
+
+				{/* <MenuItem sx={{ padding: "8px 20px" }}>
+                    <Link
+                        href="/faq/"
+                        className="text-black"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        <ListItemIcon sx={{ mr: "-10px", mt: "-3px" }}>
+                            <SupportIcon sx={{ fontSize: "20px" }} className="text-black" />
+                        </ListItemIcon>
+
+                        <span style={{ fontSize: "13px" }}>Support</span>
+                    </Link>
+                </MenuItem>
+
+                <MenuItem sx={{ padding: "8px 20px" }}>
+                    <Link
+                        href="/authentication/lock-screen/"
+                        className="text-black"
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        <ListItemIcon sx={{ mr: "-10px", mt: "-3px" }}>
+                            <LockOpenIcon sx={{ fontSize: "20px" }} className="text-black" />
+                        </ListItemIcon>
+
+                        <span style={{ fontSize: "13px" }}>Lock Screen</span>
+                    </Link>
+                </MenuItem> */}
 
 				<MenuItem sx={{ padding: "8px 20px" }} onClick={handleLogout}>
 					<Box

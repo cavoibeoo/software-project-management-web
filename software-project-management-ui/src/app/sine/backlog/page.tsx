@@ -58,7 +58,7 @@ import * as issueService from "@/api-services/issueServices";
 import * as sprintService from "@/api-services/sprintService";
 import * as projectService from "@/api-services/projectServices";
 import * as workflowService from "@/api-services/workflowService";
-
+import * as issueTypeService from "@/api-services/issueTypeService";
 type Issue = {
 	_id: string;
 	key: string;
@@ -82,6 +82,8 @@ export default function Page({ projectName }: { projectName: string }) {
 	const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
 	const [project, setProject] = useState<any>();
 	const [workflow, setWorkflow] = useState<any>();
+	const [issueType, setIssueType] = useState<any>();
+	const [actors, setActors] = useState<any>();
 
 	const [update, setUpdate] = useState(false);
 	const [currentDeleteSprintId, setCurrentDeleteSprintId] = useState<
@@ -100,6 +102,7 @@ export default function Page({ projectName }: { projectName: string }) {
 		const fetchProject = async () => {
 			const result = await projectService.fetchById(projectId);
 			setProject(result);
+			setActors(result.actors);
 		};
 		fetchProject();
 	}, []);
@@ -114,23 +117,24 @@ export default function Page({ projectName }: { projectName: string }) {
 
 			const workflow = await workflowService.fetchWorkflow(projectId);
 			setWorkflow(workflow);
+
+			const getIssueType = await issueTypeService.fetchIssueType(projectId);
+			setIssueType(getIssueType);
 		};
 		fetchAPI();
 	}, [update]);
 
 	useEffect(() => {
-		if (fetchedSprint && fetchedSprint.length > 0) {
+		if (fetchedSprint?.length > 0) {
 			const sprintNames = fetchedSprint.map((sprint) => sprint);
 			setSprints(sprintNames);
-		} else {
-			setSprints([]);
 		}
 	}, [fetchedSprint]);
 
 	const [issueName, setIssueName] = useState("");
 
 	useEffect(() => {
-		if (issue && issue.length > 0) {
+		if (issue?.length > 0) {
 			const mappedBacklogs = issue.map((item) => item);
 			setBacklogs(mappedBacklogs);
 		}
@@ -141,7 +145,6 @@ export default function Page({ projectName }: { projectName: string }) {
 		if (sprintId) {
 			setOpenNotification(false);
 			await sprintService.deleteSprint(sprintId, projectId);
-			toast.success("Delete Sprint Successful!");
 			setUpdate(!update);
 		}
 	};
@@ -220,7 +223,6 @@ export default function Page({ projectName }: { projectName: string }) {
 		// console.log(sprint);
 		setTimeout(() => {
 			setUpdate(!update);
-			toast.success("Create Sprint Successful!");
 			setLoading(false);
 		}, 1000);
 		console.log(sprints);
@@ -256,9 +258,9 @@ export default function Page({ projectName }: { projectName: string }) {
 	};
 	React.useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent) => {
-			if (event.key === "`") {
-				setIsEpicVisible((prev) => !prev);
-			}
+			// if (event.key === "`") {
+			//     setIsEpicVisible((prev) => !prev);
+			// }
 		};
 
 		window.addEventListener("keydown", handleKeyPress);
@@ -395,55 +397,23 @@ export default function Page({ projectName }: { projectName: string }) {
 						label="Epic"
 					></FormControlLabel>
 					<Box display="flex" alignItems="center" sx={{ marginBottom: "20px" }}>
-						<FormDialog></FormDialog>
+						{project ? (
+							<FormDialog
+								project={project}
+								callUpdate={callUpdate}
+							></FormDialog>
+						) : null}
 						<AvatarGroup max={4}>
-							<Avatar
-								className="avatar-hover"
-								sx={{ bgcolor: deepOrange[500] }}
-							>
-								P
-							</Avatar>
-							<Box
-								sx={{
-									display: "flex",
-									alingItems: "center",
-									gap: "10px",
-								}}
-							>
-								<StyledBadge
-									overlap="circular"
-									anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-									variant="dot"
+							{actors?.map((actor: any) => (
+								<Avatar
+									src={actor?.user?.avatar}
+									key={actor.user?._id}
+									className="avatar-hover"
+									sx={{ bgcolor: deepOrange[500] }}
 								>
-									<Avatar
-										className="avatar-hover"
-										sx={{ bgcolor: deepPurple[500] }}
-									>
-										DQ
-									</Avatar>
-								</StyledBadge>
-							</Box>
-
-							<Avatar
-								className="avatar-hover"
-								alt="Remy Sharp"
-								src="/images/users/user1.jpg"
-							/>
-							<Avatar
-								className="avatar-hover"
-								alt="Travis Howard"
-								src="/images/users/user2.jpg"
-							/>
-							<Avatar
-								className="avatar-hover"
-								alt="Cindy Baker"
-								src="/images/users/user3.jpg"
-							/>
-							<Avatar
-								className="avatar-hover"
-								alt="Agnes Walker"
-								src="/images/users/user4.jpg"
-							/>
+									{actor?.user?.name.charAt(0)}
+								</Avatar>
+							))}
 						</AvatarGroup>
 					</Box>
 				</Box>
@@ -696,7 +666,11 @@ export default function Page({ projectName }: { projectName: string }) {
 											justifyContent="space-between"
 										>
 											<Box display="flex">
-												<StartSprintDialog />
+												<StartSprintDialog
+													project={project}
+													sprint={sprint}
+													callUpdate={callUpdate}
+												/>
 											</Box>
 											<Box
 												display="flex"
@@ -707,7 +681,7 @@ export default function Page({ projectName }: { projectName: string }) {
 											>
 												<Button
 													id="fade-button"
-													aria-controls={open ? `${sprint._id}` : undefined}
+													aria-controls={open ? "fade-menu" : undefined}
 													aria-haspopup="true"
 													aria-expanded={open ? "true" : undefined}
 													onClick={(event) => {
@@ -720,7 +694,8 @@ export default function Page({ projectName }: { projectName: string }) {
 													</span>
 												</Button>
 												<Menu
-													id={`${sprint._id}`}
+													key={sprint._id}
+													id={`fade-menu-${sprint._id}`}
 													MenuListProps={{
 														"aria-labelledby": "fade-button",
 													}}
@@ -729,6 +704,9 @@ export default function Page({ projectName }: { projectName: string }) {
 													onClose={handleClose}
 													TransitionComponent={Fade}
 												>
+													<MenuItem onClick={handleClose}>
+														Project settings
+													</MenuItem>
 													<MenuItem
 														onClick={async () => {
 															await handleClickOpenNotification(
@@ -777,6 +755,9 @@ export default function Page({ projectName }: { projectName: string }) {
 													callUpdate={callUpdate}
 													sprintId={sprint._id}
 													workflow={workflow}
+													issueType={issueType}
+													sprints={sprints}
+													project={project}
 												></BacklogList>
 											</AccordionDetails>
 										</Accordion>
@@ -961,6 +942,9 @@ export default function Page({ projectName }: { projectName: string }) {
 														callUpdate={callUpdate}
 														sprintId={null}
 														workflow={workflow}
+														issueType={issueType}
+														sprints={sprints}
+														project={project}
 													></BacklogList>
 												</AccordionDetails>
 											</Accordion>

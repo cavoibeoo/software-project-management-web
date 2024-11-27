@@ -14,20 +14,33 @@ export const BacklogList: React.FC<{
     callUpdate: () => void;
     sprintId: any;
     workflow: any;
-}> = ({ backlogs, projectId, callUpdate, sprintId, workflow }) => {
+    issueType: any;
+    sprints: any[];
+    project: any;
+}> = ({ backlogs, projectId, callUpdate, sprintId, workflow, issueType, sprints, project }) => {
     return (
         <Stack spacing={1}>
             <SortableContext items={backlogs}>
-                {backlogs.map((backlog) => (
+                {backlogs.map((backlog, index) => (
                     <Backlog
+                        key={backlog._id}
                         issue={backlog}
                         workflows={workflow}
                         projectId={projectId}
                         callUpdate={callUpdate}
+                        issueType={issueType}
+                        index={index}
+                        sprints={sprints}
+                        project={project}
                     ></Backlog>
                 ))}
             </SortableContext>
-            <CreateBacklog projectId={projectId} callUpdate={callUpdate} sprintId={sprintId} />
+            <CreateBacklog
+                projectId={projectId}
+                callUpdate={callUpdate}
+                sprintId={sprintId}
+                issueType={issueType}
+            />
         </Stack>
     );
 };
