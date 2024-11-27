@@ -30,7 +30,15 @@ import { useFetchUser } from "@/api-services/userServices";
 interface ProfileProps {}
 
 const Profile: React.FC<ProfileProps> = () => {
-    const user = useFetchUser();
+    const [user, setUser] = React.useState<any>();
+    React.useEffect(() => {
+        const fetchUser = async () => {
+            let user = await useFetchUser();
+            setUser(user);
+            console.log(user);
+        };
+        fetchUser();
+    }, []);
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);

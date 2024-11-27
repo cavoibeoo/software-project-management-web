@@ -22,6 +22,7 @@ import {
     Accordion,
     AccordionDetails,
     Typography,
+    Box,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -35,6 +36,9 @@ import MoreOption from "./Component/MoreOption";
 import * as issueService from "@/api-services/issueServices";
 import { toast } from "react-toastify";
 
+import { useFetchUser } from "@/api-services/userServices";
+import * as commentServices from "@/api-services/commentServices";
+
 const IssueDetailDialog: React.FC<{
     issue: any;
     issueType: any;
@@ -45,7 +49,13 @@ const IssueDetailDialog: React.FC<{
     project: any;
 }> = ({ issue, projectId, workflows, issueType, callUpdate, sprints, project }) => {
     const [open, setOpen] = React.useState(false);
-
+    const [user, setUser] = useState<any>(null);
+    useEffect(() => {
+        const fetchAPI = async () => {
+            setUser(await useFetchUser());
+        };
+        fetchAPI();
+    }, []);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -106,6 +116,47 @@ const IssueDetailDialog: React.FC<{
         setWorkflowValue(event.target.value as string);
     };
 
+    const handleCreateComment = async () => {
+        let newComment = await commentServices.addComment({
+            projectId: issue.project,
+            issueId: issue._id,
+            comment: commentValue,
+        });
+        if (!newComment?.error) {
+            callUpdate();
+            setCommentValue("");
+        }
+    };
+
+    const handleUpdateComment = async (commentId: any, index: any) => {
+        let newComment = await commentServices.updateComment({
+            projectId: issue.project,
+            issueId: issue._id,
+            comment: { _id: commentId, comment: commentValue },
+        });
+        if (!newComment.error) {
+            setIsEditCommentArray((prev) => {
+                const newArray = [...prev];
+                newArray[index] = false;
+                return newArray;
+            });
+            setCommentValue("");
+            callUpdate();
+        }
+    };
+
+    const handleDeleteComment = async (commentId: any) => {
+        let newComment = await commentServices.deleteComment({
+            projectId: issue.project,
+            issueId: issue._id,
+            commentId: commentId,
+        });
+        if (!newComment?.error) {
+            setCommentValue("");
+            callUpdate();
+        }
+    };
+
     const StyledBadge = styled(Badge)(({ theme }) => ({
         "& .MuiBadge-badge": {
             backgroundColor: "#44b700",
@@ -135,6 +186,10 @@ const IssueDetailDialog: React.FC<{
         },
     }));
 
+    const [isEditCommentArray, setIsEditCommentArray] = useState<boolean[]>(
+        issue?.comments?.map(() => false) || []
+    );
+
     const [isEditingComment, setIsEditingComment] = useState<boolean>(false);
     const [commentValue, setCommentValue] = useState<string>("");
 
@@ -146,9 +201,9 @@ const IssueDetailDialog: React.FC<{
         setAssigneeValue(event.target.value as string);
     };
 
-    useEffect(() => {
-        console.log(issue);
-    }, [issue]);
+    // useEffect(() => {
+    //     console.log(issue);
+    // }, [issue]);
 
     const [sprintValue, setSprintValue] = useState<string>(issue?.sprint?._id);
     const handleSprintValueChange = (event: SelectChangeEvent) => {
@@ -166,6 +221,9 @@ const IssueDetailDialog: React.FC<{
                 {issue.summary}
             </Button>
             <Dialog
+                fullWidth
+                maxWidth="md"
+                sx={{ width: "100%" }}
                 open={open}
                 onClose={handleClose}
                 PaperProps={{
@@ -320,7 +378,7 @@ const IssueDetailDialog: React.FC<{
                 >
                     {issue.summary}
                 </DialogTitle>
-                <DialogContent sx={{ width: "600px" }}>
+                <DialogContent sx={{ width: "100%" }}>
                     <strong style={{ color: "#0bb0af", width: "80px", marginRight: "7px" }}>
                         Status
                     </strong>
@@ -530,6 +588,131 @@ const IssueDetailDialog: React.FC<{
                         <Button>Comments</Button>
                         <Button>History</Button>
                     </DialogContentText>
+
+                    {issue?.comments?.map((comment: any, index: number) => (
+                        <DialogContentText
+                            sx={{
+                                fontWeight: "400",
+                                paddingTop: "10px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                            }}
+                        >
+                            <StyledBadge
+                                overlap="circular"
+                                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                variant="dot"
+                            >
+                                <Avatar
+                                    src={comment?.user?.avatar}
+                                    className="avatar-hover"
+                                    sx={{ bgcolor: deepPurple[500] }}
+                                >
+                                    {user?.name
+                                        .split(" ")
+                                        .map((word: string) => word.charAt(0))
+                                        .join("")}
+                                </Avatar>
+                            </StyledBadge>
+
+                            {isEditCommentArray[index] ? (
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    gap="10px"
+                                    flexDirection="column"
+                                >
+                                    <RichTextEditor
+                                        defaultValue={comment?.comment}
+                                        value={commentValue}
+                                        onChange={setCommentValue}
+                                    />
+                                    <Box
+                                        display="flex"
+                                        gap="10px"
+                                        justifyContent="flex-end"
+                                        width="100%"
+                                    >
+                                        <Box flexGrow={1}></Box>
+                                        <Button
+                                            variant="contained"
+                                            onClick={(event) =>
+                                                handleUpdateComment(comment._id, index)
+                                            }
+                                        >
+                                            Update
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            onClick={() =>
+                                                setIsEditCommentArray((prev) => {
+                                                    const newArray = [...prev];
+                                                    newArray[index] = false;
+                                                    return newArray;
+                                                })
+                                            }
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </Box>
+                                </Box>
+                            ) : (
+                                <>
+                                    {/* <TextField
+                                        InputProps={{
+                                            readOnly: true,
+                                        }}
+                                        label={comment?.user?.name}
+                                        value={comment?.comment}
+                                        variant="filled"
+                                        id="comment"
+                                        name="comment"
+                                        sx={{
+                                            width: "100%",
+                                        }}
+                                    /> */}
+                                    <Box
+                                        display="flex"
+                                        alignItems="flex-start"
+                                        flexDirection="column"
+                                    >
+                                        <Typography sx={{ fontWeight: "bold" }}>
+                                            {comment?.user?.name}
+                                        </Typography>
+                                        <Typography sx={{ fontWeight: "100" }}>
+                                            {comment?.comment}
+                                        </Typography>
+                                    </Box>
+
+                                    {comment?.user?._id == user?._id && (
+                                        <>
+                                            <Button
+                                                size="small"
+                                                onClick={() => {
+                                                    setIsEditCommentArray((prev) => {
+                                                        const newArray = [...prev];
+                                                        newArray[index] = true;
+                                                        return newArray;
+                                                    });
+                                                    setCommentValue(comment?.comment);
+                                                }}
+                                            >
+                                                Update
+                                            </Button>
+                                            <Button
+                                                size="small"
+                                                onClick={() => handleDeleteComment(comment._id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </DialogContentText>
+                    ))}
+
                     <DialogContentText
                         sx={{
                             fontWeight: "400",
@@ -539,17 +722,54 @@ const IssueDetailDialog: React.FC<{
                             gap: "10px",
                         }}
                     >
+                        <br />
                         <StyledBadge
                             overlap="circular"
                             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                             variant="dot"
                         >
-                            <Avatar className="avatar-hover" sx={{ bgcolor: deepPurple[500] }}>
-                                DQ
+                            <Avatar
+                                src={user?.avatar}
+                                className="avatar-hover"
+                                sx={{ bgcolor: deepPurple[500] }}
+                            >
+                                {user?.name
+                                    .split(" ")
+                                    .map((word: string) => word.charAt(0))
+                                    .join("")}
                             </Avatar>
                         </StyledBadge>
                         {isEditingComment ? (
-                            <RichTextEditor value={commentValue} onChange={setCommentValue} />
+                            <>
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    gap="10px"
+                                    flexDirection="column"
+                                >
+                                    <RichTextEditor
+                                        value={commentValue}
+                                        onChange={setCommentValue}
+                                    />
+                                    <Box
+                                        display="flex"
+                                        gap="10px"
+                                        justifyContent="flex-end"
+                                        width="100%"
+                                    >
+                                        <Box flexGrow={1}></Box>
+                                        <Button variant="contained" onClick={handleCreateComment}>
+                                            Add
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => setIsEditingComment(false)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </Box>
+                                </Box>
+                            </>
                         ) : (
                             <TextField
                                 label="Add a comment"
@@ -569,7 +789,7 @@ const IssueDetailDialog: React.FC<{
                                     "& .MuiInputBase-root:hover::before": {
                                         border: "none",
                                     },
-                                    width: "600px",
+                                    width: "100%",
                                 }}
                             />
                         )}

@@ -131,7 +131,7 @@ export default function Page({ projectName }: { projectName: string }) {
     const [issueName, setIssueName] = useState("");
 
     useEffect(() => {
-        if (issue.length > 0) {
+        if (issue?.length > 0) {
             const mappedBacklogs = issue.map((item) => item);
             setBacklogs(mappedBacklogs);
         }
