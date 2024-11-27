@@ -1431,3 +1431,41 @@ table tfoot tr p {
 	background-color: #eef8ff;
 	color: #000000;
 }
+
+.sidebar-menu-divider {
+	border-top-width: 1px;
+	border-style: solid none none;
+	border-color: #040d1d24;
+	margin-bottom: 5px;
+}
+
+.breadcrumb-link {
+	color: #64748b;
+}
+
+.css-1790nmb {
+	width: 200px;
+	height: 200px;
+	display: flex;
+	flex-direction: column;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+	padding: var(--ds-space-200, 15px);
+	position: relative;
+	border-radius: 100%;
+	transition: background-color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.css-1790nmb::after {
+	content: "";
+	border: 2px dashed var(--ds-border, #d0d6d0);
+	border-radius: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	transition: border-color 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}

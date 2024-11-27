@@ -20,6 +20,7 @@ import {
 	GGLoginServices,
 } from "@/api-services/AuthServices";
 import { validateEmail, validatePassword } from "./formValidation";
+import { url } from "inspector";
 
 const SignInForm: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +43,7 @@ const SignInForm: React.FC = () => {
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
 					backgroundImage:
-						'url("https://id-frontend.prod-east.frontend.public.atl-paas.net/assets/wac.92a80da2.svg")',
+						"url('/images/authentication/LoginBackground_darkTheme.jpg')",
 					backgroundSize: "cover",
 					backgroundPosition: "center",
 					backgroundRepeat: "no-repeat",
