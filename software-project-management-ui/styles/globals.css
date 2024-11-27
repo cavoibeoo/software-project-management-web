@@ -1489,3 +1489,12 @@ table tfoot tr p {
 	width: 143px;
 	height: auto;
 }
+
+.sidebar-menu-divider {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-width: 2px;
+	border-style: solid solid solid;
+	border-color: #040d1d24;
+	background-color: #ffffff;
+}

@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import NextLink from "next/link";
-import { Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { useState } from "react";
 import { Column, Id, Task } from "@/type";
 import ColumnContainer from "./ColumnContainer/ColumnContainer";
@@ -18,7 +18,8 @@ import {
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./ColumnContainer/TaskCard/TaskCard";
-
+import { Breadcrumbs, Link, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 export default function Page() {
 	const [columns, setColumns] = useState<Column[]>([]);
 	const [tasks, setTasks] = useState<Task[]>([]);
@@ -157,101 +158,117 @@ export default function Page() {
 	const [activeColumn, setActiveColumn] = useState<any | null>(null);
 	const [activeTask, setActiveTask] = useState<any | null>(null);
 	return (
-		<div style={{ minHeight: "78vh" }}>
-			<div className="breadcrumb-card">
-				<h5>Kanban Board</h5>
+		<>
+			<Box sx={{ marginLeft: "20px" }}>
+				<Breadcrumbs separator="›" aria-label="breadcrumb">
+					<Link
+						className="hover-underlined"
+						key="1"
+						color="inherit"
+						href="/your-work/"
+					>
+						Projects
+					</Link>
+					<Link
+						className="hover-underlined"
+						key="2"
+						color="inherit"
+						href="/sine/board/"
+					>
+						Sine_SPM
+					</Link>
+					<Typography key="3" color="text.primary">
+						Kanban Board
+					</Typography>
+				</Breadcrumbs>
+				<div style={{ minHeight: "78vh" }}>
+					<Typography
+						variant="h5"
+						gutterBottom
+						fontWeight="600"
+						sx={{ marginTop: "20px" }}
+					>
+						FP Sprint 1
+					</Typography>
 
-				<ul className="breadcrumb">
-					<li>
-						<NextLink href="/your-work/">
-							<i className="material-symbols-outlined">home</i>
-							Projects
-						</NextLink>
-					</li>
-					<li>
-						<NextLink href="/sine/board/">
-							<i className="material-symbols-outlined">dataset</i>
-							Sine_SPM
-						</NextLink>
-					</li>
-					<li>Kanban Board</li>
-				</ul>
-			</div>
-			<Button variant="contained" color="primary" onClick={handleAddColumn}>
-				Add Task
-			</Button>
-			<div
-				style={{
-					margin: "auto",
-					display: "flex",
-					alignItems: "center",
-					overflowX: "auto",
-					overflowY: "hidden",
-					width: "100%",
-					paddingLeft: "40px",
-					paddingRight: "40px",
-				}}
-			>
-				<DndContext
-					sensors={sensors}
-					onDragStart={handleDragStart}
-					onDragEnd={handleDragEnd}
-					onDragOver={handleDragOver}
-				>
-					<div className="w-[350px] min-w-[350px]">
-						<div style={{ display: "flex", gap: "5vh", marginTop: "3vh" }}>
-							<SortableContext items={columnId}>
-								{columns.map((column) => (
+					<div
+						style={{
+							margin: "auto",
+							display: "flex",
+							alignItems: "center",
+							overflowX: "auto",
+							overflowY: "hidden",
+							width: "100%",
+							paddingLeft: "40px",
+							paddingRight: "40px",
+						}}
+					>
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="flex-start"
+							gap="10px"
+						>
+							<DndContext
+								sensors={sensors}
+								onDragStart={handleDragStart}
+								onDragEnd={handleDragEnd}
+								onDragOver={handleDragOver}
+							>
+								<div className="w-[350px] min-w-[350px]">
 									<div
-										key={column.Id}
-										style={{ minWidth: "300px", minHeight: "700px" }}
+										style={{ display: "flex", gap: "5vh", marginTop: "3vh" }}
 									>
-										<ColumnContainer
-											column={column}
-											deleteColumn={deleteColumn}
-											updateColumn={updateColumn}
-											createTask={createTask}
-											tasks={tasks.filter(
-												(task) => task.columnId === column.Id
-											)}
-										/>
+										<SortableContext items={columnId}>
+											{columns.map((column) => (
+												<div
+													key={column.Id}
+													style={{ minWidth: "300px", minHeight: "700px" }}
+												>
+													<ColumnContainer
+														column={column}
+														deleteColumn={deleteColumn}
+														updateColumn={updateColumn}
+														createTask={createTask}
+														tasks={tasks.filter(
+															(task) => task.columnId === column.Id
+														)}
+													/>
+												</div>
+											))}
+										</SortableContext>
 									</div>
-								))}
-							</SortableContext>
-						</div>
+								</div>
+								{createPortal(
+									<DragOverlay>
+										{activeColumn && (
+											<ColumnContainer
+												column={activeColumn}
+												deleteColumn={deleteColumn}
+												updateColumn={updateColumn}
+												createTask={createTask}
+												tasks={tasks.filter(
+													(task) => task.columnId === activeColumn.Id
+												)}
+											/>
+										)}
+										{activeTask && <TaskCard task={activeTask} />}
+									</DragOverlay>,
+									document.body
+								)}
+							</DndContext>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={handleAddColumn}
+								sx={{ marginTop: "20px" }}
+							>
+								<AddIcon />
+							</Button>
+						</Box>
 					</div>
-					{createPortal(
-						<DragOverlay>
-							{activeColumn && (
-								<ColumnContainer
-									column={activeColumn}
-									deleteColumn={deleteColumn}
-									updateColumn={updateColumn}
-									createTask={createTask}
-									tasks={tasks.filter(
-										(task) => task.columnId === activeColumn.Id
-									)}
-								/>
-							)}
-							{activeTask && <TaskCard task={activeTask} />}
-						</DragOverlay>,
-						document.body
-					)}
-				</DndContext>
-			</div>
-			{/* <Grid container columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}>
-				<Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
-					<ToDo />
-				</Grid>
-
-				<Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
-					<Doing />
-				</Grid>
-
-				<Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
-					<Done />
-				</Grid>
-			</Grid> */}
-		</div>
+				</div>
+			</Box>
+		</>
 	);
 }

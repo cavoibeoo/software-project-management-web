@@ -148,28 +148,6 @@ export default function Page({ projectName }: { projectName: string }) {
 			setUpdate(!update);
 		}
 	};
-
-	const breadcrumbs = [
-		<Link
-			className="hover-underlined"
-			key="1"
-			color="inherit"
-			href="/your-work/"
-		>
-			Projects
-		</Link>,
-		<Link
-			className="hover-underlined"
-			key="2"
-			color="inherit"
-			href="/sine/board/"
-		>
-			Sine_SPM
-		</Link>,
-		<Typography key="3" color="text.primary">
-			Backlog
-		</Typography>,
-	];
 	const StyledBadge = styled(Badge)(({ theme }) => ({
 		"& .MuiBadge-badge": {
 			backgroundColor: "#44b700",
@@ -356,7 +334,25 @@ export default function Page({ projectName }: { projectName: string }) {
 		<>
 			<div style={{ minHeight: "78vh" }}>
 				<Breadcrumbs separator="›" aria-label="breadcrumb">
-					{breadcrumbs}
+					<Link
+						className="hover-underlined"
+						key="1"
+						color="inherit"
+						href="/your-work/"
+					>
+						Projects
+					</Link>
+					<Link
+						className="hover-underlined"
+						key="2"
+						color="inherit"
+						href="/sine/board/"
+					>
+						Sine_SPM
+					</Link>
+					<Typography key="3" color="text.primary">
+						Backlog
+					</Typography>
 				</Breadcrumbs>
 				<Typography
 					variant="h5"
@@ -365,7 +361,7 @@ export default function Page({ projectName }: { projectName: string }) {
 				>
 					Backlog
 				</Typography>
-				<Box display="flex" alignItems="center" justifyContent="space-between">
+				<Box display="flex" alignItems="center" gap="10px">
 					<Box
 						display="flex"
 						alignItems="center"
@@ -390,20 +386,9 @@ export default function Page({ projectName }: { projectName: string }) {
 							}}
 						/>
 					</Box>
-					<FormControlLabel
-						control={
-							<Switch checked={isEpicVisible} onChange={handleSwitchChange} />
-						}
-						label="Epic"
-					></FormControlLabel>
+
 					<Box display="flex" alignItems="center" sx={{ marginBottom: "20px" }}>
-						{project ? (
-							<FormDialog
-								project={project}
-								callUpdate={callUpdate}
-							></FormDialog>
-						) : null}
-						<AvatarGroup max={4}>
+						<AvatarGroup sx={{ marginRight: "5px" }} max={4}>
 							{actors?.map((actor: any) => (
 								<Avatar
 									src={actor?.user?.avatar}
@@ -415,7 +400,20 @@ export default function Page({ projectName }: { projectName: string }) {
 								</Avatar>
 							))}
 						</AvatarGroup>
+						{project ? (
+							<FormDialog
+								project={project}
+								callUpdate={callUpdate}
+							></FormDialog>
+						) : null}
 					</Box>
+					<FormControlLabel
+						control={
+							<Switch checked={isEpicVisible} onChange={handleSwitchChange} />
+						}
+						sx={{ marginLeft: "auto", marginRight: "10vh" }}
+						label="Epic"
+					></FormControlLabel>
 				</Box>
 
 				<Grid container columnSpacing={{ xs: 1, sm: 1, md: 1, lg: 1 }}>

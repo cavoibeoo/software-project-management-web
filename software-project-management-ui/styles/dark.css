@@ -503,3 +503,12 @@
 	color: #dddddd;
 	border: 1px solid #dddddd;
 }
+
+.dark-theme .sidebar-menu-divider {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-width: 2px;
+	border-style: solid solid solid;
+	border-color: #151d31;
+	background-color: #040d1d24;
+}

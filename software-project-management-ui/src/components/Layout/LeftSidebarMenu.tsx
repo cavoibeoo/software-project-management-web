@@ -86,7 +86,7 @@ const LeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 								width={26}
 								height={26}
 							/>
-							<span>{projectName?.projectName}</span>
+							<span>Sine</span>
 						</Link>
 					</div>
 
