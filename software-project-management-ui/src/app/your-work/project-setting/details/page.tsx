@@ -174,11 +174,11 @@ export default function Page() {
 					<Link className="hover-underlined breadcrumb-link" href="/your-work/">
 						Projects
 					</Link>
-					<Link className="hover-underlined breadcrumb-link" href="/your-work/">
+					<Link className="hover-underlined breadcrumb-link" href="#">
 						Sineizabes
 					</Link>
-					<Link className="breadcrumb-link" href="#">
-						Details
+					<Link className="hover-underlined breadcrumb-link" href="#">
+						Project Settings
 					</Link>
 				</Breadcrumbs>
 				<Button
@@ -321,15 +321,19 @@ export default function Page() {
 				</Box>
 			</BootstrapDialog>
 
+			<Typography
+				variant="h5"
+				sx={{ marginInline: 11, mt: 5, fontWeight: "bold" }}
+			>
+				Details
+			</Typography>
 			<Box
 				sx={{
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
-					mt: 5,
 					mb: 5,
 					alignItems: "center",
-					padding: "20px",
 					gap: "20px",
 				}}
 			>

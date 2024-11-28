@@ -474,3 +474,41 @@
 	border-radius: 100%;
 	transition: background-color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
+
+.dark-theme .text-dark {
+	color: #dddddd !important;
+}
+
+.dark-theme .background-authentication {
+	background-image: url("/images/authentication/LoginBackground_darkTheme.jpg");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	width: 100%;
+	min-height: 100vh;
+}
+
+.dark-theme .authentication-input {
+	border: 1px solid #fff;
+	border-radius: 7px;
+}
+
+.dark-theme .navbar-logo {
+	content: url("/images/Sine_logo_dark.png");
+	width: 143px;
+	height: auto;
+}
+
+.dark-theme .fp-outlined-btn {
+	color: #dddddd;
+	border: 1px solid #dddddd;
+}
+
+.dark-theme .sidebar-menu-divider {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-width: 2px;
+	border-style: solid solid solid;
+	border-color: #151d31;
+	background-color: #040d1d24;
+}

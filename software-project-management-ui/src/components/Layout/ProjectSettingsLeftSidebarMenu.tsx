@@ -110,13 +110,13 @@ const ProjectSettingsLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 								style={{ marginTop: 10, marginBottom: 10 }}
 							></div>
 							<Link
-								href="/your-work/project-setting/details/epic"
+								href="/your-work/project-setting/details"
 								className="sidebar-menu-link"
 							>
 								<span className="title">Details</span>
 							</Link>
 							<Link
-								href="/your-work/project-setting/issue-types/epic"
+								href="/your-work/project-setting/issue-types/bug"
 								className="sidebar-menu-link"
 							>
 								<span className="title">Issue types</span>
