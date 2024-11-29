@@ -20,6 +20,8 @@ import { createPortal } from "react-dom";
 import TaskCard from "./ColumnContainer/TaskCard/TaskCard";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { Chatbot } from "@/components/Chatbot";
+
 export default function Page() {
 	const [columns, setColumns] = useState<Column[]>([]);
 	const [tasks, setTasks] = useState<Task[]>([]);
@@ -58,18 +60,15 @@ export default function Page() {
 			id: generateId(),
 			columnId,
 			summary: `Task ${tasks.length + 1}`,
-			description:
-				"A brief description of the project, its objectives, and its importance to the organization.",
+			description: "Create Sylabus program",
 			daysLeft: "16 days left",
 			TeamMembers: [
 				{
-					img: "/images/users/user16.jpg",
-				},
-				{
-					img: "/images/users/user17.jpg",
+					img: "/images/avt_quang.jpg",
 				},
 			],
 			bgClass: "bg-primary-100",
+			issueType: "Story",
 		};
 		setTasks([...tasks, newTask]);
 	}
@@ -261,7 +260,7 @@ export default function Page() {
 								variant="contained"
 								color="primary"
 								onClick={handleAddColumn}
-								sx={{ marginTop: "20px" }}
+								sx={{ marginTop: "4vh" }}
 							>
 								<AddIcon />
 							</Button>
@@ -269,6 +268,7 @@ export default function Page() {
 					</div>
 				</div>
 			</Box>
+			<Chatbot />
 		</>
 	);
 }

@@ -134,12 +134,10 @@ const TaskCard = ({ task }: TaskCardProps) => {
 								fontSize="15px"
 								className="text-black"
 							>
-								{task.summary}
+								{task.description}
 							</Typography>
 							<EditIssueDialog description={task.description} />
 						</Box>
-
-						<Typography mb="15px">{task.description}</Typography>
 
 						<Box
 							sx={{
@@ -149,6 +147,17 @@ const TaskCard = ({ task }: TaskCardProps) => {
 								mt: "23px",
 							}}
 						>
+							<Box sx={{ display: "flex", alignItems: "center" }}>
+								<img
+									src="/images/issueType/Task.svg"
+									alt="Task"
+									width={25}
+									height={25}
+									style={{ marginRight: 8 }}
+								/>
+								<Typography>WIH-1</Typography>
+							</Box>
+
 							<AvatarGroup
 								max={3}
 								sx={{
@@ -170,8 +179,6 @@ const TaskCard = ({ task }: TaskCardProps) => {
 									<Avatar key={i} alt="Remy Sharp" src={member.img} />
 								))}
 							</AvatarGroup>
-
-							<Typography color="primary.main">{task.daysLeft}</Typography>
 						</Box>
 					</Box>
 				</Box>
@@ -220,6 +227,17 @@ const TaskCard = ({ task }: TaskCardProps) => {
 								mt: "23px",
 							}}
 						>
+							<Box sx={{ display: "flex", alignItems: "center" }}>
+								<img
+									src="/images/issueType/Task.svg"
+									alt="Task"
+									width={25}
+									height={25}
+									style={{ marginRight: 8 }}
+								/>
+								<Typography>WIH-1</Typography>
+							</Box>
+
 							<AvatarGroup
 								max={3}
 								sx={{
@@ -241,8 +259,6 @@ const TaskCard = ({ task }: TaskCardProps) => {
 									<Avatar key={i} alt="Remy Sharp" src={member.img} />
 								))}
 							</AvatarGroup>
-
-							<Typography color="primary.main">{task.daysLeft}</Typography>
 						</Box>
 					</Box>
 				</Box>

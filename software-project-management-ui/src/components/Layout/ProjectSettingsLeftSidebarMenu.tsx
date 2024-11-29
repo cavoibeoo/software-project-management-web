@@ -116,6 +116,12 @@ const ProjectSettingsLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 								<span className="title">Details</span>
 							</Link>
 							<Link
+								href="/your-work/project-setting/access"
+								className="sidebar-menu-link"
+							>
+								<span className="title">Access</span>
+							</Link>
+							<Link
 								href="/your-work/project-setting/issue-types/bug"
 								className="sidebar-menu-link"
 							>

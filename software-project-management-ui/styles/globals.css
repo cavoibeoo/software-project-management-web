@@ -1498,3 +1498,62 @@ table tfoot tr p {
 	border-color: #040d1d24;
 	background-color: #ffffff;
 }
+
+.custom-modal-dialog-header {
+	background-color: #2f887d;
+}
+
+.custom-delete-dialog-header {
+	background-color: #d44444;
+}
+.custom-modal-dialog-content {
+	background-color: #ffffff !important;
+}
+.custom-delete-dialog-content {
+	background-color: #ffffff !important;
+}
+
+.custom-edit-dialog-header {
+	background-color: #9eb6ff;
+}
+.custom-edit-dialog-content {
+	background-color: #ffffff !important;
+}
+
+.input-column-title {
+	background-color: #fff;
+	border-color: #3a4252;
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 4px;
+	color: #3a4252;
+}
+
+.bg-custom {
+	background-color: #ececec;
+}
+
+.message-button {
+	position: fixed;
+	bottom: 40px;
+	right: 40px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	padding: 0;
+	font-size: 27px;
+	cursor: pointer;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+}
+
+.message-button:hover {
+	background-color: #0056b3;
+}
+
+.chat-form-custom {
+	color: #000 !important;
+}

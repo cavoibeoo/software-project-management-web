@@ -438,10 +438,11 @@
 
 ::-webkit-scrollbar {
 	width: 4px;
+	height: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: #06b6d4;
+	background-color: #005261;
 	border-radius: 9999px;
 }
 
@@ -511,4 +512,62 @@
 	border-style: solid solid solid;
 	border-color: #151d31;
 	background-color: #040d1d24;
+}
+
+.dark-theme .custom-modal-dialog-header {
+	background-color: #00443b;
+}
+.dark-theme .custom-modal-dialog-content {
+	background-color: #283331 !important;
+}
+.dark-theme .custom-edit-dialog-header {
+	background-color: #00132d;
+}
+.dark-theme .custom-edit-dialog-content {
+	background-color: #080b13 !important;
+}
+
+.dark-theme .custom-delete-dialog-header {
+	background-color: #3c151c;
+}
+.dark-theme .custom-delete-dialog-content {
+	background-color: #1f0711 !important;
+}
+
+.dark-theme .input-column-title {
+	background-color: #070b13;
+	border-color: rgb(5, 245, 245);
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 4px;
+	color: #fff;
+}
+
+.dark-theme .bg-custom {
+	background-color: #b2b2b20f;
+}
+
+.dark-theme .message-button {
+	position: fixed;
+	bottom: 40px;
+	right: 40px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	padding: 0;
+	font-size: 27px;
+	cursor: pointer;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+}
+
+.dark-theme .message-button:hover {
+	background-color: #0056b3;
+}
+
+.dark-theme .chat-form-custom {
+	color: #262626 !important;
 }

@@ -1,0 +1,14 @@
+.column {
+	min-width: 300px;
+	min-height: 150px;
+	margin-bottom: 100px;
+}
+
+.column-todo {
+}
+
+.column-in-progress {
+}
+
+.column-done {
+}

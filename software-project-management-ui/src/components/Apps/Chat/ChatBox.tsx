@@ -32,10 +32,10 @@ const ChatBox: React.FC = () => {
 				sx={{
 					boxShadow: "none",
 					bgcolor: "#fff",
-					mb: "25px",
 					borderRadius: "7px",
 					padding: { xs: "20px", sm: "25px" },
 					position: "relative",
+					paddingBottom: "0 !important",
 				}}
 			>
 				<Box>
@@ -54,71 +54,26 @@ const ChatBox: React.FC = () => {
 								gap: "15px",
 							}}
 						>
-							<Box position="relative">
-								<Image
-									src="/images/users/user31.jpg"
-									alt="user-image"
-									width={75}
-									height={75}
-									style={{ borderRadius: "100px" }}
-								/>
-								<Box
-									bgcolor="success.main"
-									sx={{
-										width: "10px",
-										height: "10px",
-										border: "2px solid #fff",
-										borderRadius: "100px",
-										position: "absolute",
-										bottom: "10px",
-										right: "5px",
-									}}
-								></Box>
+							<Box position="relative" fontSize={35}>
+								<i className="ri-robot-2-line"></i>
 							</Box>
 
 							<Box>
 								<Typography
 									variant="h5"
 									fontWeight={600}
+									paddingTop={0.5}
 									className="text-black"
 									sx={{
 										fontSize: { xs: "13px", sm: "16px" },
 									}}
 								>
-									Sarah Smith
-								</Typography>
-
-								<Typography
-									component="span"
-									sx={{
-										display: "block",
-										fontSize: { xs: "12px", sm: "14px" },
-									}}
-								>
-									Active Now
+									Sine AI
 								</Typography>
 							</Box>
 						</Box>
 
 						<Box sx={{ display: "flex", alignItems: "center" }}>
-							<IconButton aria-label="call" size="small">
-								<i
-									className="material-symbols-outlined"
-									style={{ fontSize: "17px" }}
-								>
-									call
-								</i>
-							</IconButton>
-
-							<IconButton aria-label="video" size="small">
-								<i
-									className="material-symbols-outlined"
-									style={{ fontSize: "17px" }}
-								>
-									videocam
-								</i>
-							</IconButton>
-
 							<Box>
 								<IconButton
 									onClick={handleClick}
@@ -171,218 +126,142 @@ const ChatBox: React.FC = () => {
 						className="border-top"
 						sx={{ marginTop: "15px", marginBottom: "15px" }}
 					></Box>
-					<Typography sx={{ fontSize: "12px", mb: "10px !important" }}>
-						2023-11-10 09:15 AM
-					</Typography>
 
-					<Box className={styles.chatBody}>
-						<ul>
-							<li>
-								<Image
-									src="/images/users/user31.jpg"
-									width={35}
-									height={35}
-									alt="user"
-									className={styles.user}
-								/>
-								<div className={styles.message}>
-									<div>
-										<p>
-											Hey Olivia, have you had a chance to check out the new
-											admin dashboard?
-										</p>
+					<Box
+						className={styles.chatBody}
+						maxHeight="50vh"
+						display="flex"
+						justifyContent="center"
+						paddingRight="25px"
+					>
+						<Box width="100%">
+							<ul>
+								<li>
+									<Box
+										width="35px"
+										height="35px"
+										fontSize={25}
+										className={styles.user}
+									>
+										<i className="ri-robot-2-line"></i>
+									</Box>
+									<div className={styles.message}>
+										<div>
+											<p className="chat-form-custom">
+												You have done 10 tasks in project Web Innovation Hub
+											</p>
+										</div>
 									</div>
-									<div>
-										<p>
-											Oh, they've got this Kanban board for task management. You
-											can drag and drop tasks between columns – it's so
-											intuitive. Makes managing tasks a breeze. 🔥
-										</p>
+									<Typography component="span" className={styles.time}>
+										09:20 AM
+									</Typography>
+								</li>
+								<li className={styles.right}>
+									<div className={styles.message}>
+										<div>
+											<p>
+												Sine, How many task have done in project Web Innovation
+												Hub?
+											</p>
+										</div>
 									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:10 AM
-								</Typography>
-							</li>
+									<Typography component="span" className={styles.time}>
+										09:20 AM
+									</Typography>
+								</li>
+								<li>
+									<Box
+										width="35px"
+										height="35px"
+										fontSize={25}
+										className={styles.user}
+									>
+										<i className="ri-robot-2-line"></i>
+									</Box>
+									<div
+										className={styles.message}
+										style={{ color: "#000 !important" }}
+									>
+										<div>
+											<p className="chat-form-custom">
+												You have done 10 tasks in project Web Innovation Hub
+											</p>
+										</div>
+									</div>
+									<Typography component="span" className={styles.time}>
+										09:20 AM
+									</Typography>
+								</li>
 
-							<li className={styles.right}>
-								<div className={styles.message}>
-									<div>
-										<p>Oh, you mean the one for project management?</p>
+								<li className={styles.right}>
+									<div className={styles.message}>
+										<div>
+											<p>
+												Sine, How many task remain in project Web Innovation
+												Hub?
+											</p>
+										</div>
 									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:20 AM
-								</Typography>
-							</li>
-
-							<li>
-								<Image
-									src="/images/users/user31.jpg"
-									width={35}
-									height={35}
-									alt="user"
-									className={styles.user}
-								/>
-								<div className={styles.message}>
-									<div>
-										<p>
-											Yeah, that's the one! It's got a sleek Material Design,
-											and the features are pretty robust.
-										</p>
+									<Typography component="span" className={styles.time}>
+										09:21 AM
+									</Typography>
+								</li>
+								<li>
+									<Box
+										width="35px"
+										height="35px"
+										fontSize={25}
+										className={styles.user}
+									>
+										<i className="ri-robot-2-line"></i>
+									</Box>
+									<Box
+										className={styles.message}
+										sx={{ color: "#000", backgroundColor: "#fff" }}
+									>
+										<div>
+											<p className="chat-form-custom">
+												You have remain 4 task to be done in project Web
+												Innovation Hub!
+											</p>
+										</div>
+									</Box>
+									<Typography component="span" className={styles.time}>
+										09:21 AM
+									</Typography>
+								</li>
+								<li className={styles.right}>
+									<div className={styles.message}>
+										<div>
+											<p>Sine, How many task remain?</p>
+										</div>
 									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:20 AM
-								</Typography>
-							</li>
-
-							<li className={styles.right}>
-								<div className={styles.message}>
-									<div>
-										<p>Nice! What features are you finding interesting?</p>
+									<Typography component="span" className={styles.time}>
+										09:21 AM
+									</Typography>
+								</li>
+								<li>
+									<Box
+										width="35px"
+										height="35px"
+										fontSize={25}
+										className={styles.user}
+									>
+										<i className="ri-robot-2-line"></i>
+									</Box>
+									<div className={styles.message}>
+										<div>
+											<p className="chat-form-custom">
+												You have remain 100 task to be done!
+											</p>
+										</div>
 									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:21 AM
-								</Typography>
-							</li>
-
-							<li>
-								<Image
-									src="/images/users/user31.jpg"
-									width={35}
-									height={35}
-									alt="user"
-									className={styles.user}
-								/>
-								<div className={styles.message}>
-									<div>
-										<p>
-											Well, it has a project overview with all the key metrics
-											on the landing page – project
-										</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:22 AM
-								</Typography>
-							</li>
-
-							<li className={styles.right}>
-								<div className={styles.message}>
-									<div>
-										<p>
-											That sounds handy. How about the task management features?
-										</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:25 AM
-								</Typography>
-							</li>
-
-							<li>
-								<Image
-									src="/images/users/user31.jpg"
-									width={35}
-									height={35}
-									alt="user"
-									className={styles.user}
-								/>
-								<div className={styles.message}>
-									<div>
-										<p>
-											Well, it has a project overview with all the key metrics
-											on the landing page – project
-										</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:22 AM
-								</Typography>
-							</li>
-
-							<li className={styles.right}>
-								<div className={styles.message}>
-									<div>
-										<p>
-											That sounds handy. How about the task management features?
-										</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:25 AM
-								</Typography>
-							</li>
-
-							<li>
-								<Image
-									src="/images/users/user31.jpg"
-									width={35}
-									height={35}
-									alt="user"
-									className={styles.user}
-								/>
-								<div className={styles.message}>
-									<div>
-										<p>
-											Well, it has a project overview with all the key metrics
-											on the landing page – project
-										</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:22 AM
-								</Typography>
-							</li>
-
-							<li className={styles.right}>
-								<div className={styles.message}>
-									<div>
-										<p>
-											That sounds handy. How about the task management features?
-										</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:25 AM
-								</Typography>
-							</li>
-
-							<li>
-								<Image
-									src="/images/users/user31.jpg"
-									width={35}
-									height={35}
-									alt="user"
-									className={styles.user}
-								/>
-								<div className={styles.message}>
-									<div>
-										<p>
-											Oh, they've got this Kanban board for task management. You
-											can drag and drop tasks between columns – it's so
-											intuitive.
-										</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:30 AM
-								</Typography>
-							</li>
-
-							<li className={styles.right}>
-								<div className={styles.message}>
-									<div>
-										<p>Sweet! What about team collaboration?</p>
-									</div>
-								</div>
-								<Typography component="span" className={styles.time}>
-									09:31 AM
-								</Typography>
-							</li>
-						</ul>
+									<Typography component="span" className={styles.time}>
+										09:21 AM
+									</Typography>
+								</li>
+							</ul>
+						</Box>
 					</Box>
 
 					<Box

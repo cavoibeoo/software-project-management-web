@@ -9,6 +9,7 @@ import Footer from "@/components/Layout/Footer";
 import ControlPanel from "@/components/Layout/ControlPanel";
 import ProjectSettingsLeftSidebarMenu from "@/components/Layout/ProjectSettingsLeftSidebarMenu";
 import IssueTypeLeftSidebarMenu from "@/components/Layout/IssueTypeLeftSidebarMenu";
+import AdminLeftSidebarMenu from "@/components/Layout/AdminLeftSidebarMenu";
 
 interface LayoutProviderProps {
 	children: ReactNode;
@@ -28,6 +29,7 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 		"/authentication/forgot-password/",
 		"/authentication/reset-password/",
 		"/authentication/confirm-email/",
+		"/authentication/confirm-expired/",
 		"/authentication/lock-screen/",
 		"/authentication/logout/",
 		"/coming-soon/",
@@ -37,9 +39,22 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 		"/front-pages/faq/",
 		"/front-pages/contact/",
 		"/your-work/",
+		"/admin/authentication/sign-in/",
+		"/admin/authentication/sign-up/",
+		"/admin/authentication/forgot-password/",
+		"/admin/authentication/reset-password/",
+		"/admin/authentication/confirm-email/",
+		"/admin/authentication/confirm-expired/",
+		"/admin/authentication/lock-screen/",
+		"/admin/authentication/logout/",
 	].includes(pathname);
 
-	const isProjectPage = ["/your-work/", "/your-work/trash/"].includes(pathname);
+	const isProjectPage = [
+		"/your-work/",
+		"/your-work/trash/",
+		"/user/profile/",
+		"/your-work/user-management/",
+	].includes(pathname);
 
 	const isProjectSettingsPage = pathname.startsWith(
 		"/your-work/project-setting/"
@@ -50,6 +65,8 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 	const isIssueTypePage = pathname.startsWith(
 		"/your-work/project-setting/issue-types/"
 	);
+
+	const isAdminPage = pathname.startsWith("/admin/");
 
 	return (
 		<>
@@ -85,6 +102,7 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 							<Footer />
 						</>
 					)}
+				{isAdminPage && <AdminLeftSidebarMenu toggleActive={toggleActive} />}
 
 				<div className="main-content">
 					{children}

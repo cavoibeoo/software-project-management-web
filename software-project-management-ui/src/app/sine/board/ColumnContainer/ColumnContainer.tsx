@@ -263,6 +263,11 @@ export default function ColumnContainer(props: {
 		deleteColumn(column.Id);
 	}
 
+	const [selectedIssueType, setSelectedIssueType] = useState("");
+	const handleIssueTypeChange = (event: SelectChangeEvent) => {
+		setSelectedIssueType(event.target.value);
+	};
+
 	return (
 		<>
 			<Card
@@ -273,7 +278,7 @@ export default function ColumnContainer(props: {
 					borderRadius: "7px",
 					mb: "25px",
 					padding: { xs: "18px", sm: "20px", lg: "25px" },
-					maxWidth: "300px",
+					maxWidth: "350px",
 				}}
 				className="rmui-card"
 			>
@@ -359,7 +364,7 @@ export default function ColumnContainer(props: {
 							transformOrigin={{ horizontal: "right", vertical: "top" }}
 							anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
 						>
-							<MenuItem>Settings</MenuItem>
+							<MenuItem>Clone</MenuItem>
 							<MenuItem onClick={handleClickOpenDeleteColumnModal}>
 								Delete
 							</MenuItem>
@@ -495,21 +500,56 @@ export default function ColumnContainer(props: {
 										}}
 										className="text-black"
 									>
-										Key*
+										Issue Type*
 									</Typography>
 
-									<TextField
-										autoComplete="taskKey"
-										name="taskKey"
-										required
+									<Select
 										fullWidth
-										id="taskKey"
-										label="Task Key"
-										autoFocus
-										InputProps={{
-											style: { borderRadius: 8 },
+										required
+										id="issueType"
+										placeholder="Select Issue Type"
+										value={selectedIssueType}
+										onChange={handleIssueTypeChange}
+										displayEmpty
+										inputProps={{ "aria-label": "Select Issue Type" }}
+										sx={{
+											borderRadius: 8,
+											"& .MuiSelect-select": {
+												display: "flex",
+												alignItems: "center",
+												alignContent: "center",
+											},
 										}}
-									/>
+									>
+										<MenuItem value="" disabled>
+											Select Issue Type
+										</MenuItem>
+										<MenuItem value="bug">
+											<img
+												src="/images/issueType/Bug.svg"
+												alt="Bug"
+												style={{ marginRight: 8 }}
+											/>
+											Bug
+										</MenuItem>
+										<MenuItem value="feature">
+											<img
+												src="/images/issueType/Story.svg"
+												alt="Story"
+												style={{ marginRight: 8 }}
+											/>
+											Story
+										</MenuItem>
+										<MenuItem value="task">
+											<img
+												src="/images/issueType/Task.svg"
+												alt="Task"
+												style={{ marginRight: 8 }}
+											/>
+											Task
+										</MenuItem>
+										{/* Add more issue types as needed */}
+									</Select>
 								</Grid>
 
 								<Grid item xs={12} mt={1}>

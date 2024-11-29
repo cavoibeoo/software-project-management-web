@@ -119,82 +119,10 @@ function createData(
 const rows = [
 	createData(
 		1,
-		"/images/users/user6.jpg",
-		"Alex Davis",
+		"/images/cavoibeoLogo.png",
+		"Phuocchan",
 		"success",
-		"alex@sine.com",
-		"#"
-	),
-	createData(
-		2,
-		"/images/users/user7.jpg",
-		"Laura Martinez",
-		"success",
-		"laura@sine.com",
-		"#"
-	),
-	createData(
-		3,
-		"/images/users/user8.jpg",
-		"Mark Thompson",
-		"error",
-		"mark@sine.com",
-		"#"
-	),
-	createData(
-		4,
-		"/images/users/user9.jpg",
-		"Rachel White",
-		"success",
-		"rachel@sine.com",
-		"#"
-	),
-	createData(
-		5,
-		"/images/users/user10.jpg",
-		"Kevin Lee",
-		"error",
-		"kevin@sine.com",
-		"#"
-	),
-	createData(
-		6,
-		"/images/users/user11.jpg",
-		"Oliver Johnson",
-		"success",
-		"oliver@sine.com",
-		"#"
-	),
-	createData(
-		7,
-		"/images/users/user12.jpg",
-		"Jake Noah",
-		"success",
-		"jake@sine.com",
-		"#"
-	),
-	createData(
-		8,
-		"/images/users/user13.jpg",
-		"Callum Mason",
-		"error",
-		"callum@sine.com",
-		"#"
-	),
-	createData(
-		9,
-		"/images/users/user14.jpg",
-		"Robert Kyle",
-		"success",
-		"robert@sine.com",
-		"#"
-	),
-	createData(
-		10,
-		"/images/users/user15.jpg",
-		"Thomas Joe",
-		"error",
-		"thomas@sine.com",
+		"phuocchan@sine.com",
 		"#"
 	),
 ].sort((b, a) => (a.id < b.id ? -1 : 1));
@@ -304,7 +232,7 @@ const Friends: React.FC = () => {
 								? rows.slice(
 										page * rowsPerPage,
 										page * rowsPerPage + rowsPerPage
-								  )
+									)
 								: rows
 							).map((row) => (
 								<TableRow key={row.id}>

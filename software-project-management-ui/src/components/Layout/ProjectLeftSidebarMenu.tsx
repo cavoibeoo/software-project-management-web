@@ -112,6 +112,13 @@ const ProjectLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 								</i>
 								<span className="title">Projects</span>
 							</Link>
+							<Link
+								href="/your-work/user-management/"
+								className="sidebar-menu-link"
+							>
+								<i className="material-symbols-outlined">person</i>
+								<span className="title">User Management</span>
+							</Link>
 							<div
 								style={{
 									borderTopWidth: "1px",

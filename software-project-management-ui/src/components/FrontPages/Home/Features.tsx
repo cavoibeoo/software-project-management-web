@@ -37,6 +37,10 @@ const Features: React.FC = () => {
 						}}
 					>
 						<h1>Connect every team, task, and project together with Sine</h1>
+						<p>
+							Insights On-the-Go: Access Your Project Mananagement Anywhere,
+							Anytime
+						</p>
 						<TextField
 							label="Enter work email"
 							variant="filled"
@@ -69,7 +73,7 @@ const Features: React.FC = () => {
 
 					<div className="banner-image text-center">
 						<Image
-							src="/images/background.png"
+							src="/images/Sine_Dark_background.png"
 							alt="dashboard-image"
 							width={948}
 							height={685}

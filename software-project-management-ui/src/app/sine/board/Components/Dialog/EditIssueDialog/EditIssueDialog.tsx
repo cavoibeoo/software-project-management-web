@@ -112,6 +112,23 @@ const EditIssueDialog: React.FC<{ description: string }> = ({
 		setSprintValue(event.target.value as string);
 	};
 
+	const handleEditDescriptionClick = () => {
+		setIsEditingDescription(true);
+	};
+
+	const [isEditingTitle, setIsEditingTitle] = useState<boolean>(false);
+	const [titleValue, setTitleValue] = useState<string>(
+		"View detail Training Programs"
+	);
+
+	const handleEditTitleClick = () => {
+		setIsEditingTitle(true);
+	};
+
+	const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setTitleValue(event.target.value);
+	};
+
 	return (
 		<>
 			<IconButton aria-label="delete" size="small" onClick={handleClickOpen}>
@@ -358,15 +375,30 @@ const EditIssueDialog: React.FC<{ description: string }> = ({
 						<MoreOption />
 					</Breadcrumbs>
 				</DialogTitle>
-				<DialogTitle
-					sx={{
-						fontWeight: "500",
-						fontSize: "20px",
-						paddingTop: "0px !important",
-					}}
-				>
-					View detail Training Programs
-				</DialogTitle>
+				{isEditingTitle ? (
+					<TextField
+						value={titleValue}
+						onChange={handleTitleChange}
+						onBlur={() => setIsEditingTitle(false)}
+						autoFocus
+						sx={{
+							fontWeight: "500",
+							fontSize: "20px",
+							paddingTop: "0px !important",
+						}}
+					/>
+				) : (
+					<DialogTitle
+						sx={{
+							fontWeight: "500",
+							fontSize: "20px",
+							paddingTop: "0px !important",
+						}}
+						onClick={handleEditTitleClick}
+					>
+						{titleValue}
+					</DialogTitle>
+				)}
 				<DialogContent>
 					<strong
 						style={{ color: "#0bb0af", width: "80px", marginRight: "7px" }}

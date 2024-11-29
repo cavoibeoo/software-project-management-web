@@ -1,388 +1,307 @@
 "use client";
 import * as React from "react";
 import NextLink from "next/link";
-import Link from "next/link";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Fade from "@mui/material/Fade";
-import MenuItem from "@mui/material/MenuItem";
+import { Box, Button, Grid } from "@mui/material";
 import { useState } from "react";
-import Menu from "@mui/material/Menu";
-import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import ClearIcon from "@mui/icons-material/Clear";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import { toast } from "react-toastify";
-import { DialogTitle } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import PropTypes from "prop-types";
-import { FormEvent } from "react";
-import ProjectDefaultLogo from "@/app/img/icon/ProjectDefaultLogo";
+import { Column, Id, Task } from "@/type";
+import {
+	DndContext,
+	DragOverlay,
+	DragStartEvent,
+	DragEndEvent,
+	useSensor,
+	PointerSensor,
+	useSensors,
+	DragOverEvent,
+} from "@dnd-kit/core";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
+import { createPortal } from "react-dom";
+import { Breadcrumbs, Link, Typography } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import ColumnContainer from "./ColumnContainer/ColumnContainer";
+import WorkFlowCard from "./WorkFlowCard/WorkFlowCard";
+import "./ColumnContainer/Column.css";
 
 export default function Page() {
-	interface BootstrapDialogTitleProps {
-		children?: React.ReactNode;
-		onClose: () => void;
+	const [columns, setColumns] = useState<Column[]>([
+		{
+			Id: generateId(),
+			title: "To Do",
+		},
+		{
+			Id: generateId(),
+			title: "In Progress",
+		},
+		{
+			Id: generateId(),
+			title: "Done",
+		},
+	]);
+	const [tasks, setTasks] = useState<Task[]>([]);
+	console.log(columns);
+
+	function handleAddColumn() {
+		const newColumn = {
+			Id: generateId(),
+			title: `Column ${columns.length + 1}`,
+		};
+		setColumns([...columns, newColumn]);
 	}
 
-	const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-		"& .MuiDialogContent-root": {
-			padding: theme.spacing(2),
-		},
-		"& .MuiDialogActions-root": {
-			padding: theme.spacing(1),
-		},
-	}));
-
-	function BootstrapDialogTitle(props: BootstrapDialogTitleProps) {
-		const { children, onClose, ...other } = props;
-
-		return (
-			<DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-				{children}
-				{onClose ? (
-					<IconButton
-						aria-label="close"
-						onClick={onClose}
-						sx={{
-							position: "absolute",
-							right: 8,
-							top: 8,
-							color: (theme) => theme.palette.grey[500],
-						}}
-					>
-						<ClearIcon />
-					</IconButton>
-				) : null}
-			</DialogTitle>
-		);
+	function generateId() {
+		return Math.random().toString(36).substring(2, 15);
 	}
-	BootstrapDialogTitle.propTypes = {
-		children: PropTypes.node,
-		onClose: PropTypes.func.isRequired,
-	};
+	const columnId = columns.map((column) => column.Id);
 
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const open = Boolean(anchorEl);
-	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
+	function deleteColumn(id: Id) {
+		const filteredColumns = columns.filter((column) => column.Id !== id);
+		setColumns(filteredColumns);
 
-	// Modal
-	const [openNotification, setOpenNotification] = useState(false);
-	const handleClickOpenNotification = () => {
-		setOpenNotification(true);
-	};
-	const handleCloseNotification = () => {
-		setOpenNotification(false);
-	};
-	const [projectInput, setProjectInput] = useState("");
-	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		// if (projectInput === projectName) {
-		// 	await moveToTrash(_id, projectName);
-		// 	onDeleteSuccess();
-		// } else {
-		// 	toast.error("Project name does not match!");
-		// }
-	};
-	const [nameInput, setNameInput] = useState("");
-	const [keyInput, setKeyInput] = useState("");
-	const handleUpdateProject = async (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		if (nameInput.length <= 2) {
-			toast.error("Project name must be longer than 2 characters.");
-			return;
-		}
+		const newTasks = tasks.filter((task) => task.columnId !== id);
+		setTasks(newTasks);
+	}
 
-		if (!keyInput) {
-			toast.error("Project key cannot be empty.");
-			return;
-		}
-
-		if (keyInput.length > 10) {
-			toast.error("Project key cannot exceed 10 characters.");
-			return;
-		}
-
-		toast.info(
-			"This change would re-index your project, and may break some external integrations."
+	function updateColumn(id: Id, title: string) {
+		const newColumns = columns.map((column) =>
+			column.Id !== id ? column : { ...column, title }
 		);
-		toast.success("Project updated successfully!");
+		setColumns(newColumns);
+	}
 
-		// Proceed with the update logic here
-	};
+	function createTask(columnId: Id) {
+		const newTask = {
+			id: generateId(),
+			columnId,
+			summary: `Task ${tasks.length + 1}`,
+			description:
+				"A brief description of the project, its objectives, and its importance to the organization.",
+			daysLeft: "16 days left",
+			TeamMembers: [
+				{
+					img: "/images/users/user16.jpg",
+				},
+				{
+					img: "/images/users/user17.jpg",
+				},
+			],
+			bgClass: "bg-primary-100",
+		};
+		setTasks([...tasks, newTask]);
+	}
 
+	function handleDragStart(event: DragStartEvent) {
+		console.log(event);
+		if (event.active.data.current?.type === "column") {
+			setActiveColumn(event.active.data.current.column);
+			return;
+		}
+		if (event.active.data.current?.type === "task") {
+			setActiveTask(event.active.data.current.task);
+			return;
+		}
+	}
+
+	function handleDragEnd(event: DragEndEvent) {
+		setActiveColumn(null);
+		setActiveTask(null);
+
+		const { active, over } = event;
+		if (!over) return;
+		const activeColumnId = active.id;
+		const overColumnId = over.id;
+		if (activeColumnId === overColumnId) return;
+
+		setColumns((columns) => {
+			const activeColumnIndex = columns.findIndex(
+				(column) => column.Id === activeColumnId
+			);
+			const overColumnIndex = columns.findIndex(
+				(column) => column.Id === overColumnId
+			);
+			return arrayMove(columns, activeColumnIndex, overColumnIndex);
+		});
+	}
+	function handleDragOver(event: DragOverEvent) {
+		const { active, over } = event;
+		if (!over) return;
+
+		const activeColumnId = active.id;
+		const overColumnId = over.id;
+
+		if (activeColumnId === overColumnId) return;
+
+		const isActiveTask = active.data.current?.type === "task";
+		const isOverTask = over.data.current?.type === "task";
+
+		if (!isActiveTask) return;
+
+		// Dragging a task over another task
+		if (isActiveTask && isOverTask) {
+			setTasks((tasks) => {
+				const activeTaskIndex = tasks.findIndex(
+					(task) => task.id === active.id
+				);
+				const overTaskIndex = tasks.findIndex((task) => task.id === over.id);
+
+				tasks[activeTaskIndex].columnId = tasks[overTaskIndex].columnId;
+
+				return arrayMove(tasks, activeTaskIndex, overTaskIndex);
+			});
+		}
+
+		const isOverAColumn = over.data.current?.type === "column";
+		if (isActiveTask && isOverAColumn) {
+			setTasks((tasks) => {
+				const activeTaskIndex = tasks.findIndex(
+					(task) => task.id === activeColumnId
+				);
+				tasks[activeTaskIndex].columnId = overColumnId;
+
+				return arrayMove(tasks, activeTaskIndex, activeTaskIndex);
+			});
+		}
+	}
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 1,
+			},
+		})
+	);
+
+	const [activeColumn, setActiveColumn] = useState<any | null>(null);
+	const [activeTask, setActiveTask] = useState<any | null>(null);
 	return (
 		<>
-			<Box
-				marginInline={10}
-				display="flex"
-				alignItems="center"
-				justifyContent="space-between"
-			>
+			<Box sx={{ marginLeft: "80px", marginTop: "7px" }}>
 				<Breadcrumbs separator="›" aria-label="breadcrumb">
-					<Link className="hover-underlined breadcrumb-link" href="/your-work/">
+					<Link
+						className="hover-underlined"
+						key="1"
+						color="inherit"
+						href="/your-work/"
+					>
 						Projects
 					</Link>
-					<Link className="breadcrumb-link" href="#">
-						Issue Types
+					<Link
+						className="hover-underlined"
+						key="2"
+						color="inherit"
+						href="/sine/board/"
+					>
+						Sine_SPM
 					</Link>
+					<Typography key="3" color="text.primary">
+						Kanban Board
+					</Typography>
 				</Breadcrumbs>
-				<Button
-					id="fade-button"
-					aria-controls={open ? "fade-menu" : undefined}
-					aria-haspopup="true"
-					aria-expanded={open ? "true" : undefined}
-					onClick={handleClick}
+				<div
+					style={{ minHeight: "78vh", marginLeft: "5px", marginTop: "10px" }}
 				>
-					<span className="material-symbols-outlined">more_horiz</span>
-				</Button>
-				<Menu
-					id="fade-menu"
-					MenuListProps={{
-						"aria-labelledby": "fade-button",
-					}}
-					anchorEl={anchorEl}
-					open={open}
-					onClose={handleClose}
-					TransitionComponent={Fade}
-				>
-					<MenuItem onClick={handleClickOpenNotification}>
-						Move to trash
-					</MenuItem>
-				</Menu>
-			</Box>
+					<Typography
+						variant="h5"
+						gutterBottom
+						fontWeight="600"
+						sx={{ marginTop: "20px" }}
+					>
+						Columns and statuses
+					</Typography>
+					<Typography variant="subtitle1" gutterBottom>
+						Use columns and statuses to define how work progresses on your
+						board. Store statuses in the left panel to hide their associated
+						issues from the board and backlog.
+					</Typography>
 
-			<BootstrapDialog
-				onClose={handleCloseNotification}
-				aria-labelledby="customized-dialog-title"
-				open={openNotification}
-				className="rmu-modal"
-			>
-				<Box>
-					<Box
-						sx={{
+					<div
+						style={{
+							margin: "auto",
 							display: "flex",
-							justifyContent: "space-between",
 							alignItems: "center",
-							background: "#ff6666",
-							padding: { xs: "15px 20px", md: "25px" },
+							overflowX: "auto",
+							overflowY: "hidden",
+							width: "100%",
+							paddingLeft: "40px",
+							paddingRight: "40px",
+							marginTop: "80px",
 						}}
-						className="rmu-modal-header"
 					>
-						<Typography
-							id="modal-modal-title"
-							variant="h6"
-							sx={{
-								fontWeight: "600",
-								fontSize: { xs: "16px", md: "18px" },
-								color: "#fff !important",
-							}}
-							className="text-black"
+						<Box
+							display="flex"
+							flexDirection="row"
+							alignItems="flex-start"
+							gap="10px"
 						>
-							Move to Trash
-						</Typography>
-
-						<IconButton
-							aria-label="remove"
-							size="small"
-							onClick={handleCloseNotification}
-						>
-							<ClearIcon />
-						</IconButton>
-					</Box>
-
-					<Box className="rmu-modal-content">
-						<Box component="form" noValidate onSubmit={handleSubmit}>
-							<Box
-								sx={{
-									padding: "25px",
-									borderRadius: "8px",
-								}}
-								className="bg-white"
+							<DndContext
+								sensors={sensors}
+								onDragStart={handleDragStart}
+								onDragEnd={handleDragEnd}
+								onDragOver={handleDragOver}
 							>
-								<Grid container alignItems="center" spacing={2}>
-									<Typography>
-										Please input <strong>ProjectName</strong> to Temporary
-										Delete
-									</Typography>
-									<TextField
-										sx={{ mt: 2 }}
-										label="Project Name"
-										variant="outlined"
-										fullWidth
-										value={projectInput}
-										onChange={(e) => setProjectInput(e.target.value)}
-									/>
-
-									<Grid
-										item
-										xs={12}
-										mt={1}
-										display="flex"
-										justifyContent="flex-end"
+								<div className="w-[350px] min-w-[350px]">
+									<div
+										style={{ display: "flex", gap: "5vh", marginTop: "3vh" }}
 									>
-										<Box
-											sx={{
-												display: "flex",
-												alignItems: "center",
-												gap: "10px",
-											}}
-										>
-											<Button
-												onClick={handleCloseNotification}
-												variant="outlined"
-												color="error"
-												sx={{
-													textTransform: "capitalize",
-													borderRadius: "8px",
-													fontWeight: "500",
-													fontSize: "13px",
-													padding: "11px 30px",
-												}}
-											>
-												Cancel
-											</Button>
+										<SortableContext items={columnId}>
+											{columns.map((column) => {
+												const columnClass =
+													column.title === "To Do"
+														? "column-todo"
+														: column.title === "In Progress"
+															? "column-in-progress"
+															: column.title === "Done"
+																? "column-done"
+																: "";
 
-											<Button
-												type="submit"
-												variant="contained"
-												component="button"
-												sx={{
-													textTransform: "capitalize",
-													borderRadius: "8px",
-													fontWeight: "500",
-													fontSize: "13px",
-													padding: "11px 30px",
-													color: "#fff !important",
-												}}
-											>
-												Move
-											</Button>
-										</Box>
-									</Grid>
-								</Grid>
-							</Box>
+												return (
+													<div
+														key={column.Id}
+														className={`column ${columnClass}`}
+													>
+														<ColumnContainer
+															column={column}
+															deleteColumn={deleteColumn}
+															updateColumn={updateColumn}
+															createTask={createTask}
+															tasks={tasks.filter(
+																(task) => task.columnId === column.Id
+															)}
+														/>
+													</div>
+												);
+											})}
+										</SortableContext>
+									</div>
+								</div>
+								{createPortal(
+									<DragOverlay>
+										{activeColumn && (
+											<ColumnContainer
+												column={activeColumn}
+												deleteColumn={deleteColumn}
+												updateColumn={updateColumn}
+												createTask={createTask}
+												tasks={tasks.filter(
+													(task) => task.columnId === activeColumn.Id
+												)}
+											/>
+										)}
+										{activeTask && <WorkFlowCard task={activeTask} />}
+									</DragOverlay>,
+									document.body
+								)}
+							</DndContext>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={handleAddColumn}
+								sx={{ marginTop: "4vh", paddingX: "10px", marginLeft: "20px" }}
+							>
+								<AddIcon />
+							</Button>
 						</Box>
-					</Box>
-				</Box>
-			</BootstrapDialog>
-
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "center",
-					mt: 5,
-					mb: 5,
-					alignItems: "center",
-					padding: "20px",
-					gap: "20px",
-				}}
-			>
-				{/* <ProjectDefaultLogo /> */}
-				<Button variant="outlined" size="medium">
-					Change Icon
-				</Button>
-				<Box
-					component="form"
-					noValidate
-					onSubmit={handleUpdateProject}
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						gap: "10px",
-						alignContent: "start",
-						maxWidth: "700px",
-					}}
-				>
-					<Typography variant="h6">
-						Required fields are marked with an asterisk{" "}
-						<span style={{ color: "#ff5630", marginBottom: "10px" }}> * </span>
-					</Typography>
-
-					<Typography variant="h6" fontWeight="bold">
-						Name<span style={{ color: "#ff5630" }}> * </span>
-					</Typography>
-
-					<TextField
-						placeholder="SineVoiBeo"
-						required
-						fullWidth
-						id="name"
-						autoFocus
-						value={nameInput}
-						onChange={(e) => setNameInput(e.target.value)}
-						InputProps={{
-							style: { borderRadius: 8 },
-						}}
-					/>
-					<Typography
-						variant="body2"
-						style={{
-							display:
-								nameInput.length > 0 && nameInput.length <= 2
-									? "block"
-									: "none",
-							color: "#ff5630",
-						}}
-					>
-						Project name must be longer than 2 characters.
-					</Typography>
-
-					<Typography variant="h6" fontWeight="bold">
-						Project Key<span style={{ color: "#ff5630" }}> * </span>
-					</Typography>
-
-					<TextField
-						placeholder="SVB"
-						required
-						fullWidth
-						id="projectKey"
-						autoFocus
-						value={keyInput}
-						onChange={(e) => setKeyInput(e.target.value)}
-						InputProps={{
-							style: { borderRadius: 8 },
-						}}
-					/>
-					<Typography
-						variant="body2"
-						style={{
-							display:
-								keyInput.length > 0 && keyInput.length > 10 ? "block" : "none",
-							color: "#ff5630",
-						}}
-					>
-						Project key cannot exceed 10 characters.
-					</Typography>
-					<Typography
-						variant="body2"
-						style={{
-							display: keyInput.length > 0 ? "block" : "none",
-							color: "#cc9c00",
-						}}
-					>
-						Changing the project key will re-index your project, and may break
-						some external integrations.
-					</Typography>
-
-					<Button
-						variant="contained"
-						size="medium"
-						type="submit"
-						style={{ marginTop: "10px" }}
-					>
-						Save
-					</Button>
-				</Box>
+					</div>
+				</div>
 			</Box>
 		</>
 	);
