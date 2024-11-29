@@ -136,37 +136,11 @@ export const Backlog: React.FC<{
 									<TableCell
 										style={{
 											border: "none",
-											display: "flex",
 											alignItems: "center",
 											flexDirection: "row",
-											width: "10vh",
+											width: "30vh",
 										}}
 									>
-										{/* <Select
-                                            labelId="product-type-label"
-                                            id="product-type"
-                                            className="epicSelectBg"
-                                            size="small"
-                                            value={epicValue}
-                                            onChange={handleEpicValueChange}
-                                            style={{ marginRight: "5px" }}
-                                            sx={{
-                                                "& fieldset": {
-                                                    maxWidth: "120px",
-                                                },
-                                                "& .MuiSelect-select": {
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    whiteSpace: "nowrap",
-                                                },
-                                            }}
-                                        >
-                                            <MenuItem value={0}>epic</MenuItem>
-                                            <MenuItem value={1}>1</MenuItem>
-                                            <MenuItem value={2}>2</MenuItem>
-                                            <MenuItem value={3}>3</MenuItem>
-                                            <MenuItem value={4}>4</MenuItem>
-                                        </Select> */}
 										<Select
 											labelId="product-type-label"
 											className="progressSelectBg"
@@ -192,7 +166,14 @@ export const Backlog: React.FC<{
 											))}
 										</Select>
 									</TableCell>
-									<TableCell style={{ border: "none" }}>
+									<TableCell
+										style={{
+											border: "none",
+											width: "10vh",
+											alignItems: "left",
+											justifyContent: "center",
+										}}
+									>
 										<AssignMemberDialog
 											actors={project.actors}
 											issue={issue}

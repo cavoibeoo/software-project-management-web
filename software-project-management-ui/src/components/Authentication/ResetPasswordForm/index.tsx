@@ -16,7 +16,7 @@ const ResetPasswordForm: React.FC = () => {
 	return (
 		<>
 			<Box
-				className="auth-main-wrapper forgot-password-area"
+				className="auth-main-wrapper sign-in-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
 				}}
@@ -64,19 +64,7 @@ const ResetPasswordForm: React.FC = () => {
 										mb: "23px",
 									}}
 								>
-									<Image
-										src="/images/Sine_logo.png"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
-									<Image
-										src="/images/white-logo.svg"
-										className="d-none"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
+									<Box className="navbar-logo"></Box>
 								</Box>
 
 								<Box
@@ -98,8 +86,7 @@ const ResetPasswordForm: React.FC = () => {
 									</Typography>
 
 									<Typography sx={{ fontWeight: "500", fontSize: "16px" }}>
-										Enter your new password and confirm it another time in the
-										field below.
+										Enter your new password and confirm it in the field below.
 									</Typography>
 								</Box>
 
@@ -114,50 +101,13 @@ const ResetPasswordForm: React.FC = () => {
 													mb: "10px",
 													display: "block",
 												}}
-												className="text-black"
-											>
-												Old Password
-											</Typography>
-
-											<TextField
-												label="Type your old password"
-												variant="filled"
-												type="password"
-												id="oldPassword"
-												name="oldPassword"
-												sx={{
-													"& .MuiInputBase-root": {
-														border: "1px solid #D5D9E2",
-														backgroundColor: "#fff",
-														borderRadius: "7px",
-													},
-													"& .MuiInputBase-root::before": {
-														border: "none",
-													},
-													"& .MuiInputBase-root:hover::before": {
-														border: "none",
-													},
-												}}
-											/>
-										</FormControl>
-									</Box>
-
-									<Box mb="15px">
-										<FormControl fullWidth>
-											<Typography
-												component="label"
-												sx={{
-													fontWeight: "500",
-													fontSize: "14px",
-													mb: "10px",
-													display: "block",
-												}}
-												className="text-black"
+												className="text-all-black"
 											>
 												New Password
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="Type your new password"
 												variant="filled"
 												type="password"
@@ -165,7 +115,6 @@ const ResetPasswordForm: React.FC = () => {
 												name="newPassword"
 												sx={{
 													"& .MuiInputBase-root": {
-														border: "1px solid #D5D9E2",
 														backgroundColor: "#fff",
 														borderRadius: "7px",
 													},
@@ -190,12 +139,13 @@ const ResetPasswordForm: React.FC = () => {
 													mb: "10px",
 													display: "block",
 												}}
-												className="text-black"
+												className="text-all-black"
 											>
 												Confrim Password
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="Type your confrim password"
 												variant="filled"
 												type="password"
@@ -203,7 +153,6 @@ const ResetPasswordForm: React.FC = () => {
 												name="confrimPassword"
 												sx={{
 													"& .MuiInputBase-root": {
-														border: "1px solid #D5D9E2",
 														backgroundColor: "#fff",
 														borderRadius: "7px",
 													},
@@ -239,19 +188,6 @@ const ResetPasswordForm: React.FC = () => {
 											Send
 										</Button>
 									</Box>
-
-									<Typography>
-										Back to{" "}
-										<Link
-											href="/authentication/sign-in/"
-											className="text-primary"
-											style={{
-												fontWeight: "500",
-											}}
-										>
-											Sign In
-										</Link>
-									</Typography>
 								</Box>
 							</Box>
 						</Grid>

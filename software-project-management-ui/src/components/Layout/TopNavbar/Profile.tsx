@@ -158,7 +158,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
 				<MenuItem sx={{ padding: "8px 20px" }}>
 					<Link
-						href="/my-profile/"
+						href="/user/"
 						className="text-black"
 						style={{
 							display: "flex",

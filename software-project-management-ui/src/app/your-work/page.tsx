@@ -4,7 +4,9 @@ import ToDoList from "@/components/Apps/ToDoList";
 import Link from "next/link";
 import ImgMediaCard from "@/components/ImgMediaCard/ImgMediaCard";
 import EnhancedTable from "./component/table";
-import { Typography, Breadcrumbs } from "@mui/material";
+import { Typography, Breadcrumbs, Button } from "@mui/material";
+import { Chatbot } from "@/components/Chatbot";
+import ChatContent from "@/components/Apps/Chat/ChatContent";
 
 export default function Page() {
 	return (
@@ -27,6 +29,7 @@ export default function Page() {
 				<h3>Trash</h3>
 				<ImgMediaCard />
 			</Link> */}
+			<Chatbot />
 		</>
 	);
 }

@@ -59,6 +59,7 @@ import * as sprintService from "@/api-services/sprintService";
 import * as projectService from "@/api-services/projectServices";
 import * as workflowService from "@/api-services/workflowService";
 import * as issueTypeService from "@/api-services/issueTypeService";
+import { Chatbot } from "@/components/Chatbot";
 type Issue = {
 	_id: string;
 	key: string;
@@ -399,6 +400,13 @@ export default function Page({ projectName }: { projectName: string }) {
 									{actor?.user?.name.charAt(0)}
 								</Avatar>
 							))}
+						</AvatarGroup>
+						<AvatarGroup max={4}>
+							<Avatar alt="Remy Sharp" src="/images/users/user1.jpg" />
+							<Avatar alt="Travis Howard" src="/images/users/user2.jpg" />
+							<Avatar alt="Cindy Baker" src="/images/users/user3.jpg" />
+							<Avatar alt="Agnes Walker" src="/images/users/user4.jpg" />
+							<Avatar alt="Trevor Henderson" src="/images/users/user5.jpg" />
 						</AvatarGroup>
 						{project ? (
 							<FormDialog
@@ -954,6 +962,7 @@ export default function Page({ projectName }: { projectName: string }) {
 					</Grid>
 				</Grid>
 			</div>
+			<Chatbot />
 		</>
 	);
 }
