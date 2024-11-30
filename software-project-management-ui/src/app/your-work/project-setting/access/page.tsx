@@ -40,7 +40,7 @@ import {
 	OutlinedInput,
 } from "@mui/material";
 import { UserRolesTables } from "./UserRolesTables/UserRolesTables";
-
+import RoleMenuDialog from "@/app/your-work/user-management/RoleMenuDialog";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 1;
 const MenuProps = {
@@ -311,6 +311,7 @@ export default function Page() {
 							gap: "20px",
 						}}
 					>
+						<RoleMenuDialog />
 						<form className={styles.searchBox} style={{ maxWidth: "30%" }}>
 							<Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
 								<label>
