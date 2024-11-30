@@ -364,9 +364,8 @@ export default function ColumnContainer(props: {
 							transformOrigin={{ horizontal: "right", vertical: "top" }}
 							anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
 						>
-							<MenuItem>Clone</MenuItem>
 							<MenuItem onClick={handleClickOpenDeleteColumnModal}>
-								Delete
+								Delete Column
 							</MenuItem>
 						</Menu>
 					</Box>

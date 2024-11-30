@@ -77,309 +77,331 @@ type Sprint = {
     issues: [any];
 };
 
-export default function Page({ projectName }: { projectName: string }) {
-    // Fetch sprint onloading
-    const [issue, setIssue] = useState<Issue[]>([]);
-    const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
-    const [project, setProject] = useState<any>();
-    const [workflow, setWorkflow] = useState<any>();
-    const [issueType, setIssueType] = useState<any>();
-    const [actors, setActors] = useState<any>();
+export default function Page() {
+	// Fetch sprint onloading
+	const [issue, setIssue] = useState<Issue[]>([]);
+	const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
+	const [project, setProject] = useState<any>();
+	const [workflow, setWorkflow] = useState<any>();
+	const [issueType, setIssueType] = useState<any>();
+	const [actors, setActors] = useState<any>();
 
-    const [update, setUpdate] = useState(false);
-    const [currentDeleteSprintId, setCurrentDeleteSprintId] = useState<string | null>(null);
+	const [update, setUpdate] = useState(false);
+	const [currentDeleteSprintId, setCurrentDeleteSprintId] = useState<
+		string | null
+	>(null);
 
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const projectId = searchParams.get("projectId");
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const projectId = searchParams.get("projectId");
 
-    const callUpdate = () => {
-        setUpdate(!update);
-    };
+	const callUpdate = () => {
+		setUpdate(!update);
+	};
 
-    useEffect(() => {
-        const fetchProject = async () => {
-            const result = await projectService.fetchById(projectId);
-            setProject(result);
-            setActors(result.actors);
-        };
-        fetchProject();
-    }, []);
+	useEffect(() => {
+		const fetchProject = async () => {
+			const result = await projectService.fetchById(projectId);
+			setProject(result);
+			setActors(result.actors);
+		};
+		fetchProject();
+	}, []);
 
-    useEffect(() => {
-        const fetchAPI = async () => {
-            const sprints = await sprintService.fetchAllSprint(projectId);
-            setFetchedSprint(sprints);
+	useEffect(() => {
+		const fetchAPI = async () => {
+			const sprints = await sprintService.fetchAllSprint(projectId);
+			setFetchedSprint(sprints);
 
-            const issues = await issueService.fetchIssue(projectId);
-            setIssue(issues);
+			const issues = await issueService.fetchIssue(projectId);
+			setIssue(issues);
 
-            const workflow = await workflowService.fetchWorkflow(projectId);
-            setWorkflow(workflow);
+			const workflow = await workflowService.fetchWorkflow(projectId);
+			setWorkflow(workflow);
 
-            const getIssueType = await issueTypeService.fetchIssueType(projectId);
-            setIssueType(getIssueType);
-        };
-        fetchAPI();
-    }, [update]);
+			const getIssueType = await issueTypeService.fetchIssueType(projectId);
+			setIssueType(getIssueType);
+		};
+		fetchAPI();
+	}, [update]);
 
-    useEffect(() => {
-        if (fetchedSprint?.length > 0) {
-            const sprintNames = fetchedSprint.map((sprint) => sprint);
-            setSprints(sprintNames);
-        }
-    }, [fetchedSprint]);
+	useEffect(() => {
+		if (fetchedSprint?.length > 0) {
+			const sprintNames = fetchedSprint.map((sprint) => sprint);
+			setSprints(sprintNames);
+		}
+	}, [fetchedSprint]);
 
-    const [issueName, setIssueName] = useState("");
+	const [issueName, setIssueName] = useState("");
 
-    useEffect(() => {
-        if (issue?.length > 0) {
-            const mappedBacklogs = issue.map((item) => item);
-            setBacklogs(mappedBacklogs);
-        }
-    }, [issue]);
+	useEffect(() => {
+		if (issue?.length > 0) {
+			const mappedBacklogs = issue.map((item) => item);
+			setBacklogs(mappedBacklogs);
+		}
+	}, [issue]);
 
-    const handleDeleteSprint = async (projectId: string) => {
-        let sprintId = currentDeleteSprintId;
-        if (sprintId) {
-            setOpenNotification(false);
-            await sprintService.deleteSprint(sprintId, projectId);
-            setUpdate(!update);
-        }
-    };
-    const StyledBadge = styled(Badge)(({ theme }) => ({
-        "& .MuiBadge-badge": {
-            backgroundColor: "#44b700",
-            color: "#44b700",
-            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-            "&::after": {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                animation: "ripple 1.2s infinite ease-in-out",
-                border: "1px solid currentColor",
-                content: '""',
-            },
-        },
-        "@keyframes ripple": {
-            "0%": {
-                transform: "scale(.8)",
-                opacity: 1,
-            },
-            "100%": {
-                transform: "scale(2.4)",
-                opacity: 0,
-            },
-        },
-    }));
+	const handleDeleteSprint = async (projectId: string) => {
+		let sprintId = currentDeleteSprintId;
+		if (sprintId) {
+			setOpenNotification(false);
+			await sprintService.deleteSprint(sprintId, projectId);
+			setUpdate(!update);
+		}
+	};
+	const StyledBadge = styled(Badge)(({ theme }) => ({
+		"& .MuiBadge-badge": {
+			backgroundColor: "#44b700",
+			color: "#44b700",
+			boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+			"&::after": {
+				position: "absolute",
+				top: 0,
+				left: 0,
+				width: "100%",
+				height: "100%",
+				borderRadius: "50%",
+				animation: "ripple 1.2s infinite ease-in-out",
+				border: "1px solid currentColor",
+				content: '""',
+			},
+		},
+		"@keyframes ripple": {
+			"0%": {
+				transform: "scale(.8)",
+				opacity: 1,
+			},
+			"100%": {
+				transform: "scale(2.4)",
+				opacity: 0,
+			},
+		},
+	}));
 
-    const [isEpicVisible, setIsEpicVisible] = React.useState(true);
-    const [expanded, setExpanded] = React.useState<string | string[]>([]);
-    const [sprints, setSprints] = React.useState<any[]>([]);
-    const [newbacklogs, setNewBacklogs] = React.useState<string[]>([]);
+	const [isEpicVisible, setIsEpicVisible] = React.useState(true);
+	const [expanded, setExpanded] = React.useState<string | string[]>([]);
+	const [sprints, setSprints] = React.useState<any[]>([]);
+	const [newbacklogs, setNewBacklogs] = React.useState<string[]>([]);
 
-    const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent) => {
-        setExpanded((prev) =>
-            Array.isArray(prev)
-                ? prev.includes(panel)
-                    ? prev.filter((p) => p !== panel)
-                    : [...prev, panel]
-                : prev === panel
-                  ? []
-                  : [panel]
-        );
-    };
+	const handleAccordionChange =
+		(panel: string) => (event: React.SyntheticEvent) => {
+			setExpanded((prev) =>
+				Array.isArray(prev)
+					? prev.includes(panel)
+						? prev.filter((p) => p !== panel)
+						: [...prev, panel]
+					: prev === panel
+						? []
+						: [panel]
+			);
+		};
 
-    const handleCreateSprint = async () => {
-        setLoading(true);
-        await sprintService.createSprint(projectId);
-        // console.log(sprint);
-        setTimeout(() => {
-            setUpdate(!update);
-            setLoading(false);
-        }, 1000);
-        console.log(sprints);
-        // setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
-    };
+	const handleCreateSprint = async () => {
+		setLoading(true);
+		await sprintService.createSprint(projectId);
+		// console.log(sprint);
+		setTimeout(() => {
+			setUpdate(!update);
+			setLoading(false);
+		}, 1000);
+		console.log(sprints);
+		// setSprints((prev) => [...prev, `Sprint ${prev.length + 1}`]);
+	};
 
-    const handleCreateBacklog = () => {
-        setNewBacklogs((prev) => [...prev, `Backlog ${prev.length + 1}`]);
-        setShowCreateBacklogButton(false);
-    };
+	const handleCreateBacklog = () => {
+		setNewBacklogs((prev) => [...prev, `Backlog ${prev.length + 1}`]);
+		setShowCreateBacklogButton(false);
+	};
 
-    const [loading, setLoading] = useState(false);
-    const [showCreateBacklogButton, setShowCreateBacklogButton] = React.useState(true);
+	const [loading, setLoading] = useState(false);
+	const [showCreateBacklogButton, setShowCreateBacklogButton] =
+		React.useState(true);
 
-    const handleRemoveBacklog = () => {
-        setNewBacklogs((prev) => prev.slice(0, -1));
-        setShowCreateBacklogButton(true);
-    };
+	const handleRemoveBacklog = () => {
+		setNewBacklogs((prev) => prev.slice(0, -1));
+		setShowCreateBacklogButton(true);
+	};
 
-    const handleBacklogSubmit = async () => {
-        setLoading(true);
-        let issue = await issueService.createIssue({
-            projectId: project._id,
-            summary: issueName,
-        });
-        setUpdate(!update);
-        setTimeout(() => {
-            toast.success("Create Backlog Successful!");
-            setLoading(false);
-            setIssueName(""); // Clear the input after submission
-        }, 2000);
-    };
-    React.useEffect(() => {
-        const handleKeyPress = (event: KeyboardEvent) => {
-            // if (event.key === "`") {
-            //     setIsEpicVisible((prev) => !prev);
-            // }
-        };
+	const handleBacklogSubmit = async () => {
+		setLoading(true);
+		let issue = await issueService.createIssue({
+			projectId: project._id,
+			summary: issueName,
+		});
+		setUpdate(!update);
+		setTimeout(() => {
+			toast.success("Create Backlog Successful!");
+			setLoading(false);
+			setIssueName(""); // Clear the input after submission
+		}, 2000);
+	};
+	React.useEffect(() => {
+		const handleKeyPress = (event: KeyboardEvent) => {
+			// if (event.key === "`") {
+			//     setIsEpicVisible((prev) => !prev);
+			// }
+		};
 
-        window.addEventListener("keydown", handleKeyPress);
+		window.addEventListener("keydown", handleKeyPress);
 
-        return () => {
-            window.removeEventListener("keydown", handleKeyPress);
-        };
-    }, []);
-    const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setIsEpicVisible(event.target.checked);
-    };
+		return () => {
+			window.removeEventListener("keydown", handleKeyPress);
+		};
+	}, []);
+	const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setIsEpicVisible(event.target.checked);
+	};
 
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    const [openNotification, setOpenNotification] = useState(false);
-    const handleClickOpenNotification = (sprintName: any) => {
-        setOpenNotification(true);
-    };
-    const handleCloseNotification = () => {
-        setOpenNotification(false);
-    };
-    const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-        "& .MuiDialogContent-root": {
-            padding: theme.spacing(2),
-        },
-        "& .MuiDialogActions-root": {
-            padding: theme.spacing(1),
-        },
-    }));
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    };
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const open = Boolean(anchorEl);
+	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+	const [openNotification, setOpenNotification] = useState(false);
+	const handleClickOpenNotification = (sprintName: any) => {
+		setOpenNotification(true);
+	};
+	const handleCloseNotification = () => {
+		setOpenNotification(false);
+	};
+	const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+		"& .MuiDialogContent-root": {
+			padding: theme.spacing(2),
+		},
+		"& .MuiDialogActions-root": {
+			padding: theme.spacing(1),
+		},
+	}));
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+	};
 
-    const [backlogs, setBacklogs] = useState<any[]>([]);
+	const [backlogs, setBacklogs] = useState<any[]>([]);
 
-    const getTaskPos = (id: string) => backlogs.findIndex((backlog) => backlog.id === id);
+	const getTaskPos = (id: string) =>
+		backlogs.findIndex((backlog) => backlog.id === id);
 
-    const handleOnDragStart = (event: any) => {
-        console.log("Start Drag", event);
-        setactiveDragItemId(event?.active?.id);
-        setactiveDragItemData(event?.active?.data?.current);
-    };
+	const handleOnDragStart = (event: any) => {
+		console.log("Start Drag", event);
+		setactiveDragItemId(event?.active?.id);
+		setactiveDragItemData(event?.active?.data?.current);
+	};
 
-    const handleDragEnd = (event: { active: { id: string }; over: { id: string } }) => {
-        const { active, over } = event;
-        if (active.id === over.id) return;
-        setBacklogs((backlogs) => {
-            const originalPos = getTaskPos(active.id);
-            const newPos = getTaskPos(over.id);
-            return arrayMove(backlogs, originalPos, newPos);
-        });
-        console.log("setactiveDragItemId", activeDragItemId);
-        console.log("setactiveDragItemData", activeDragItemData);
-        setactiveDragItemId(null);
-        setactiveDragItemData(null);
-    };
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 3,
-            },
-        }),
-        useSensor(TouchSensor, {
-            activationConstraint: {
-                distance: 3,
-            },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
-    );
+	const handleDragEnd = (event: {
+		active: { id: string };
+		over: { id: string };
+	}) => {
+		const { active, over } = event;
+		if (active.id === over.id) return;
+		setBacklogs((backlogs) => {
+			const originalPos = getTaskPos(active.id);
+			const newPos = getTaskPos(over.id);
+			return arrayMove(backlogs, originalPos, newPos);
+		});
+		console.log("setactiveDragItemId", activeDragItemId);
+		console.log("setactiveDragItemData", activeDragItemData);
+		setactiveDragItemId(null);
+		setactiveDragItemData(null);
+	};
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 3,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				distance: 3,
+			},
+		}),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		})
+	);
 
-    const [activeDragItemId, setactiveDragItemId] = useState(null);
-    const [activeDragItemData, setactiveDragItemData] = useState(null);
+	const [activeDragItemId, setactiveDragItemId] = useState(null);
+	const [activeDragItemData, setactiveDragItemData] = useState(null);
 
-    const dropAnimation = {
-        sideEffects: defaultDropAnimationSideEffects({
-            styles: { active: { opacity: "0.5" } },
-        }),
-    };
+	const dropAnimation = {
+		sideEffects: defaultDropAnimationSideEffects({
+			styles: { active: { opacity: "0.5" } },
+		}),
+	};
 
-    return (
-        <>
-            <div style={{ minHeight: "78vh" }}>
-                <Breadcrumbs separator="›" aria-label="breadcrumb">
-                    <Link className="hover-underlined" key="1" color="inherit" href="/your-work/">
-                        Projects
-                    </Link>
-                    <Link className="hover-underlined" key="2" color="inherit" href="/sine/board/">
-                        Sine_SPM
-                    </Link>
-                    <Typography key="3" color="text.primary">
-                        Backlog
-                    </Typography>
-                </Breadcrumbs>
-                <Typography variant="h5" gutterBottom sx={{ fontSize: "26px", fontWeight: "500" }}>
-                    Backlog
-                </Typography>
-                <Box display="flex" alignItems="center" gap="10px">
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                        className={styles.searchBox}
-                        style={{ maxWidth: "20%" }}
-                    >
-                        <Box display="flex" alignItems="center" height={"100%"}>
-                            <i className="material-symbols-outlined" style={{ top: "34%" }}>
-                                search
-                            </i>
-                        </Box>
-                        <input
-                            type="text"
-                            className={styles.inputSearch}
-                            placeholder="Search"
-                            id="searchboxColor"
-                            style={{
-                                border: "1px solid #a6adba",
-                                marginBottom: "20px",
-                                fontSize: "0.96875rem",
-                                marginLeft: "8px",
-                            }}
-                        />
-                    </Box>
+	return (
+		<>
+			<div style={{ minHeight: "78vh" }}>
+				<Breadcrumbs separator="›" aria-label="breadcrumb">
+					<Link
+						className="hover-underlined"
+						key="1"
+						color="inherit"
+						href="/your-work/"
+					>
+						Projects
+					</Link>
+					<Link
+						className="hover-underlined"
+						key="2"
+						color="inherit"
+						href="/sine/board/"
+					>
+						Sine_SPM
+					</Link>
+					<Typography key="3" color="text.primary">
+						Backlog
+					</Typography>
+				</Breadcrumbs>
+				<Typography
+					variant="h5"
+					gutterBottom
+					sx={{ fontSize: "26px", fontWeight: "500" }}
+				>
+					Backlog
+				</Typography>
+				<Box display="flex" alignItems="center" gap="10px">
+					<Box
+						display="flex"
+						alignItems="center"
+						className={styles.searchBox}
+						style={{ maxWidth: "20%" }}
+					>
+						<Box display="flex" alignItems="center" height={"100%"}>
+							<i className="material-symbols-outlined" style={{ top: "34%" }}>
+								search
+							</i>
+						</Box>
+						<input
+							type="text"
+							className={styles.inputSearch}
+							placeholder="Search"
+							id="searchboxColor"
+							style={{
+								border: "1px solid #a6adba",
+								marginBottom: "20px",
+								fontSize: "0.96875rem",
+								marginLeft: "8px",
+							}}
+						/>
+					</Box>
 
-                    <Box display="flex" alignItems="center" sx={{ marginBottom: "20px" }}>
-                        <AvatarGroup sx={{ marginRight: "5px" }} max={4}>
-                            {actors?.map((actor: any) => (
-                                <Avatar
-                                    src={actor?.user?.avatar}
-                                    key={actor.user?._id}
-                                    className="avatar-hover"
-                                    sx={{ bgcolor: deepOrange[500] }}
-                                >
-                                    {actor?.user?.name.charAt(0)}
-                                </Avatar>
-                            ))}
-                        </AvatarGroup>
-                        {/* <AvatarGroup max={4}>
+					<Box display="flex" alignItems="center" sx={{ marginBottom: "20px" }}>
+						<AvatarGroup sx={{ marginRight: "5px" }} max={4}>
+							{actors?.map((actor: any) => (
+								<Avatar
+									src={actor?.user?.avatar}
+									key={actor.user?._id}
+									className="avatar-hover"
+									sx={{ bgcolor: deepOrange[500] }}
+								>
+									{actor?.user?.name.charAt(0)}
+								</Avatar>
+							))}
+						</AvatarGroup>
+						<AvatarGroup max={4}>
 							<Avatar alt="Remy Sharp" src="/images/users/user1.jpg" />
 							<Avatar alt="Travis Howard" src="/images/users/user2.jpg" />
 							<Avatar alt="Cindy Baker" src="/images/users/user3.jpg" />
