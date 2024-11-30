@@ -28,10 +28,12 @@ const login = async (req, res, next) => {
         res.cookie("accessToken", result.accessToken, {
             httpOnly: false,
             maxAge: 24 * 60 * 60 * 1000, //15 minutes
+            sameSite: "None",
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
+            sameSite: "None",
         });
 
         res.status(StatusCodes.OK).send(result);
@@ -46,10 +48,12 @@ const loginWithGoogle = async (req, res, next) => {
         res.cookie("accessToken", result.accessToken, {
             httpOnly: false,
             maxAge: 15 * 60 * 1000, //15 minutes
+            sameSite: "None",
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
+            sameSite: "None",
         });
 
         // res.status(StatusCodes.OK).send(result);
