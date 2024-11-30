@@ -1,5 +1,6 @@
 import { authRequest } from "@/utils/request";
 import axios from "axios";
+import axios2 from "@/utils/axios";
 import { toast } from "react-toastify";
 import { getRefreshTokenFromCookie } from "./CookieServices";
 import { ex } from "@fullcalendar/core/internal-common";
@@ -7,7 +8,7 @@ import { ex } from "@fullcalendar/core/internal-common";
 
 export const loginGoogle = async () => {
     try {
-        window.location.href = `http://localhost:3001/api/auth/google`;
+        window.location.href = `https://spm-server.vercel.app/api/auth/google`;
     } catch (error: any) {
         toast.error(error?.message);
         console.log(error);
@@ -33,8 +34,8 @@ export const CheckCookieServices = async () => {
 
 export const FormLoginServices = async (email: any, password: any) => {
     try {
-        await authRequest.post(
-            "/login",
+        await axios2.post(
+            "/auth/login",
             {
                 email: email,
                 password: password,
@@ -43,25 +44,15 @@ export const FormLoginServices = async (email: any, password: any) => {
         );
         window.location.href = "/your-work";
         toast.success("Sucessful signing in!");
-    } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            const statusCode = error.response.status;
-            if (statusCode === 400) {
-                toast.error("User not existed!");
-            } else if (statusCode === 401) {
-                toast.error("Invalid Password!");
-            } else if (statusCode === 422) {
-                toast.error("Please Input with correct form!");
-            }
-        } else {
-            toast.error("Đăng Nhập Không Thành Công!");
-        }
+    } catch (error: any) {
+        toast.error(error.response.data.message);
+        console.log(error);
     }
 };
 
 export const GGLoginServices = async () => {
     try {
-        window.location.href = "localhost:3000/api/auth/google";
+        window.location.href = "http://localhost:3001/api/auth/google";
         // const response = await authRequest.get("/google", {
         // 	withCredentials: true,
         // });
@@ -85,7 +76,7 @@ export const GGLoginServices = async () => {
 
 export const LogoutServices = async () => {
     try {
-        await authRequest.get("/logout", {
+        await axios2.get("/auth/logout", {
             withCredentials: true,
         });
         document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
@@ -94,10 +85,7 @@ export const LogoutServices = async () => {
         window.location.href = "/authentication/logout/";
         toast.success("Sucessful logout!");
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-        } else {
-            toast.error("Logout Không Thành Công!");
-        }
+        console.log(error);
     }
 };
 
