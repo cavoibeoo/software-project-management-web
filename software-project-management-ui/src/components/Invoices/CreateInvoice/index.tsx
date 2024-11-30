@@ -202,7 +202,7 @@ const CreateInvoice: React.FC = () => {
 										fontWeight={500}
 										className="text-black"
 									>
-										Olivia John
+										Duc Quang
 									</Typography>
 
 									<Typography mt="5px !important">

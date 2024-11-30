@@ -4,50 +4,46 @@ import mongoose from "mongoose";
 
 const IssueSchema = mongoose.Schema(
     {
-        project: {
-            type: String,
-            required: true,
-        },
-        count: Number,
+        project: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
+        count: { type: Number, default: 0 },
         page: Number,
-        issues: {
-            name: { type: String, required: true },
-            key: { type: String, required: true },
-            description: String,
-            issueType: {
-                //ref IssueType
-                type: String,
-                required: true,
-            },
-            fields: [
-                {
-                    name: {
-                        type: String,
-                        required: true,
-                    },
-                    value: {
-                        type: any,
-                    },
-                },
-            ],
-            workFlow: {
-                // ref Workflow
-                type: String,
-            },
-            parent: {
-                // ref parent issue
-                type: String,
-            },
-            sprint: {
-                // ref Sprint
-                type: String,
-            },
-        },
-        comments: [
+
+        issues: [
             {
-                comment: String,
-                user: String,
-                createdAt: Date,
+                project: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
+                summary: { type: String, required: true },
+                key: { type: String, required: true },
+                description: String,
+                issueType: {
+                    _id: { type: mongoose.Schema.Types.ObjectId },
+                    img: { type: String },
+                    name: { type: String, required: true },
+                },
+                fields: { type: mongoose.Schema.Types.Mixed },
+                assignee: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+                workflow: {
+                    // ref Workflow
+                    type: String,
+                    default: "Todo",
+                },
+                parent: {
+                    // ref parent issue
+                    type: String,
+                },
+                sprint: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Sprint",
+                },
+                comments: [
+                    {
+                        comment: String,
+                        user: {
+                            type: mongoose.Schema.Types.ObjectId,
+                            ref: "User",
+                        },
+                        createdAt: Date,
+                    },
+                ],
             },
         ],
     },

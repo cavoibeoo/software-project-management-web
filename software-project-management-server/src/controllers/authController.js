@@ -26,11 +26,11 @@ const login = async (req, res, next) => {
     try {
         let result = await authService.loginService(req.body, false);
         res.cookie("accessToken", result.accessToken, {
-            httpOnly: true,
-            maxAge: 15 * 60 * 1000, //15 minutes
+            httpOnly: false,
+            maxAge: 24 * 60 * 60 * 1000, //15 minutes
         });
         res.cookie("refreshToken", result.refreshToken, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
         });
 
@@ -44,15 +44,16 @@ const loginWithGoogle = async (req, res, next) => {
     try {
         let result = await authService.loginService(req?.user, true);
         res.cookie("accessToken", result.accessToken, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: 15 * 60 * 1000, //15 minutes
         });
         res.cookie("refreshToken", result.refreshToken, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
         });
 
-        res.status(StatusCodes.OK).send(result);
+        // res.status(StatusCodes.OK).send(result);
+        res.redirect("http://localhost:3000/your-work/");
     } catch (err) {
         next(err);
     }
@@ -72,11 +73,11 @@ const refreshToken = async (req, res, next) => {
         let result = await authService.refreshTokenService(req.cookies);
         if (result?.error) {
             res.clearCookie("refreshToken", {
-                httpOnly: true,
+                httpOnly: false,
                 sameSite: "None" /*secure: true*/,
             });
             res.clearCookie("accessToken", {
-                httpOnly: true,
+                httpOnly: false,
                 sameSite: "None" /*secure: true*/,
             });
             res.status(StatusCodes.BAD_REQUEST)
@@ -87,11 +88,11 @@ const refreshToken = async (req, res, next) => {
                 .send();
         } else {
             res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: true,
+                httpOnly: false,
                 maxAge: 7 * 24 * 60 * 60 * 1000, //15 days
             });
             res.cookie("accessToken", result.accessToken, {
-                httpOnly: true,
+                httpOnly: false,
                 maxAge: 15 * 60 * 1000, //15 min
             });
             res.status(StatusCodes.OK).json(result).send();
@@ -106,11 +107,11 @@ const logout = async (req, res, next) => {
         if (req.cookies?.refreshToken && req.cookies?.accessToken) {
             let result = await authService.logoutService(req.cookies);
             res.clearCookie("refreshToken", {
-                httpOnly: true,
+                httpOnly: false,
                 sameSite: "None" /*secure: true*/,
             });
             res.clearCookie("accessToken", {
-                httpOnly: true,
+                httpOnly: false,
                 sameSite: "None" /*secure: true*/,
             });
             res.status(StatusCodes.NO_CONTENT).send(result);

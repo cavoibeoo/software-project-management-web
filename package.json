@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@dnd-kit/modifiers": "^7.0.0"
+  }
+}

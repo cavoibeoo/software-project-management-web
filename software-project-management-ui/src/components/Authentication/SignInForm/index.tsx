@@ -12,58 +12,34 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { cookies } from "next/headers";
+import { FormLoginServices, loginGoogle } from "@/api-services/AuthServices";
+import { validateEmail, validatePassword } from "./formValidation";
 
 const SignInForm: React.FC = () => {
 	const [showPassword, setShowPassword] = useState(false);
 
-	const handleSubmit = async (event: React.FormEvent) => {
+	const handleLoginForm = async (event: React.FormEvent) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget as HTMLFormElement);
-
-		try {
-			const response = await axios.post(
-				"http://localhost:3001/api/auth/login",
-				{
-					email: formData.get("email"),
-					password: formData.get("password"),
-				},
-				{ withCredentials: true }
-			);
-
-			document.cookie = `token=${response.data.token}; path=/;`;
-
-			window.location.href = "/your-work";
-			toast.success("Sucessful signing in!");
-		} catch (error) {
-			if (axios.isAxiosError(error) && error.response) {
-				const statusCode = error.response.status;
-				if (statusCode === 400) {
-					toast.error("User not existed!");
-				} else if (statusCode === 401) {
-					toast.error("Invalid Password!");
-				} else if (statusCode === 422) {
-					toast.error("Please Input with correct form!");
-				}
-			} else {
-				toast.error("Đăng Nhập Không Thành Công!");
-			}
-		}
+		FormLoginServices(formData.get("email"), formData.get("password"));
 	};
+
+	const handleLoginWithGG = async (event: React.FormEvent) => {
+		event.preventDefault();
+		await loginGoogle();
+	};
+
 	return (
 		<>
-			{console.log(document.cookie)}
 			<Box
-				className="auth-main-wrapper sign-in-area"
+				className="auth-main-wrapper sign-in-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
 					backgroundImage:
-						'url("https://id-frontend.prod-east.frontend.public.atl-paas.net/assets/wac.92a80da2.svg")',
+						"url('/images/authentication/LoginBackground_darkTheme.jpg')",
 					backgroundSize: "cover",
 					backgroundPosition: "center",
 					backgroundRepeat: "no-repeat",
@@ -114,19 +90,7 @@ const SignInForm: React.FC = () => {
 										mb: "23px",
 									}}
 								>
-									<Image
-										src="/images/Sine_logo.png"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
-									<Image
-										src="/images/white-logo.svg"
-										className="d-none"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
+									<Box className="navbar-logo"></Box>
 								</Box>
 
 								<Box
@@ -137,7 +101,7 @@ const SignInForm: React.FC = () => {
 								>
 									<Typography
 										variant="h1"
-										className="text-black"
+										className="text-all-black"
 										sx={{
 											fontSize: { xs: "22px", sm: "25px", lg: "28px" },
 											mb: "7px",
@@ -164,12 +128,13 @@ const SignInForm: React.FC = () => {
 								>
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
 											padding: "10.5px 20px",
 										}}
+										onClick={handleLoginWithGG}
 									>
 										<Image
 											src="/images/icons/google.svg"
@@ -181,7 +146,7 @@ const SignInForm: React.FC = () => {
 
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -198,7 +163,7 @@ const SignInForm: React.FC = () => {
 
 									<Button
 										variant="outlined"
-										className="border bg-white"
+										className="border allwhite"
 										sx={{
 											width: "100%",
 											borderRadius: "8px",
@@ -214,7 +179,7 @@ const SignInForm: React.FC = () => {
 									</Button>
 								</Box>
 
-								<Box component="form" onSubmit={handleSubmit}>
+								<Box component="form" onSubmit={handleLoginForm}>
 									<Box mb="15px">
 										<FormControl fullWidth>
 											<Typography
@@ -225,12 +190,13 @@ const SignInForm: React.FC = () => {
 													mb: "10px",
 													display: "block",
 												}}
-												className="text-black"
+												className="text-all-black"
 											>
 												Email Address
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="example&#64;sine.com"
 												variant="filled"
 												id="email"
@@ -251,20 +217,10 @@ const SignInForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const email = e.target.value;
-													const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-													if (!emailPattern.test(email)) {
-														const emailErrorElement =
-															document.getElementById("emailError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText =
-																"Email không hợp lệ!";
-														}
-													} else {
-														const emailErrorElement =
-															document.getElementById("emailError");
-														if (emailErrorElement) {
-															emailErrorElement.innerText = "";
-														}
+													const emailErrorElement =
+														document.getElementById("emailError");
+													if (emailErrorElement) {
+														emailErrorElement.innerText = validateEmail(email);
 													}
 												}}
 											/>
@@ -289,12 +245,13 @@ const SignInForm: React.FC = () => {
 													mb: "10px",
 													display: "block",
 												}}
-												className="text-black"
+												className="text-all-black"
 											>
 												Password
 											</Typography>
 
 											<TextField
+												className="authentication-input"
 												label="Type Password"
 												variant="filled"
 												type={showPassword ? "text" : "password"}
@@ -316,21 +273,11 @@ const SignInForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const password = e.target.value;
-													const passwordPattern =
-														/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/; // Password must be at least 6 characters and contain a special character
-													if (!passwordPattern.test(password)) {
-														const passwordErrorElement =
-															document.getElementById("passwordError");
-														if (passwordErrorElement) {
-															passwordErrorElement.innerText =
-																"Password must be at least 6 characters and include a special character!";
-														}
-													} else {
-														const passwordErrorElement =
-															document.getElementById("passwordError");
-														if (passwordErrorElement) {
-															passwordErrorElement.innerText = "";
-														}
+													const passwordErrorElement =
+														document.getElementById("passwordError");
+													if (passwordErrorElement) {
+														passwordErrorElement.innerText =
+															validatePassword(password);
 													}
 												}}
 												InputProps={{

@@ -36,6 +36,7 @@ const Footer: React.FC = () => {
 										width={100}
 										height={26}
 									/>
+
 									<Image
 										src="/images/white-logo-big.svg"
 										className="d-none"

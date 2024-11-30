@@ -1,13 +1,16 @@
 "use strict";
 
 import Project from "./../models/project.js";
+import User from "./../models/user.js";
+import Issue from "../models/issue.js";
+import Sprint from "../models/sprint.js";
+
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import config from "../config/environment.js";
 import uploadImg from "../utils/uploadFirebaseImg.js";
-import User from "./../models/user.js";
 import getObjectId from "../utils/getObjectId.js";
 import Permission from "../utils/permission.js";
 
@@ -46,8 +49,9 @@ const getById = async (data, user) => {
 
 const getCurrentUserProjects = async (user, data, status) => {
     try {
+        console.log(data);
         let userId = getObjectId(user?.userId);
-        let pageSize = data?.pageSize ? data.pageSize : 10;
+        let pageSize = data?.pageSize ? data.pageSize : 100;
         let page = data?.page ? data.page : 1;
 
         let result = await Project.find({ "actors.user": userId, status: status })
@@ -73,87 +77,23 @@ const createProject = async (user, data) => {
         if (project) {
             throw new ApiError(StatusCodes.CONFLICT, "Project key already exists");
         }
+
+        let defaultProject = data?.defaultProject
+            ? await Project.findOne({ _id: getObjectId(data.defaultFrom) })
+            : await Project.findOne({ isDefault: true, status: 1 });
+
+        if (!defaultProject) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Default project not found!");
+        }
+
         project = new Project({
             ...data,
+            img: defaultProject.img,
             author: userId,
             actors: [{ user: userId, role: "Admin" }],
-            roles: [
-                {
-                    name: "Admin",
-                    permissions: {
-                        modify_project: true,
-                        delete_project: true,
-                        archive_project: true,
-                        add_workflow: true,
-                        edit_workflow: true,
-                        delete_workflow: true,
-                        add_actor: true,
-                        edit_actor_role: true,
-                        remove_actor: true,
-                        add_sprint: true,
-                        edit_sprint: true,
-                        delete_sprint: true,
-                        add_issue: true,
-                        edit_issue: true,
-                        delete_issue: true,
-                        add_comment: true,
-                        edit_comment: true,
-                        delete_comment: true,
-                    },
-
-                    isDefault: true,
-                },
-                {
-                    name: "Member",
-                    permissions: {
-                        modify_project: false,
-                        delete_project: false,
-                        archive_project: false,
-                        add_workflow: false,
-                        edit_workflow: false,
-                        delete_workflow: false,
-                        add_actor: false,
-                        edit_actor_role: false,
-                        remove_actor: false,
-                        add_sprint: true,
-                        edit_sprint: true,
-                        delete_sprint: true,
-                        add_issue: true,
-                        edit_issue: true,
-                        delete_issue: true,
-                        add_comment: true,
-                        edit_comment: true,
-                        delete_comment: true,
-                    },
-
-                    isDefault: true,
-                },
-                {
-                    name: "Viewer",
-                    permissions: {
-                        modify_project: false,
-                        delete_project: false,
-                        archive_project: false,
-                        add_workflow: false,
-                        edit_workflow: false,
-                        delete_workflow: false,
-                        add_actor: false,
-                        edit_actor_role: false,
-                        remove_actor: false,
-                        add_sprint: false,
-                        edit_sprint: false,
-                        delete_sprint: false,
-                        add_issue: false,
-                        edit_issue: false,
-                        delete_issue: false,
-                        add_comment: false,
-                        edit_comment: false,
-                        delete_comment: false,
-                    },
-
-                    isDefault: true,
-                },
-            ],
+            roles: data.roles ? data.roles : defaultProject.roles,
+            workflow: data.workflow ? data.workflow : defaultProject.workflow,
+            issueTypes: data.issueType ? data.issueType : defaultProject.issueTypes,
         });
         data.author = userId;
 
@@ -209,10 +149,45 @@ const addActor = async (project, data, isAdded) => {
     }
 };
 
+const updateProject = async (project, data) => {
+    try {
+        let prjId = getObjectId(project.prjId);
+
+        // upload img if exists then update the data in db
+        let uploadedImg = data?.img ? await uploadImg(data?.img, "project", prjId) : project.img;
+
+        let updateProject = await Project.findOneAndUpdate(
+            { _id: prjId },
+            {
+                $set: {
+                    name: data.name,
+                    key: data.key,
+                    img: uploadedImg,
+                },
+            },
+            { new: true }
+        )
+            .populate("author", "name email avatar ")
+            .populate("actors.user", "name email avatar");
+
+        if (!updateProject) {
+            throw new ApiError(StatusCodes.NOT_FOUND, `Project '${project.prjId}' not found!`);
+        }
+
+        return updateProject ? updateProject : null;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const changeProjectStatus = async (project, data, status) => {
     try {
         let prjId = getObjectId(project.prjId);
         let currentProject = await Project.findOne({ _id: prjId });
+
+        if (currentProject.isDefault) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot delete default project!");
+        }
 
         if (!currentProject) {
             throw new ApiError(StatusCodes.NOT_FOUND, `Project '${data.projectName}' not found!`);
@@ -235,6 +210,10 @@ const hardDeleteProject = async (user, project, data) => {
         let prjId = getObjectId(project.prjId);
         let currentProject = await Project.findOne({ _id: prjId });
 
+        if (currentProject.isDefault) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot delete default project!");
+        }
+
         if (!currentProject) {
             throw new ApiError(StatusCodes.NOT_FOUND, `Project '${project.prjId}' not found!`);
         }
@@ -249,6 +228,10 @@ const hardDeleteProject = async (user, project, data) => {
         }
 
         let result = await Project.deleteOne({ _id: prjId });
+
+        await Issue.deleteMany({ project: prjId });
+        await Sprint.deleteMany({ project: prjId });
+
         return result.deletedCount > 0 ? { message: "Project deleted successfully" } : null;
     } catch (error) {
         throw error;
@@ -263,4 +246,5 @@ export {
     addActor,
     changeProjectStatus,
     hardDeleteProject,
+    updateProject,
 };

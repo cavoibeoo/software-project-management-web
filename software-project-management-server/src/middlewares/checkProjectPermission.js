@@ -24,14 +24,13 @@ const checkPermission = (requiredPermissions) => {
                 //     message: "You have no permission to access this project",
                 // });
             }
-
             // Check if the user has the required permission
             if (requiredPermissions) {
                 if (
                     !prj.roles.some(
                         (role) =>
                             role.name == isActor.role &&
-                            role.permissions[requiredPermissions] === true
+                            role.permissions.includes(requiredPermissions)
                     )
                 ) {
                     throw new ApiError(StatusCodes.FORBIDDEN, "Insufficient permissions");

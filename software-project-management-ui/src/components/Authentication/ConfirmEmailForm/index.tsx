@@ -9,7 +9,7 @@ const ConfirmEmailForm: React.FC = () => {
 	return (
 		<>
 			<Box
-				className="auth-main-wrapper forgot-password-area"
+				className="auth-main-wrapper sign-in-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
 				}}
@@ -57,19 +57,7 @@ const ConfirmEmailForm: React.FC = () => {
 										mb: "23px",
 									}}
 								>
-									<Image
-										src="/images/Sine_logo.png"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
-									<Image
-										src="/images/white-logo.svg"
-										className="d-none"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
+									<Box className="navbar-logo"></Box>
 								</Box>
 
 								<Box
@@ -99,7 +87,7 @@ const ConfirmEmailForm: React.FC = () => {
 								<Box>
 									<Box mb="30px">
 										<Box
-											className="logo bg-white text-success rounded-circle"
+											className="logo bg-custom text-success rounded-circle"
 											sx={{
 												display: "flex",
 												alignItems: "center",

@@ -13,7 +13,7 @@ import session from "express-session";
 import passport from "passport";
 
 const START_SERVER = () => {
-    const app = express();
+	const app = express();
 
     // Configure express-session middleware
     app.use(
@@ -27,25 +27,30 @@ const START_SERVER = () => {
     app.use(passport.initialize());
     // app.use(passport.session());
     app.use(express.json({ extended: true }));
-    app.use(cors());
+    app.use(
+        cors({
+            origin: "http://localhost:3000",
+            credentials: true,
+        })
+    );
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
     app.use(morgan("combined"));
     const port = config.port;
 
-    routes(app);
+	routes(app);
 
-    app.listen(config.port, () => {
-        console.log(chalk.blueBright(`Listen on http://localhost:${port}`));
-    });
+	app.listen(config.port, () => {
+		console.log(chalk.blueBright(`Listen on http://localhost:${port}`));
+	});
 };
 
 db()
-    .then(() => {})
-    .then(() => {
-        START_SERVER();
-    })
-    .catch((error) => {
-        console.error(chalk.red("Failed to connect to MongoDB: ", error));
-        process.exit(0);
-    });
+	.then(() => {})
+	.then(() => {
+		START_SERVER();
+	})
+	.catch((error) => {
+		console.error(chalk.red("Failed to connect to MongoDB: ", error));
+		process.exit(0);
+	});

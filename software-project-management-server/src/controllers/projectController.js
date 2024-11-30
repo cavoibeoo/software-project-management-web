@@ -24,7 +24,7 @@ const getById = async (req, res, next) => {
 
 const getCurrentUserProjects = async (req, res, next) => {
     try {
-        let result = await projectService.getCurrentUserProjects(req.user, req.body, 1);
+        let result = await projectService.getCurrentUserProjects(req.user, req?.query, 1);
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
@@ -49,6 +49,16 @@ const createProject = async (req, res, next) => {
     }
 };
 
+const createDefaultProject = async (req, res, next) => {
+    try {
+        req.body.isDefault = true;
+        let result = await projectService.createProject(req.user, req.body);
+        res.status(StatusCodes.CREATED).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
 const addNewActor = async (req, res, next) => {
     try {
         let result = await projectService.addActor(req.params, req.body, true);
@@ -61,6 +71,17 @@ const addNewActor = async (req, res, next) => {
 const changeActorRole = async (req, res, next) => {
     try {
         let result = await projectService.addActor(req.params, req.body, false);
+        res.status(StatusCodes.OK).send(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
+const updateProject = async (req, res, next) => {
+    try {
+        if (req?.file) req.body.img = req?.file;
+
+        let result = await projectService.updateProject(req.params, req.body);
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
@@ -117,4 +138,6 @@ export {
     hardDeleteProject,
     recoverDeletedProject,
     archivedProject,
+    createDefaultProject,
+    updateProject,
 };

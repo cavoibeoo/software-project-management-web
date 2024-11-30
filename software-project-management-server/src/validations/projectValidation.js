@@ -1,20 +1,14 @@
 import Joi from "joi";
 
 const createProject = Joi.object({
+    defaultProject: Joi.string().optional(),
     name: Joi.string().required(),
     key: Joi.string().required(),
     img: Joi.string().optional(),
     roles: Joi.array().items(
         Joi.object({
             name: Joi.string().required(),
-            permissions: Joi.array()
-                .items(
-                    Joi.object({
-                        name: Joi.string().optional(),
-                        allowedAPI: Joi.array().items(Joi.string()).optional(),
-                    })
-                )
-                .optional(),
+            permissions: Joi.array().optional(),
             isDefault: Joi.boolean().default(false),
         })
     ),
@@ -26,7 +20,7 @@ const createProject = Joi.object({
             workflowType: Joi.string().valid("Todo", "Progress", "Done").required(),
         })
     ),
-    issueType: Joi.array().items(
+    issueTypes: Joi.array().items(
         Joi.object({
             name: Joi.string().required(),
             img: Joi.string().optional(),
@@ -36,8 +30,8 @@ const createProject = Joi.object({
                 .items(
                     Joi.object({
                         name: Joi.string().required(),
-                        dataType: Joi.any()
-                            .valid(Number, String, Array, Object, Date, Boolean)
+                        dataType: Joi.string()
+                            .valid("Number", "String", "Array", "Object", "Date", "Boolean")
                             .required(),
                         isRequired: Joi.boolean().default(false),
                         description: Joi.string().optional(),
@@ -48,7 +42,11 @@ const createProject = Joi.object({
     ),
 }).strict();
 
-const updateProject = Joi.object({}).strict();
+const updateProject = Joi.object({
+    key: Joi.string().optional(),
+    name: Joi.string().optional(),
+    img: Joi.string().optional(),
+});
 const addMember = Joi.object({
     email: Joi.string().email().required().max(50).trim().strict(),
     role: Joi.string().required(),

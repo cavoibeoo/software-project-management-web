@@ -57,10 +57,13 @@
 .dark-theme .MuiTypography-body2,
 .dark-theme .MuiStepLabel-label,
 .dark-theme .MuiTypography-caption {
-	color: var(--darkBodyColor);
+	color: #dddddd;
 }
 .dark-theme .bg-white {
 	background-color: #0c1427 !important;
+}
+.dark-theme .allwhite {
+	background-color: #fff !important;
 }
 .dark-theme .text-black {
 	color: var(--whiteColor) !important;
@@ -415,6 +418,156 @@
 	color: #fff;
 }
 
+.dark-theme .ItemSelectBg {
+	background-color: #15334a;
+	color: #fff;
+	border: none;
+}
+.dark-theme .ItemSelectBg:hover {
+	background-color: #193f5b;
+	color: #fff;
+}
+
 .datePicker {
 	background-color: #0a0e19 !important;
+}
+
+.dark-theme .MuiTypography-caption {
+	color: #dddddd;
+}
+
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #005261;
+	border-radius: 9999px;
+}
+
+::-webkit-scrollbar-horizontal {
+	height: 2px;
+}
+
+.dark-theme .task-card:hover {
+	border: 1px solid rgb(45, 233, 247);
+}
+
+.dark-theme .sidebar-menu-divider {
+	border-top-width: 1px;
+	border-style: solid none none;
+	border-color: #ffffff;
+	margin-bottom: 5px;
+}
+
+.dark-theme .css-1790nmb {
+	width: 200px;
+	height: 200px;
+	display: flex;
+	flex-direction: column;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+	padding: var(--ds-space-200, 15px);
+	position: relative;
+	border-radius: 100%;
+	transition: background-color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.dark-theme .text-dark {
+	color: #dddddd !important;
+}
+
+.dark-theme .background-authentication {
+	background-image: url("/images/authentication/LoginBackground_darkTheme.jpg");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	width: 100%;
+	min-height: 100vh;
+}
+
+.dark-theme .authentication-input {
+	border: 1px solid #fff;
+	border-radius: 7px;
+}
+
+.dark-theme .navbar-logo {
+	content: url("/images/Sine_logo_dark.png");
+	width: 143px;
+	height: auto;
+}
+
+.dark-theme .fp-outlined-btn {
+	color: #dddddd;
+	border: 1px solid #dddddd;
+}
+
+.dark-theme .sidebar-menu-divider {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-width: 2px;
+	border-style: solid solid solid;
+	border-color: #151d31;
+	background-color: #040d1d24;
+}
+
+.dark-theme .custom-modal-dialog-header {
+	background-color: #00443b;
+}
+.dark-theme .custom-modal-dialog-content {
+	background-color: #283331 !important;
+}
+.dark-theme .custom-edit-dialog-header {
+	background-color: #00132d;
+}
+.dark-theme .custom-edit-dialog-content {
+	background-color: #080b13 !important;
+}
+
+.dark-theme .custom-delete-dialog-header {
+	background-color: #3c151c;
+}
+.dark-theme .custom-delete-dialog-content {
+	background-color: #1f0711 !important;
+}
+
+.dark-theme .input-column-title {
+	background-color: #070b13;
+	border-color: rgb(5, 245, 245);
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 4px;
+	color: #fff;
+}
+
+.dark-theme .bg-custom {
+	background-color: #b2b2b20f;
+}
+
+.dark-theme .message-button {
+	position: fixed;
+	bottom: 40px;
+	right: 40px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	padding: 0;
+	font-size: 27px;
+	cursor: pointer;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+}
+
+.dark-theme .message-button:hover {
+	background-color: #0056b3;
+}
+
+.dark-theme .chat-form-custom {
+	color: #262626 !important;
 }

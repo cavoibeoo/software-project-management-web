@@ -9,7 +9,7 @@ const LogoutContent: React.FC = () => {
 	return (
 		<>
 			<Box
-				className="auth-main-wrapper forgot-password-area"
+				className="auth-main-wrapper sign-in-area background-authentication"
 				sx={{
 					py: { xs: "60px", md: "80px", lg: "100px", xl: "135px" },
 				}}
@@ -57,19 +57,7 @@ const LogoutContent: React.FC = () => {
 										mb: "23px",
 									}}
 								>
-									<Image
-										src="/images/Sine_logo.png"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
-									<Image
-										src="/images/white-logo.svg"
-										className="d-none"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
+									<Box className="navbar-logo"></Box>
 								</Box>
 
 								<Box
@@ -87,7 +75,7 @@ const LogoutContent: React.FC = () => {
 											fontWeight: "600",
 										}}
 									>
-										Welcome back to sine!
+										Best of luck with your project!
 									</Typography>
 
 									<Typography sx={{ fontWeight: "500", fontSize: "16px" }}>
@@ -106,9 +94,10 @@ const LogoutContent: React.FC = () => {
 									<Image
 										src="/images/avt_quang.jpg"
 										className="rounded-circle"
+										style={{ borderRadius: "10% !important" }}
 										alt="admin-image"
-										width={50}
-										height={50}
+										width={55}
+										height={25}
 									/>
 									<Typography
 										component="span"
@@ -118,7 +107,7 @@ const LogoutContent: React.FC = () => {
 											display: "block",
 										}}
 									>
-										Olivia John
+										Duc Quang
 									</Typography>
 								</Box>
 

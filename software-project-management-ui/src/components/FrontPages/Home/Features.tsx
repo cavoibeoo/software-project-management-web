@@ -37,14 +37,23 @@ const Features: React.FC = () => {
 						}}
 					>
 						<h1>Connect every team, task, and project together with Sine</h1>
+						<p>
+							Insights On-the-Go: Access Your Project Mananagement Anywhere,
+							Anytime
+						</p>
 						<TextField
 							label="Enter work email"
 							variant="filled"
+							style={{
+								backgroundColor: "#707f9e",
+								borderRadius: "7px",
+								marginRight: "10px",
+							}}
 							id="email"
 							name="email"
 							sx={{
 								"& .MuiInputBase-root": {
-									border: "1px solid #D5D9E2",
+									border: "1px solid #fff",
 									backgroundColor: "#fff",
 									borderRadius: "7px",
 								},
@@ -54,7 +63,6 @@ const Features: React.FC = () => {
 								"& .MuiInputBase-root:hover::before": {
 									border: "none",
 								},
-								paddingRight: "10px",
 							}}
 						/>
 						<Link href="/your-work/" className="fp-banner-button">
@@ -65,7 +73,7 @@ const Features: React.FC = () => {
 
 					<div className="banner-image text-center">
 						<Image
-							src="/images/background.png"
+							src="/images/Sine_Dark_background.png"
 							alt="dashboard-image"
 							width={948}
 							height={685}

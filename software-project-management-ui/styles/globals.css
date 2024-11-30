@@ -1422,3 +1422,138 @@ table tfoot tr p {
 .hover-underlined:hover {
 	text-decoration: underline;
 }
+
+.backlogItem {
+	background-color: #ffffff;
+	color: #000000;
+}
+.backlogItem:hover {
+	background-color: #eef8ff;
+	color: #000000;
+}
+
+.sidebar-menu-divider {
+	border-top-width: 1px;
+	border-style: solid none none;
+	border-color: #040d1d24;
+	margin-bottom: 5px;
+}
+
+.breadcrumb-link {
+	color: #64748b;
+}
+
+.css-1790nmb {
+	width: 200px;
+	height: 200px;
+	display: flex;
+	flex-direction: column;
+	-webkit-box-align: center;
+	align-items: center;
+	-webkit-box-pack: center;
+	justify-content: center;
+	padding: var(--ds-space-200, 15px);
+	position: relative;
+	border-radius: 100%;
+	transition: background-color 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.css-1790nmb::after {
+	content: "";
+	border: 2px dashed var(--ds-border, #d0d6d0);
+	border-radius: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	transition: border-color 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.background-authentication {
+	background-image: url("/images/authentication/LoginBackground_lightTheme.jpg");
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	width: 100%;
+	min-height: 100vh;
+}
+
+.authentication-input {
+	border: 1px solid #707070;
+	border-radius: 7px;
+}
+
+.navbar-logo {
+	content: url("/images/Sine_logo.png");
+	width: 143px;
+	height: auto;
+}
+
+.sidebar-menu-divider {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	border-width: 2px;
+	border-style: solid solid solid;
+	border-color: #040d1d24;
+	background-color: #ffffff;
+}
+
+.custom-modal-dialog-header {
+	background-color: #2f887d;
+}
+
+.custom-delete-dialog-header {
+	background-color: #d44444;
+}
+.custom-modal-dialog-content {
+	background-color: #ffffff !important;
+}
+.custom-delete-dialog-content {
+	background-color: #ffffff !important;
+}
+
+.custom-edit-dialog-header {
+	background-color: #9eb6ff;
+}
+.custom-edit-dialog-content {
+	background-color: #ffffff !important;
+}
+
+.input-column-title {
+	background-color: #fff;
+	border-color: #3a4252;
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 4px;
+	color: #3a4252;
+}
+
+.bg-custom {
+	background-color: #ececec;
+}
+
+.message-button {
+	position: fixed;
+	bottom: 40px;
+	right: 40px;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	padding: 0;
+	font-size: 27px;
+	cursor: pointer;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+}
+
+.message-button:hover {
+	background-color: #0056b3;
+}
+
+.chat-form-custom {
+	color: #000 !important;
+}
