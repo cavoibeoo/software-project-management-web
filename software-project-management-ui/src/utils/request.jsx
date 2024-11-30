@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export const authRequest = axios.create({
-    baseURL: "http://localhost:3001/api/auth",
+    baseURL: "https://spm-server.vercel.appapi/auth",
 });
 
 export const userService = axios.create({
-    baseURL: "http://localhost:3001/api/user",
+    baseURL: "https://spm-server.vercel.app/api/user",
 });
