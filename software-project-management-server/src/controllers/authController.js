@@ -29,11 +29,13 @@ const login = async (req, res, next) => {
             httpOnly: false,
             maxAge: 24 * 60 * 60 * 1000, //15 minutes
             sameSite: "None",
+            secure: true,
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
             sameSite: "None",
+            secure: true,
         });
 
         res.status(StatusCodes.OK).send(result);
@@ -49,11 +51,13 @@ const loginWithGoogle = async (req, res, next) => {
             httpOnly: false,
             maxAge: 15 * 60 * 1000, //15 minutes
             sameSite: "None",
+            secure: true,
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
             sameSite: "None",
+            secure: true,
         });
 
         // res.status(StatusCodes.OK).send(result);
@@ -79,10 +83,12 @@ const refreshToken = async (req, res, next) => {
             res.clearCookie("refreshToken", {
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
+                secure: true,
             });
             res.clearCookie("accessToken", {
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
+                secure: true,
             });
             res.status(StatusCodes.BAD_REQUEST)
                 .json({
