@@ -3,6 +3,7 @@
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
 import * as authService from "../services/authService.js";
+import config from "../config/environment.js";
 
 const createUser = async (req, res, next) => {
     try {
@@ -61,7 +62,7 @@ const loginWithGoogle = async (req, res, next) => {
         });
 
         // res.status(StatusCodes.OK).send(result);
-        res.redirect("http://localhost:3000/your-work/");
+        res.redirect(`${config.feUrl}/your-work/`);
     } catch (err) {
         next(err);
     }
