@@ -29,7 +29,7 @@ const START_SERVER = () => {
     app.use(express.json({ extended: true }));
     app.use(
         cors({
-            origin: "https://localhost:3000",
+            origin: `${config.feUrl}`,
             credentials: true,
         })
     );
