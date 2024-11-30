@@ -85,7 +85,9 @@ const Profile: React.FC<ProfileProps> = () => {
 							display: { xs: "none", sm: "block" },
 						}}
 						className="text-black"
-					></Typography>
+					>
+						{user?.name}
+					</Typography>
 					<KeyboardArrowDownIcon sx={{ fontSize: "15px" }} />
 				</IconButton>
 			</Tooltip>

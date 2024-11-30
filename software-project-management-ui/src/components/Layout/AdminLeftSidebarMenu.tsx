@@ -52,9 +52,7 @@ interface LeftSidebarProps {
 	toggleActive: () => void;
 }
 
-const AdminLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
-	toggleActive,
-}) => {
+const AdminLeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
 	const pathname = usePathname();
 
 	const [expanded, setExpanded] = React.useState<string | false>("panel1");
@@ -118,6 +116,13 @@ const AdminLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 							>
 								<i className="material-symbols-outlined">person</i>
 								<span className="title">User Management</span>
+							</Link>
+							<Link
+								href="/your-work/role-management/"
+								className="sidebar-menu-link"
+							>
+								<i className="ri-user-settings-fill"></i>
+								<span className="title">Role Management</span>
 							</Link>
 							<div
 								style={{
