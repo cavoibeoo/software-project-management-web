@@ -105,10 +105,10 @@ export default function MoreOption() {
 					onClose={handleClose}
 					TransitionComponent={Fade}
 				>
-					<MenuItem onClick={handleClickOpenNotification}>Delete</MenuItem>
 					<NextLink href="/your-work/project-setting/">
-						<MenuItem>Configure</MenuItem>
+						<MenuItem>Clone</MenuItem>
 					</NextLink>
+					<MenuItem onClick={handleClickOpenNotification}>Delete</MenuItem>
 				</Menu>
 			</div>
 			<BootstrapDialog

@@ -29,21 +29,8 @@ const Footer: React.FC = () => {
 					<Grid container columnSpacing={{ xs: 1, sm: 2, md: 2, lg: 3 }}>
 						<Grid item xs={12} sm={6} md={6} lg={3} className="fp-grid-item">
 							<div className="single-footer-widget">
-								<Link href="/" className="logo">
-									<Image
-										src="/images/Sine_logo.png"
-										alt="logo"
-										width={100}
-										height={26}
-									/>
-
-									<Image
-										src="/images/white-logo-big.svg"
-										className="d-none"
-										alt="logo"
-										width={142}
-										height={38}
-									/>
+								<Link href="/" className="">
+									<Box sx={{ marginBottom: 2 }} className="navbar-logo"></Box>
 								</Link>
 
 								<p>
