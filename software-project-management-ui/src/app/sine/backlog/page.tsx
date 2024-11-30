@@ -77,7 +77,7 @@ type Sprint = {
 	issues: [any];
 };
 
-export default function Page({ projectName }: { projectName: string }) {
+export default function Page() {
 	// Fetch sprint onloading
 	const [issue, setIssue] = useState<Issue[]>([]);
 	const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);

@@ -279,7 +279,7 @@ export const UserRolesTables: React.FC = () => {
 						}}
 						className="rmui-table"
 					>
-						<Table sx={{ minWidth: 1200 }} aria-label="All Projects Table">
+						<Table sx={{ minWidth: 800 }} aria-label="All Projects Table">
 							<TableHead className="bg-primary-50">
 								<TableRow>
 									<TableCell

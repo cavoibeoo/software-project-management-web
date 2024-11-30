@@ -14,6 +14,7 @@ import {
 	Checkbox,
 	Container,
 	Paper,
+	TextField,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
@@ -31,6 +32,8 @@ const RoleMenuDialog = () => {
 	const [open, setOpen] = useState(false);
 	const [selectedRole, setSelectedRole] = useState<string | null>(null);
 	const [currentPermissions, setCurrentPermissions] = useState<string[]>([]);
+	const [addRoleDialogOpen, setAddRoleDialogOpen] = useState(false);
+	const [newRoleName, setNewRoleName] = useState("");
 
 	const rolePermissions = {
 		admin: [
@@ -98,6 +101,18 @@ const RoleMenuDialog = () => {
 
 	const isPermissionChecked = (permission: string) => {
 		return currentPermissions.includes(permission);
+	};
+
+	const handleAddRoleClick = () => {
+		setAddRoleDialogOpen(true);
+	};
+
+	const handleAddRoleClose = () => {
+		setAddRoleDialogOpen(false);
+	};
+
+	const handleRoleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setNewRoleName(event.target.value);
 	};
 
 	return (
@@ -187,7 +202,11 @@ const RoleMenuDialog = () => {
 									>
 										Custom Role
 									</Button>
-									<Button variant="outlined" color="primary">
+									<Button
+										variant="outlined"
+										color="primary"
+										onClick={handleAddRoleClick}
+									>
 										Add more Roles
 									</Button>
 								</Box>
@@ -318,6 +337,44 @@ const RoleMenuDialog = () => {
 							</Paper>
 						</Grid>
 					</Grid>
+				</Container>
+			</Dialog>
+			<Dialog open={addRoleDialogOpen} onClose={handleAddRoleClose}>
+				<AppBar
+					sx={{ position: "relative", backgroundColor: "#283045 !important" }}
+				>
+					<Toolbar>
+						<IconButton
+							edge="start"
+							color="inherit"
+							onClick={handleAddRoleClose}
+							aria-label="close"
+						>
+							<CloseIcon />
+						</IconButton>
+						<Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+							Add New Role
+						</Typography>
+					</Toolbar>
+				</AppBar>
+				<Container>
+					<Box sx={{ padding: 1 }}>
+						<Typography variant="h6" component="div" gutterBottom>
+							Enter Role Name
+						</Typography>
+						<TextField
+							fullWidth
+							variant="outlined"
+							value={newRoleName}
+							onChange={handleRoleNameChange}
+							placeholder="Role Name"
+						/>
+					</Box>
+					<Box sx={{ padding: 2, display: "flex", justifyContent: "flex-end" }}>
+						<Button variant="text" color="primary" onClick={handleAddRoleClose}>
+							Save
+						</Button>
+					</Box>
 				</Container>
 			</Dialog>
 		</>
