@@ -54,6 +54,7 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 		"/your-work/trash/",
 		"/user/profile/",
 		"/your-work/user-management/",
+		"/your-work/role-management/",
 	].includes(pathname);
 
 	const isProjectSettingsPage = pathname.startsWith(

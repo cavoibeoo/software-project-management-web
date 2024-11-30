@@ -33,6 +33,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import RoleMenuDialog from "../RoleMenuDialog";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 interface TablePaginationActionsProps {
@@ -313,10 +314,12 @@ const UserTable: React.FC = () => {
 					sx={{
 						display: "flex",
 						alignItems: "center",
-						justifyContent: "flex-end",
+						justifyContent: "space-between",
 						mb: "25px",
+						mt: "10px",
 					}}
 				>
+					<RoleMenuDialog />
 					<TextField
 						label="Search"
 						variant="outlined"

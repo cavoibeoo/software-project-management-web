@@ -14,12 +14,31 @@ import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { DialogTitle } from "@mui/material";
+import { toast } from "react-toastify";
+import {
+	DialogContent,
+	DialogActions,
+	DialogContentText,
+	DialogTitle,
+	Slide,
+	SelectChangeEvent,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import PropTypes from "prop-types";
 import { FormEvent } from "react";
-import UserTable from "./UserTable";
+import ProjectDefaultLogo from "@/app/img/icon/ProjectDefaultLogo";
+import { TransitionProps } from "@mui/material/transitions";
+import { TextFields } from "@mui/icons-material";
+import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
+import {
+	FormControl,
+	InputLabel,
+	Select,
+	Checkbox,
+	ListItemText,
+	OutlinedInput,
+} from "@mui/material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 1;
@@ -31,6 +50,8 @@ const MenuProps = {
 		},
 	},
 };
+
+const names = ["Administrator", "Developer", "Tester", "Viewer"];
 
 export default function Page() {
 	interface BootstrapDialogTitleProps {
@@ -103,10 +124,21 @@ export default function Page() {
 		// }
 	};
 
+	const [search, setSearch] = React.useState("");
+	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearch(event.target.value);
+	};
+
+	const [roles, setRoles] = React.useState<string[]>(["Administrator"]);
 	return (
 		<>
 			<Box marginBottom={10}>
-				<Box display="flex" alignItems="center" justifyContent="space-between">
+				<Box
+					marginInline={10}
+					display="flex"
+					alignItems="center"
+					justifyContent="space-between"
+				>
 					<Breadcrumbs separator="›" aria-label="breadcrumb">
 						<Link className="hover-underlined breadcrumb-link" href="#">
 							Admin
@@ -254,7 +286,13 @@ export default function Page() {
 						</Box>
 					</Box>
 				</BootstrapDialog>
-				<UserTable />
+
+				<Typography
+					variant="h4"
+					sx={{ marginInline: 11, mt: 5, fontWeight: "bold" }}
+				>
+					List of Role
+				</Typography>
 			</Box>
 		</>
 	);

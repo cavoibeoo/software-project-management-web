@@ -15,5 +15,4 @@ export type Task = {
 		img: string;
 	}>;
 	bgClass: string;
-	issueType: string;
 };
