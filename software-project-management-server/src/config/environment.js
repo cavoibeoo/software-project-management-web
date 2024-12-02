@@ -6,6 +6,7 @@ const config = {
     host: process.env.HOST,
     connStr: process.env.ATLAS_URI,
     feUrl: process.env.FE_URL,
+    beURL: process.env.BE_URL,
     port: process.env.PORT,
     buildMode: process.env.BUILD_MODE,
     salt: process.env.SALT,
