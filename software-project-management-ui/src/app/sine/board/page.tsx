@@ -21,6 +21,9 @@ import TaskCard from "./ColumnContainer/TaskCard/TaskCard";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { Chatbot } from "@/components/Chatbot";
+import dynamic from "next/dynamic";
+
+const Board = dynamic(() => import("./board/board"), { ssr: false });
 
 export default function Page() {
 	const [columns, setColumns] = useState<Column[]>([]);
@@ -158,117 +161,7 @@ export default function Page() {
 	const [activeTask, setActiveTask] = useState<any | null>(null);
 	return (
 		<>
-			<Box sx={{ marginLeft: "20px" }}>
-				<Breadcrumbs separator="›" aria-label="breadcrumb">
-					<Link
-						className="hover-underlined"
-						key="1"
-						color="inherit"
-						href="/your-work/"
-					>
-						Projects
-					</Link>
-					<Link
-						className="hover-underlined"
-						key="2"
-						color="inherit"
-						href="/sine/board/"
-					>
-						Sine_SPM
-					</Link>
-					<Typography key="3" color="text.primary">
-						Kanban Board
-					</Typography>
-				</Breadcrumbs>
-				<div style={{ minHeight: "78vh" }}>
-					<Typography
-						variant="h5"
-						gutterBottom
-						fontWeight="600"
-						sx={{ marginTop: "20px" }}
-					>
-						FP Sprint 1
-					</Typography>
-
-					<div
-						style={{
-							margin: "auto",
-							display: "flex",
-							alignItems: "center",
-							overflowX: "auto",
-							overflowY: "hidden",
-							width: "100%",
-							paddingLeft: "40px",
-							paddingRight: "40px",
-						}}
-					>
-						<Box
-							display="flex"
-							flexDirection="row"
-							alignItems="flex-start"
-							gap="10px"
-						>
-							<DndContext
-								sensors={sensors}
-								onDragStart={handleDragStart}
-								onDragEnd={handleDragEnd}
-								onDragOver={handleDragOver}
-							>
-								<div className="w-[350px] min-w-[350px]">
-									<div
-										style={{ display: "flex", gap: "5vh", marginTop: "3vh" }}
-									>
-										<SortableContext items={columnId}>
-											{columns.map((column) => (
-												<div
-													key={column.Id}
-													style={{ minWidth: "300px", minHeight: "700px" }}
-												>
-													<ColumnContainer
-														column={column}
-														deleteColumn={deleteColumn}
-														updateColumn={updateColumn}
-														createTask={createTask}
-														tasks={tasks.filter(
-															(task) => task.columnId === column.Id
-														)}
-													/>
-												</div>
-											))}
-										</SortableContext>
-									</div>
-								</div>
-								{createPortal(
-									<DragOverlay>
-										{activeColumn && (
-											<ColumnContainer
-												column={activeColumn}
-												deleteColumn={deleteColumn}
-												updateColumn={updateColumn}
-												createTask={createTask}
-												tasks={tasks.filter(
-													(task) => task.columnId === activeColumn.Id
-												)}
-											/>
-										)}
-										{activeTask && <TaskCard task={activeTask} />}
-									</DragOverlay>,
-									document.body
-								)}
-							</DndContext>
-							<Button
-								variant="contained"
-								color="primary"
-								onClick={handleAddColumn}
-								sx={{ marginTop: "4vh" }}
-							>
-								<AddIcon />
-							</Button>
-						</Box>
-					</div>
-				</div>
-			</Box>
-			<Chatbot />
+			<Board />
 		</>
 	);
 }
