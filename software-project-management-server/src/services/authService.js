@@ -39,7 +39,7 @@ const registerService = async (data) => {
 
         //send verification email
         await jwtUtil.generateAccessToken(user).then((token) => {
-            let link = `http://${config.host}:${config.port}/api/auth/verify-email?token=${token}`;
+            let link = `${config.beURL}/api/auth/verify-email?token=${token}`;
             // console.log(link);
             let html = `<!DOCTYPE html>
             <html lang="en">
