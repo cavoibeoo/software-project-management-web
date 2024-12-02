@@ -30,15 +30,15 @@ const login = async (req, res, next) => {
             domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 24 * 60 * 60 * 1000, //15 minutes
-            sameSite: "None",
-            secure: true,
+            sameSite: config.env === "production" ? "None" : undefined,
+            secure: config.env === "production",
         });
         res.cookie("refreshToken", result.refreshToken, {
             domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
-            sameSite: "None",
-            secure: true,
+            sameSite: config.env === "production" ? "None" : undefined,
+            secure: config.env === "production",
         });
 
         res.status(StatusCodes.OK).send(result);
@@ -54,15 +54,15 @@ const loginWithGoogle = async (req, res, next) => {
             domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 15 * 60 * 1000, //15 minutes
-            sameSite: "None",
-            secure: true,
+            sameSite: config.env === "production" ? "None" : undefined,
+            secure: config.env === "production",
         });
         res.cookie("refreshToken", result.refreshToken, {
             domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
-            sameSite: "None",
-            secure: true,
+            sameSite: config.env === "production" ? "None" : undefined,
+            secure: config.env === "production",
         });
 
         // res.status(StatusCodes.OK).send(result);
@@ -88,14 +88,14 @@ const refreshToken = async (req, res, next) => {
             res.clearCookie("refreshToken", {
                 domain: `${new URL(config.feUrl).hostname}`,
                 httpOnly: false,
-                sameSite: "None" /*secure: true*/,
-                secure: true,
+                sameSite: config.env === "production" ? "None" : undefined,
+                secure: config.env === "production",
             });
             res.clearCookie("accessToken", {
                 domain: `${new URL(config.feUrl).hostname}`,
                 httpOnly: false,
-                sameSite: "None" /*secure: true*/,
-                secure: true,
+                sameSite: config.env === "production" ? "None" : undefined,
+                secure: config.env === "production",
             });
             res.status(StatusCodes.BAD_REQUEST)
                 .json({
@@ -126,12 +126,14 @@ const logout = async (req, res, next) => {
             res.clearCookie("refreshToken", {
                 domain: `${config.feUrl}`,
                 httpOnly: false,
-                sameSite: "None" /*secure: true*/,
+                sameSite: config.env === "production" ? "None" : undefined,
+                secure: config.env === "production",
             });
             res.clearCookie("accessToken", {
                 domain: `${config.feUrl}`,
                 httpOnly: false,
-                sameSite: "None" /*secure: true*/,
+                sameSite: config.env === "production" ? "None" : undefined,
+                secure: config.env === "production",
             });
             res.status(StatusCodes.NO_CONTENT).send(result);
         } else res.status(StatusCodes.NO_CONTENT).send();

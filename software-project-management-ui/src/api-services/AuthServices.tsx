@@ -8,7 +8,8 @@ import { ex } from "@fullcalendar/core/internal-common";
 
 export const loginGoogle = async () => {
     try {
-        window.location.href = `https://spm-server.vercel.app/api/auth/google`;
+        // window.location.href = `https://spm-server.vercel.app/api/auth/google`;
+        window.location.href = `http://localhost:3001/api/auth/google`;
     } catch (error: any) {
         toast.error(error?.message);
         console.log(error);
@@ -34,7 +35,7 @@ export const CheckCookieServices = async () => {
 
 export const FormLoginServices = async (email: any, password: any) => {
     try {
-        let result = await axios2.post(
+        await axios2.post(
             "/auth/login",
             {
                 email: email,
@@ -42,8 +43,7 @@ export const FormLoginServices = async (email: any, password: any) => {
             },
             { withCredentials: true }
         );
-        // console.log(result);
-        window.location.href = "/your-work";
+        CheckCookieServices();
         toast.success("Sucessful signing in!");
     } catch (error: any) {
         toast.error(error.response.data.message);
