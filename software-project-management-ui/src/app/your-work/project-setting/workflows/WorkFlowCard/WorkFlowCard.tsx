@@ -1,3 +1,4 @@
+"use client";
 import { Task } from "@/type";
 import { Box, Button, DialogTitle, styled } from "@mui/material";
 import React, { useState } from "react";

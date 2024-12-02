@@ -182,10 +182,13 @@ const ForgotPasswordForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const email = e.target.value;
-													const emailErrorElement =
-														document.getElementById("emailError");
-													if (emailErrorElement) {
-														emailErrorElement.innerText = validateEmail(email);
+													if (typeof window !== "undefined") {
+														const emailErrorElement =
+															document.getElementById("emailError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText =
+																validateEmail(email);
+														}
 													}
 												}}
 											/>
@@ -277,19 +280,21 @@ const ForgotPasswordForm: React.FC = () => {
 									},
 								}}
 								onChange={(e) => {
-									const nextSibling = document.getElementById(
-										`otp-${index + 1}`
-									);
-									const prevSibling = document.getElementById(
-										`otp-${index - 1}`
-									);
-									if (e.target.value) {
-										if (nextSibling) {
-											nextSibling.focus();
-										}
-									} else {
-										if (prevSibling) {
-											prevSibling.focus();
+									if (typeof window !== "undefined") {
+										const nextSibling = document.getElementById(
+											`otp-${index + 1}`
+										);
+										const prevSibling = document.getElementById(
+											`otp-${index - 1}`
+										);
+										if (e.target.value) {
+											if (nextSibling) {
+												nextSibling.focus();
+											}
+										} else {
+											if (prevSibling) {
+												prevSibling.focus();
+											}
 										}
 									}
 								}}

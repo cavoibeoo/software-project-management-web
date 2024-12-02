@@ -2,7 +2,7 @@
 import * as React from "react";
 import NextLink from "next/link";
 import { Box, Button, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Column, Id, Task } from "@/type";
 import {
 	DndContext,
@@ -18,32 +18,12 @@ import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import dynamic from "next/dynamic";
+import { Chatbot } from "@/components/Chatbot";
+import ColumnContainer from "../ColumnContainer/ColumnContainer";
+import TaskCard from "../ColumnContainer/TaskCard/TaskCard";
 
-const ColumnContainer = dynamic(
-	() => import("./ColumnContainer/ColumnContainer"),
-	{ ssr: false }
-);
-const WorkFlowCard = dynamic(() => import("./WorkFlowCard/WorkFlowCard"), {
-	ssr: false,
-});
-
-
-export default function Page() {
-	const [columns, setColumns] = useState<Column[]>([
-		{
-			Id: generateId(),
-			title: "To Do",
-		},
-		{
-			Id: generateId(),
-			title: "In Progress",
-		},
-		{
-			Id: generateId(),
-			title: "Done",
-		},
-	]);
+export default function Board() {
+	const [columns, setColumns] = useState<Column[]>([]);
 	const [tasks, setTasks] = useState<Task[]>([]);
 	console.log(columns);
 
@@ -80,18 +60,15 @@ export default function Page() {
 			id: generateId(),
 			columnId,
 			summary: `Task ${tasks.length + 1}`,
-			description:
-				"A brief description of the project, its objectives, and its importance to the organization.",
+			description: "Create Sylabus program",
 			daysLeft: "16 days left",
 			TeamMembers: [
 				{
-					img: "/images/users/user16.jpg",
-				},
-				{
-					img: "/images/users/user17.jpg",
+					img: "/images/avt_quang.jpg",
 				},
 			],
 			bgClass: "bg-primary-100",
+			issueType: "Story",
 		};
 		setTasks([...tasks, newTask]);
 	}
@@ -181,7 +158,7 @@ export default function Page() {
 	const [activeTask, setActiveTask] = useState<any | null>(null);
 	return (
 		<>
-			<Box sx={{ marginLeft: "80px", marginTop: "7px" }}>
+			<Box sx={{ marginLeft: "20px" }}>
 				<Breadcrumbs separator="›" aria-label="breadcrumb">
 					<Link
 						className="hover-underlined"
@@ -203,21 +180,14 @@ export default function Page() {
 						Kanban Board
 					</Typography>
 				</Breadcrumbs>
-				<div
-					style={{ minHeight: "78vh", marginLeft: "5px", marginTop: "10px" }}
-				>
+				<div style={{ minHeight: "78vh" }}>
 					<Typography
 						variant="h5"
 						gutterBottom
 						fontWeight="600"
 						sx={{ marginTop: "20px" }}
 					>
-						Columns and statuses
-					</Typography>
-					<Typography variant="subtitle1" gutterBottom>
-						Use columns and statuses to define how work progresses on your
-						board. Store statuses in the left panel to hide their associated
-						issues from the board and backlog.
+						FP Sprint 1
 					</Typography>
 
 					<div
@@ -230,7 +200,6 @@ export default function Page() {
 							width: "100%",
 							paddingLeft: "40px",
 							paddingRight: "40px",
-							marginTop: "80px",
 						}}
 					>
 						<Box
@@ -250,33 +219,22 @@ export default function Page() {
 										style={{ display: "flex", gap: "5vh", marginTop: "3vh" }}
 									>
 										<SortableContext items={columnId}>
-											{columns.map((column) => {
-												const columnClass =
-													column.title === "To Do"
-														? "column-todo"
-														: column.title === "In Progress"
-															? "column-in-progress"
-															: column.title === "Done"
-																? "column-done"
-																: "";
-
-												return (
-													<div
-														key={column.Id}
-														className={`column ${columnClass}`}
-													>
-														<ColumnContainer
-															column={column}
-															deleteColumn={deleteColumn}
-															updateColumn={updateColumn}
-															createTask={createTask}
-															tasks={tasks.filter(
-																(task) => task.columnId === column.Id
-															)}
-														/>
-													</div>
-												);
-											})}
+											{columns.map((column) => (
+												<div
+													key={column.Id}
+													style={{ minWidth: "300px", minHeight: "700px" }}
+												>
+													<ColumnContainer
+														column={column}
+														deleteColumn={deleteColumn}
+														updateColumn={updateColumn}
+														createTask={createTask}
+														tasks={tasks.filter(
+															(task) => task.columnId === column.Id
+														)}
+													/>
+												</div>
+											))}
 										</SortableContext>
 									</div>
 								</div>
@@ -292,7 +250,7 @@ export default function Page() {
 											)}
 										/>
 									)}
-									{activeTask && <WorkFlowCard task={activeTask} />}
+									{activeTask && <TaskCard task={activeTask} />}
 								</DragOverlay>
 								,
 								{/* {createPortal(
@@ -303,7 +261,7 @@ export default function Page() {
 								variant="contained"
 								color="primary"
 								onClick={handleAddColumn}
-								sx={{ marginTop: "4vh", paddingX: "10px", marginLeft: "20px" }}
+								sx={{ marginTop: "4vh" }}
 							>
 								<AddIcon />
 							</Button>
@@ -311,6 +269,7 @@ export default function Page() {
 					</div>
 				</div>
 			</Box>
+			<Chatbot />
 		</>
 	);
 }

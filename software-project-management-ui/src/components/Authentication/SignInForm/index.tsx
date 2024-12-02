@@ -217,10 +217,13 @@ const SignInForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const email = e.target.value;
-													const emailErrorElement =
-														document.getElementById("emailError");
-													if (emailErrorElement) {
-														emailErrorElement.innerText = validateEmail(email);
+													if (typeof window !== "undefined") {
+														const emailErrorElement =
+															document.getElementById("emailError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText =
+																validateEmail(email);
+														}
 													}
 												}}
 											/>
@@ -273,11 +276,13 @@ const SignInForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const password = e.target.value;
-													const passwordErrorElement =
-														document.getElementById("passwordError");
-													if (passwordErrorElement) {
-														passwordErrorElement.innerText =
-															validatePassword(password);
+													if (typeof window !== "undefined") {
+														const passwordErrorElement =
+															document.getElementById("passwordError");
+														if (passwordErrorElement) {
+															passwordErrorElement.innerText =
+																validatePassword(password);
+														}
 													}
 												}}
 												InputProps={{
