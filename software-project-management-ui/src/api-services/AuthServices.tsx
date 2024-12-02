@@ -52,7 +52,7 @@ export const FormLoginServices = async (email: any, password: any) => {
 
 export const GGLoginServices = async () => {
     try {
-        window.location.href = "http://localhost:3001/api/auth/google";
+        window.location.href = "https://spm-server.vercel.app/api/auth/google";
         // const response = await authRequest.get("/google", {
         // 	withCredentials: true,
         // });

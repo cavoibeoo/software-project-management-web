@@ -28,7 +28,10 @@ router.post(
 router.get(
     "/google",
     checkLogin(),
-    passport.authenticate("google", { scope: ["email", "profile"] })
+    passport.authenticate("google", {
+        scope: ["email", "profile"],
+        callbackURL: "https://spm-server.vercel.app/auth/google/callback",
+    })
 );
 router.get(
     "/google/callback",

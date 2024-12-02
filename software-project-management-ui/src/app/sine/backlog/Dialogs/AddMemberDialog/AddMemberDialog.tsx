@@ -34,6 +34,7 @@ const FormDialog: React.FC<{
     };
     const handleSubmit = async () => {
         let result = await addActor({ role, projectId: project._id, email });
+        callUpdate();
         setOpen(false);
     };
 
