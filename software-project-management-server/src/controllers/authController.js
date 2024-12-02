@@ -49,12 +49,14 @@ const loginWithGoogle = async (req, res, next) => {
     try {
         let result = await authService.loginService(req?.user, true);
         res.cookie("accessToken", result.accessToken, {
+            domain: `${config.feUrl}`,
             httpOnly: false,
             maxAge: 15 * 60 * 1000, //15 minutes
             sameSite: "None",
             secure: true,
         });
         res.cookie("refreshToken", result.refreshToken, {
+            domain: `${config.feUrl}`,
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
             sameSite: "None",
@@ -82,11 +84,13 @@ const refreshToken = async (req, res, next) => {
         let result = await authService.refreshTokenService(req.cookies);
         if (result?.error) {
             res.clearCookie("refreshToken", {
+                domain: `${config.feUrl}`,
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
                 secure: true,
             });
             res.clearCookie("accessToken", {
+                domain: `${config.feUrl}`,
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
                 secure: true,
@@ -118,10 +122,12 @@ const logout = async (req, res, next) => {
         if (req.cookies?.refreshToken && req.cookies?.accessToken) {
             let result = await authService.logoutService(req.cookies);
             res.clearCookie("refreshToken", {
+                domain: `${config.feUrl}`,
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
             });
             res.clearCookie("accessToken", {
+                domain: `${config.feUrl}`,
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
             });
