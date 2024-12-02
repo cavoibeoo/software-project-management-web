@@ -226,11 +226,13 @@ const SignUpForm: React.FC = () => {
 												}}
 												onChange={(e) => {
 													const fullName = e.target.value;
-													const fullNameErrorElement =
-														document.getElementById("fullNameError");
-													if (fullNameErrorElement) {
-														fullNameErrorElement.innerText =
-															validateFullName(fullName);
+													if (typeof window !== "undefined") {
+														const fullNameErrorElement =
+															document.getElementById("fullNameError");
+														if (fullNameErrorElement) {
+															fullNameErrorElement.innerText =
+																validateFullName(fullName);
+														}
 													}
 												}}
 											/>
@@ -282,10 +284,13 @@ const SignUpForm: React.FC = () => {
 												}}
 												onChange={(e) => {
 													const email = e.target.value;
-													const emailErrorElement =
-														document.getElementById("emailError");
-													if (emailErrorElement) {
-														emailErrorElement.innerText = validateEmail(email);
+													if (typeof window !== "undefined") {
+														const emailErrorElement =
+															document.getElementById("emailError");
+														if (emailErrorElement) {
+															emailErrorElement.innerText =
+																validateEmail(email);
+														}
 													}
 												}}
 											/>
@@ -338,11 +343,13 @@ const SignUpForm: React.FC = () => {
 												}}
 												onBlur={(e) => {
 													const password = e.target.value;
-													const passwordErrorElement =
-														document.getElementById("passwordError");
-													if (passwordErrorElement) {
-														passwordErrorElement.innerText =
-															validatePassword(password);
+													if (typeof window !== "undefined") {
+														const passwordErrorElement =
+															document.getElementById("passwordError");
+														if (passwordErrorElement) {
+															passwordErrorElement.innerText =
+																validatePassword(password);
+														}
 													}
 												}}
 												InputProps={{
@@ -408,6 +415,7 @@ const SignUpForm: React.FC = () => {
 												}}
 												onChange={(e) => {
 													const confirmPassword = e.target.value;
+													if (typeof window !== "undefined") {
 													const password = (
 														document.getElementById(
 															"password"
@@ -421,6 +429,7 @@ const SignUpForm: React.FC = () => {
 																confirmPassword,
 																password
 															);
+														}
 													}
 												}}
 												InputProps={{
