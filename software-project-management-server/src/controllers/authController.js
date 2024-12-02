@@ -27,12 +27,14 @@ const login = async (req, res, next) => {
     try {
         let result = await authService.loginService(req.body, false);
         res.cookie("accessToken", result.accessToken, {
+            domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 24 * 60 * 60 * 1000, //15 minutes
             sameSite: "None",
             secure: true,
         });
         res.cookie("refreshToken", result.refreshToken, {
+            domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
             sameSite: "None",
@@ -49,14 +51,14 @@ const loginWithGoogle = async (req, res, next) => {
     try {
         let result = await authService.loginService(req?.user, true);
         res.cookie("accessToken", result.accessToken, {
-            domain: `${config.feUrl}`,
+            domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 15 * 60 * 1000, //15 minutes
             sameSite: "None",
             secure: true,
         });
         res.cookie("refreshToken", result.refreshToken, {
-            domain: `${config.feUrl}`,
+            domain: `${new URL(config.feUrl).hostname}`,
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
             sameSite: "None",
@@ -84,13 +86,13 @@ const refreshToken = async (req, res, next) => {
         let result = await authService.refreshTokenService(req.cookies);
         if (result?.error) {
             res.clearCookie("refreshToken", {
-                domain: `${config.feUrl}`,
+                domain: `${new URL(config.feUrl).hostname}`,
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
                 secure: true,
             });
             res.clearCookie("accessToken", {
-                domain: `${config.feUrl}`,
+                domain: `${new URL(config.feUrl).hostname}`,
                 httpOnly: false,
                 sameSite: "None" /*secure: true*/,
                 secure: true,

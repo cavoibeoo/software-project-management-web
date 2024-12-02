@@ -42,8 +42,8 @@ export const FormLoginServices = async (email: any, password: any) => {
             },
             { withCredentials: true }
         );
-        console.log(result);
-        // window.location.href = "/your-work";y
+        // console.log(result);
+        window.location.href = "/your-work";
         toast.success("Sucessful signing in!");
     } catch (error: any) {
         toast.error(error.response.data.message);
