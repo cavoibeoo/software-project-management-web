@@ -30,3 +30,27 @@ export const addActor = async (data: any) => {
         await handleTokenExpired(error);
     }
 };
+
+export const updateActor = async (data: any) => {
+    try {
+        let { role, projectId, email } = data;
+        // await RefreshToken();
+        const response = await axios.put(
+            `/project/change-actor-role/${projectId}`,
+            { email: email, role },
+            {
+                headers: {
+                    Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+                },
+                withCredentials: true,
+            }
+        );
+
+        toast.success("Update member succeeded!");
+        return response.data;
+    } catch (error: any) {
+        toast.error(`Add member failed. ${error?.response?.data?.message}`);
+        console.log(error);
+        await handleTokenExpired(error);
+    }
+};
