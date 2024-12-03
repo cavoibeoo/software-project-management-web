@@ -104,7 +104,7 @@ export default function Backlog() {
             setActors(result.actors);
         };
         fetchProject();
-    }, []);
+    }, [update]);
 
     useEffect(() => {
         const fetchAPI = async () => {
@@ -113,6 +113,7 @@ export default function Backlog() {
 
             const issues = await issueService.fetchIssue(projectId);
             setIssue(issues);
+            setBacklogs(issues);
 
             const workflow = await workflowService.fetchWorkflow(projectId);
             setWorkflow(workflow);
@@ -131,13 +132,6 @@ export default function Backlog() {
     }, [fetchedSprint]);
 
     const [issueName, setIssueName] = useState("");
-
-    useEffect(() => {
-        if (issue?.length > 0) {
-            const mappedBacklogs = issue.map((item) => item);
-            setBacklogs(mappedBacklogs);
-        }
-    }, [issue]);
 
     const handleDeleteSprint = async (projectId: string) => {
         let sprintId = currentDeleteSprintId;

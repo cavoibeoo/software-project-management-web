@@ -4,10 +4,11 @@ import React from "react";
 import { Card, Typography, Box, InputLabel, MenuItem, FormControl } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-const SelectAutoWidth: React.FC<{ roles: any[]; setRole: (role: any) => void }> = ({
-    roles,
-    setRole,
-}) => {
+const SelectAutoWidth: React.FC<{
+    roles: any[];
+    setRole: (role: any) => void;
+    currentRole: any;
+}> = ({ roles, setRole, currentRole }) => {
     const [age, setAge] = React.useState("1");
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -22,7 +23,7 @@ const SelectAutoWidth: React.FC<{ roles: any[]; setRole: (role: any) => void }> 
                     <Select
                         labelId="demo-simple-select-autowidth-label"
                         id="demo-simple-select-autowidth"
-                        value={"Member"}
+                        value={currentRole}
                         onChange={handleChange}
                         autoWidth
                         label="Age"
