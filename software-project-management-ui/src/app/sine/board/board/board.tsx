@@ -39,9 +39,11 @@ import TaskCard from "../ColumnContainer/TaskCard/TaskCard";
 import BacklogCard from "../ColumnContainer/TaskCard/BacklogCard";
 import * as issueService from "@/api-services/issueServices";
 import { toast } from "react-toastify";
+import { useProject } from "@/app/context/ProjectContext";
 
 export default function Page() {
-	const projectId = "674734010395942535480a60";
+	const { projectID, setProjectID } = useProject();
+	const projectId = projectID;
 
 	const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
 	const [dialogOpen, setDialogOpen] = useState(false);

@@ -60,8 +60,11 @@ import FormDialog from "../Dialogs/AddMemberDialog/AddMemberDialog";
 import StartSprintDialog from "../Dialogs/StartSprintDialog/StartSprintDialog";
 import { BacklogList } from "../BacklogList/BacklogList";
 import { Issue, Sprint } from "@/type";
+import { useProject } from "@/app/context/ProjectContext";
 
 export default function Backlog() {
+	const { projectID, setProjectID } = useProject();
+
 	// Fetch sprint onloading
 	const [issue, setIssue] = useState<Issue[]>([]);
 	const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
@@ -77,7 +80,10 @@ export default function Backlog() {
 
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const projectId = searchParams.get("projectId");
+	const projectId = projectID;
+	if (projectId) {
+		setProjectID(projectId);
+	}
 
 	const callUpdate = () => {
 		setUpdate(!update);

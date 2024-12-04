@@ -19,6 +19,8 @@ const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
 	const [active, setActive] = useState<boolean>(false);
 	const pathname = usePathname();
 
+	
+	
 	const toggleActive = () => {
 		setActive(!active);
 	};
