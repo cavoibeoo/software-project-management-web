@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation";
 
 import { CheckCookieServices } from "@/api-services/AuthServices";
 import { Box } from "@mui/material";
+import DarkMode from "@/components/Layout/ControlPanel/DarkMode";
+import ThemeButton from "./ThemeButton/ThemeButton";
 
 const Navbar: React.FC = () => {
 	const pathname = usePathname();
@@ -55,6 +57,7 @@ const Navbar: React.FC = () => {
 								<i className="material-symbols-outlined">person</i>
 								Register
 							</Link>
+							<ThemeButton />
 						</div>
 					</nav>
 				</div>
