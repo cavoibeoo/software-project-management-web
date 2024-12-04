@@ -127,3 +127,27 @@ export const deleteProject = async (projectId: string, projectName: string) => {
         toast.error("Failed to delete project!");
     }
 };
+
+// -----------------------------------update Project-----------------------------------
+export const updateProject = async (projectId: any, projectData: any) => {
+    try {
+        const formData = new FormData();
+        for (const key in projectData) {
+            formData.append(key, projectData[key]);
+        }
+
+        const response = await axios.put(`/project/update/${projectId}`, formData, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+                "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true,
+        });
+        toast.success("Successfully updated project!");
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        toast.error(error?.response?.data?.message);
+        await handleTokenExpired(error);
+    }
+};

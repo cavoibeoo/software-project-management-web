@@ -23,7 +23,7 @@ const FormDialog: React.FC<{
 }> = ({ project, callUpdate }) => {
     const [open, setOpen] = React.useState(false);
     const [email, setEmail] = React.useState("");
-    const [role, setRole] = React.useState("Member");
+    const [role, setRole] = React.useState("Admin");
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -103,7 +103,7 @@ const FormDialog: React.FC<{
                     />
                 </DialogContent>
                 <div style={{ paddingLeft: "15px" }}>
-                    <SelectAutoWidth roles={project.roles} setRole={setRole} />
+                    <SelectAutoWidth roles={project.roles} setRole={setRole} currentRole={role} />
                 </div>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>

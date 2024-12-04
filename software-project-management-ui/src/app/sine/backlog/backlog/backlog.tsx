@@ -3,24 +3,24 @@ import * as React from "react";
 import Grid from "@mui/material/Grid";
 import { deepOrange, deepPurple } from "@mui/material/colors";
 import {
-	AvatarGroup,
-	Breadcrumbs,
-	Button,
-	Dialog,
-	Fade,
-	IconButton,
-	Link,
-	Select,
-	Menu,
-	MenuItem,
-	Table,
-	TableBody,
-	TableCell,
-	TableRow,
-	Tooltip,
-	FormControlLabel,
-	Switch,
-	LinearProgress,
+    AvatarGroup,
+    Breadcrumbs,
+    Button,
+    Dialog,
+    Fade,
+    IconButton,
+    Link,
+    Select,
+    Menu,
+    MenuItem,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    Tooltip,
+    FormControlLabel,
+    Switch,
+    LinearProgress,
 } from "@mui/material";
 import styles from "@/components/Apps/FileManager/Sidebar/SearchForm/Search.module.css";
 import { Card, Typography, Avatar, Badge, styled, Box } from "@mui/material";
@@ -33,15 +33,15 @@ import { FormEvent, useState, useEffect } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import NextLink from "next/link";
 import {
-	DndContext,
-	KeyboardSensor,
-	TouchSensor,
-	useSensor,
-	PointerSensor,
-	useSensors,
-	closestCorners,
-	DragOverlay,
-	defaultDropAnimationSideEffects,
+    DndContext,
+    KeyboardSensor,
+    TouchSensor,
+    useSensor,
+    PointerSensor,
+    useSensors,
+    closestCorners,
+    DragOverlay,
+    defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
@@ -59,21 +59,22 @@ import { Chatbot } from "@/components/Chatbot";
 import FormDialog from "../Dialogs/AddMemberDialog/AddMemberDialog";
 import StartSprintDialog from "../Dialogs/StartSprintDialog/StartSprintDialog";
 import { BacklogList } from "../BacklogList/BacklogList";
+import path from "path";
 type Issue = {
-	_id: string;
-	key: string;
-	summary: string;
-	// Add other properties if necessary
+    _id: string;
+    key: string;
+    summary: string;
+    // Add other properties if necessary
 };
 
 type Sprint = {
-	_id: string;
-	name: string;
-	status: string;
-	startDate: Date;
-	endDate: Date;
-	sprintGoal: string;
-	issues: [any];
+    _id: string;
+    name: string;
+    status: string;
+    startDate: Date;
+    endDate: Date;
+    sprintGoal: string;
+    issues: [any];
 };
 
 export default function Backlog() {
@@ -103,7 +104,7 @@ export default function Backlog() {
             setActors(result.actors);
         };
         fetchProject();
-    }, []);
+    }, [update]);
 
     useEffect(() => {
         const fetchAPI = async () => {
@@ -112,6 +113,7 @@ export default function Backlog() {
 
             const issues = await issueService.fetchIssue(projectId);
             setIssue(issues);
+            setBacklogs(issues);
 
             const workflow = await workflowService.fetchWorkflow(projectId);
             setWorkflow(workflow);
@@ -130,13 +132,6 @@ export default function Backlog() {
     }, [fetchedSprint]);
 
     const [issueName, setIssueName] = useState("");
-
-    useEffect(() => {
-        if (issue?.length > 0) {
-            const mappedBacklogs = issue.map((item) => item);
-            setBacklogs(mappedBacklogs);
-        }
-    }, [issue]);
 
     const handleDeleteSprint = async (projectId: string) => {
         let sprintId = currentDeleteSprintId;
@@ -693,9 +688,18 @@ export default function Backlog() {
                                                     onClose={handleClose}
                                                     TransitionComponent={Fade}
                                                 >
-                                                    <MenuItem onClick={handleClose}>
-                                                        Project settings
-                                                    </MenuItem>
+                                                    <NextLink
+                                                        href={{
+                                                            pathname:
+                                                                "/your-work/project-setting/details/",
+                                                            query: {
+                                                                projectId:
+                                                                    "674abb142bfd95785b28d213",
+                                                            },
+                                                        }}
+                                                    >
+                                                        <MenuItem>Project settings</MenuItem>
+                                                    </NextLink>
                                                     <MenuItem
                                                         onClick={async () => {
                                                             await handleClickOpenNotification(

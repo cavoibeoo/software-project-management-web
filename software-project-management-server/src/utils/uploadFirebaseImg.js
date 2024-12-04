@@ -6,7 +6,11 @@ const uploadImg = async (img, path, name) => {
         const extension = img.originalname.slice(img.originalname.lastIndexOf(".")); // Extract from last dot
 
         const storageRef = ref(firebaseStorage, `${path}/${name + extension}`);
-        const metadata = { contentType: "image/jpeg" };
+        let contentType = "image/jpeg";
+        if (extension === ".svg" || extension === ".svgz") {
+            contentType = "image/svg+xml";
+        }
+        const metadata = { contentType };
         const snapshot = await uploadBytesResumable(storageRef, img.buffer, metadata);
 
         const downloadURL = await getDownloadURL(snapshot.ref);
