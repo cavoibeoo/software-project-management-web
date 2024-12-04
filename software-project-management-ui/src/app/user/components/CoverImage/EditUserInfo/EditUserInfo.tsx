@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -10,11 +10,22 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import { changePassword, updateUserInfo } from "@/api-services/userServices";
+import dayjs from "dayjs";
 
-export const EditUserInfo = () => {
+export const EditUserInfo = ({
+	myInfo,
+	callUpdate,
+}: {
+	myInfo: any;
+	callUpdate: () => void;
+}) => {
 	// Dropdown
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
+	const [name, setName] = useState(myInfo.name);
+	const [department, setDepartment] = useState(myInfo.department);
+	const [organization, setOrganization] = useState(myInfo.organization);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -41,35 +52,53 @@ export const EditUserInfo = () => {
 	});
 
 	const [errors, setErrors] = useState({
+		oldPassword: "",
 		newPassword: "",
 		confirmPassword: "",
 	});
 
 	const handlePasswordChange = (field: string, value: string) => {
-		setPasswords({ ...passwords, [field]: value });
+		const updatedPasswords = { ...passwords, [field]: value };
+		setPasswords(updatedPasswords);
 
 		// Validate passwords
-		if (field === "newPassword" || field === "confirmPassword") {
-			if (passwords.newPassword !== passwords.confirmPassword) {
-				setErrors({
-					...errors,
-					confirmPassword: "Passwords must match",
-				});
-			} else {
-				setErrors({
-					...errors,
-					confirmPassword: "",
-				});
-			}
+		let newErrors = { ...errors };
+
+		if (!updatedPasswords.oldPassword) {
+			newErrors.oldPassword = "Required";
+		} else {
+			newErrors.oldPassword = "";
 		}
+
+		if (!updatedPasswords.newPassword) {
+			newErrors.newPassword = "Required";
+		} else {
+			newErrors.newPassword = "";
+		}
+
+		if (!updatedPasswords.confirmPassword) {
+			newErrors.confirmPassword = "Required";
+		} else if (
+			updatedPasswords.newPassword !== updatedPasswords.confirmPassword
+		) {
+			newErrors.confirmPassword = "Passwords must match";
+		} else {
+			newErrors.confirmPassword = "";
+		}
+
+		setErrors(newErrors);
 	};
 
-	const handleSavePassword = () => {
-		if (!passwords.newPassword || !passwords.confirmPassword) {
+	const handleSavePassword = async () => {
+		if (
+			!passwords.oldPassword ||
+			!passwords.newPassword ||
+			!passwords.confirmPassword
+		) {
 			setErrors({
-				...errors,
-				newPassword: "Required",
-				confirmPassword: "Required",
+				oldPassword: passwords.oldPassword ? "" : "Required",
+				newPassword: passwords.newPassword ? "" : "Required",
+				confirmPassword: passwords.confirmPassword ? "" : "Required",
 			});
 			return;
 		}
@@ -82,8 +111,34 @@ export const EditUserInfo = () => {
 			return;
 		}
 
-		// Proceed with saving the password
+		await changePassword({
+			oldPassword: passwords.oldPassword,
+			newPassword: passwords.newPassword,
+			confirmPassword: passwords.confirmPassword,
+		});
+		callUpdate();
 		handleCloseChangePasswordDialog();
+	};
+
+	const handleSaveInfo = async () => {
+		const data: any = {};
+
+		if (name !== myInfo.name) {
+			data.name = name;
+		}
+		if (department !== myInfo.department) {
+			data.department = department;
+		}
+		if (organization !== myInfo.organization) {
+			data.organization = organization;
+		}
+
+		if (Object.keys(data).length > 0) {
+			await updateUserInfo(data);
+		}
+
+		handleCloseDialog();
+		callUpdate();
 	};
 
 	return (
@@ -175,39 +230,51 @@ export const EditUserInfo = () => {
 					>
 						<Box display="flex" alignItems="center" gap="10px">
 							<Typography variant="h6" width="200px">
-								Name:
+								Name
 							</Typography>
-							<TextField placeholder="Duc Quang" />
+							<TextField
+								placeholder={myInfo.name}
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+							/>
 						</Box>
 						<Box display="flex" alignItems="center" gap="10px">
 							<Typography variant="h6" width="200px">
 								Email:
 							</Typography>
-							<TextField placeholder="quangductran@sine.com" />
+							<TextField value={myInfo.email} disabled={true} />
 						</Box>
 						<Box display="flex" alignItems="center" gap="10px">
 							<Typography variant="h6" width="200px">
 								Create Date:
 							</Typography>
-							<TextField placeholder="2024-01-01" />
+							<TextField value={myInfo.createDate} disabled={true} />
 						</Box>
 						<Box display="flex" alignItems="center" gap="10px">
 							<Typography variant="h6" width="200px">
 								Department:
 							</Typography>
-							<TextField placeholder="Frontend Developer" />
+							<TextField
+								placeholder={myInfo.department}
+								value={department}
+								onChange={(e) => setDepartment(e.target.value)}
+							/>
 						</Box>
 						<Box display="flex" alignItems="center" gap="10px">
 							<Typography variant="h6" width="200px">
 								Organization:
 							</Typography>
-							<TextField placeholder="SineVoiPeo" />
+							<TextField
+								placeholder={myInfo.organization}
+								value={organization}
+								onChange={(e) => setOrganization(e.target.value)}
+							/>
 						</Box>
 					</Box>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseDialog}>Cancel</Button>
-					<Button variant="contained" onClick={handleCloseDialog} autoFocus>
+					<Button variant="contained" onClick={handleSaveInfo} autoFocus>
 						Save
 					</Button>
 				</DialogActions>

@@ -8,7 +8,7 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 
-const AboutMe: React.FC = () => {
+const AboutMe: React.FC<{ myInfo: any }> = ({ myInfo }) => {
 	return (
 		<>
 			{/* Post #1 */}
@@ -54,7 +54,7 @@ const AboutMe: React.FC = () => {
 										justifyContent: "center",
 									}}
 								>
-									<strong>Duc Quang</strong>
+									<strong>{myInfo.name}</strong>
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -74,7 +74,7 @@ const AboutMe: React.FC = () => {
 										justifyContent: "center",
 									}}
 								>
-									<strong>quangcuatuonglai@gmail.com</strong>
+									<strong>{myInfo.email}</strong>
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -94,7 +94,9 @@ const AboutMe: React.FC = () => {
 										justifyContent: "center",
 									}}
 								>
-									<strong>2024-01-01</strong>
+									<strong>
+										{new Date(myInfo.createDate).toLocaleDateString()}
+									</strong>
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -114,7 +116,9 @@ const AboutMe: React.FC = () => {
 										justifyContent: "center",
 									}}
 								>
-									<strong>528/21 Le Van Viet. District 9. Thu Duc City</strong>
+									<strong>
+										{myInfo.department ? myInfo.department : "N/A"}
+									</strong>
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -134,7 +138,7 @@ const AboutMe: React.FC = () => {
 										justifyContent: "center",
 									}}
 								>
-									<strong>Frontend Developer</strong>
+									<strong>{myInfo.jobTitle ? myInfo.jobTitle : "N/A"}</strong>
 								</TableCell>
 							</TableRow>
 							<TableRow>
@@ -154,7 +158,9 @@ const AboutMe: React.FC = () => {
 										justifyContent: "center",
 									}}
 								>
-									<strong>SineVoiPeo</strong>
+									<strong>
+										{myInfo.organization ? myInfo.organization : "N/A"}
+									</strong>
 								</TableCell>
 							</TableRow>
 						</TableBody>

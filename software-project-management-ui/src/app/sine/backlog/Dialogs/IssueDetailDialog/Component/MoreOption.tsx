@@ -91,7 +91,7 @@ export default function MoreOption({
 	};
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		let result = await deleteIssue({ projectId, issueId });
-		if (!result.error) {
+		if (!result?.error) {
 			toast.success("Issue deleted successfully");
 		} else {
 			toast.error("Failed to delete issue");
