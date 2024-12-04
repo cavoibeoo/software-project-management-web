@@ -14,7 +14,7 @@ import uploadImg from "../utils/uploadFirebaseImg.js";
 import getObjectId from "../utils/getObjectId.js";
 import Permission from "../utils/permission.js";
 
-const addUpdateRole = async (params, data, isAdded) => {
+const addUpdateRole = async (params, data, isAdded, isAdmin) => {
     try {
         let prjId = getObjectId(params?.prjId);
         let currentProject = await Project.findById(prjId);
@@ -26,6 +26,7 @@ const addUpdateRole = async (params, data, isAdded) => {
         let newRole = {
             name: data.name,
             permissions: data.permissions,
+            isDefault: isAdmin,
         };
 
         if (isAdded) {
@@ -34,9 +35,16 @@ const addUpdateRole = async (params, data, isAdded) => {
             let roleIndex = currentProject.roles.findIndex(
                 (role) => role._id == getObjectId(params?.roleId)
             );
+
+            if (currentProject.roles[roleIndex].isDefault && !isAdmin) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot modify default role");
+            }
+
             if (roleIndex !== -1) {
-                currentProject.roles[roleIndex].name = data.name;
-                currentProject.roles[roleIndex].permissions = data.permissions;
+                currentProject.roles[roleIndex].name =
+                    data?.name || currentProject.roles[roleIndex].name;
+                currentProject.roles[roleIndex].permissions =
+                    data?.permissions || currentProject.roles[roleIndex].permissions;
             } else {
                 throw new ApiError(StatusCodes.NOT_FOUND, "Role not found");
             }
@@ -48,7 +56,7 @@ const addUpdateRole = async (params, data, isAdded) => {
     }
 };
 
-const deleteRole = async (params) => {
+const deleteRole = async (params, isAdmin) => {
     try {
         let prjId = getObjectId(params?.prjId);
         let currentProject = await Project.findById(prjId);
@@ -59,7 +67,9 @@ const deleteRole = async (params) => {
         if (roleIndex === -1) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Role not found");
         }
-
+        if (currentProject.roles[roleIndex].isDefault && !isAdmin) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot delete default role");
+        }
         currentProject.actors.forEach((actor) => {
             if (actor.role === currentProject.roles[roleIndex].name) {
                 actor.role = "Member";

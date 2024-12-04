@@ -6,7 +6,12 @@ import * as roleService from "../services/roleService.js";
 
 const addRole = async (req, res, next) => {
     try {
-        let result = await roleService.addUpdateRole(req.params, req.body, true);
+        let result = await roleService.addUpdateRole(
+            req.params,
+            req.body,
+            true,
+            req.user.role == "admin"
+        );
         res.status(StatusCodes.CREATED).json(result);
     } catch (error) {
         next(error);
@@ -15,7 +20,12 @@ const addRole = async (req, res, next) => {
 
 const updateRole = async (req, res, next) => {
     try {
-        let result = await roleService.addUpdateRole(req.params, req.body, false);
+        let result = await roleService.addUpdateRole(
+            req.params,
+            req.body,
+            false,
+            req.user.role == "admin"
+        );
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         next(error);
@@ -24,7 +34,7 @@ const updateRole = async (req, res, next) => {
 
 const deleteRole = async (req, res, next) => {
     try {
-        let result = await roleService.deleteRole(req.params);
+        let result = await roleService.deleteRole(req.params, req.user.role == "admin");
         res.status(StatusCodes.NO_CONTENT).json(result);
     } catch (error) {
         next(error);
