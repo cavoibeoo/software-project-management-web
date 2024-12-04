@@ -106,7 +106,11 @@ const isLoggedIn = async (data) => {
         }
         if (data?.accessToken) await jwtUtil.verifyAccessToken(data?.accessToken);
         if (data?.refreshToken) await jwtUtil.verifyRefreshToken(data?.refreshToken);
-        return true;
+        return {
+            isAuthenticated: true,
+            accessToken: data?.accessToken,
+            refreshToken: data?.refreshToken,
+        };
     } catch (error) {
         return false;
     }

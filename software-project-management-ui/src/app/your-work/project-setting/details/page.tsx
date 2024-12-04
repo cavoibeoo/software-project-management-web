@@ -189,7 +189,9 @@ export default function Page() {
                 file = new File([blob], "viewavatar (3).svg", { type: blob.type });
             }
             let result = await projectService.updateProject(projectId, { img: file });
-            setActualImg(result.img);
+            if (!result.error) {
+                setActualImg(result.img);
+            }
             setOpenChangeLogoDialog(false);
         } catch (error) {
             console.error("Error updating project image:", error);

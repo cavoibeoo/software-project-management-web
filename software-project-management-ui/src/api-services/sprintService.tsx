@@ -2,45 +2,32 @@ import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { getAccessTokenFromCookie } from "./CookieServices";
-import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
 export const fetchAllSprint = async (projectId: any) => {
     try {
         // await RefreshToken();
-        const response = await axios.get(`/sprint/get-all/${projectId}`, {
-            headers: {
-                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-            },
-            withCredentials: true,
-        });
+        const response = await axios.get(`/sprint/get-all/${projectId}`, {});
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        toast.error(`${error?.response?.data?.message}`);
         console.log(error);
-        await handleTokenExpired(error);
+
+        return { error: error };
     }
 };
 
 export const createSprint = async (projectId: any) => {
     try {
         // await RefreshToken();
-        const response = await axios.post(
-            `/sprint/${projectId}`,
-            {},
-            {
-                headers: {
-                    Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-                },
-                withCredentials: true,
-            }
-        );
+        const response = await axios.post(`/sprint/${projectId}`, {});
         toast.success("Create sprint successful");
         return response.data;
     } catch (error: any) {
         toast.error(error?.response?.data?.message);
         console.log(error);
-        await handleTokenExpired(error);
+
         return { error: error };
     }
 };
@@ -59,18 +46,13 @@ export const updateSprint = async (data: any) => {
         console.log(sprintData.startDate);
 
         // await RefreshToken();
-        const response = await axios.put(`/sprint/${projectId}/${sprintId}`, sprintData, {
-            headers: {
-                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-            },
-            withCredentials: true,
-        });
+        const response = await axios.put(`/sprint/${projectId}/${sprintId}`, sprintData, {});
         toast.success("Start sprint successful");
         return response.data;
     } catch (error: any) {
         toast.error(error?.response?.data?.message);
         console.log(error);
-        await handleTokenExpired(error);
+
         return { error: error };
     }
 };
@@ -78,19 +60,14 @@ export const updateSprint = async (data: any) => {
 export const deleteSprint = async (sprintId: string, projectId: string) => {
     try {
         // await RefreshToken();
-        const response = await axios.delete(`/sprint/${projectId}/${sprintId}`, {
-            headers: {
-                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-            },
-            withCredentials: true,
-        });
+        const response = await axios.delete(`/sprint/${projectId}/${sprintId}`, {});
 
         toast.success("Delete sprint successful");
         return response.data;
     } catch (error: any) {
         toast.error(error?.response?.data?.message);
         console.log(error);
-        await handleTokenExpired(error);
+
         return { error: error };
     }
 };
