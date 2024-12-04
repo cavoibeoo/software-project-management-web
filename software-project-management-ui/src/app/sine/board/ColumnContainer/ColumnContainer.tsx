@@ -42,13 +42,6 @@ import BacklogCard from "./TaskCard/BacklogCard";
 import * as issueTypeService from "@/api-services/issueTypeService";
 import { toast } from "react-toastify";
 import * as issueService from "@/api-services/issueServices";
-import mongoose from "mongoose";
-
-function toObjectId(id: string): mongoose.Types.ObjectId | null {
-	return mongoose.Types.ObjectId.isValid(id)
-		? new mongoose.Types.ObjectId(id)
-		: null;
-}
 
 export default function ColumnContainer(props: {
 	callUpdate: () => void;
