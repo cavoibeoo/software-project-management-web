@@ -82,6 +82,7 @@ export const FormRegisterServices = async (name: any, email: any, password: any)
             { withCredentials: true }
         );
         toast.success("Successful signing up please verify your email!");
+        window.location.href = "/authentication/sign-in/";
     } catch (error) {
         if (isAxiosError(error) && error.response) {
             toast.error(error.response.data.message);

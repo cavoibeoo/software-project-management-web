@@ -17,7 +17,7 @@ const createUser = async (req, res, next) => {
 const verifyUser = async (req, res, next) => {
     try {
         let result = await authService.verifyEmailService(req.query);
-        res.status(StatusCodes.CREATED).send(result);
+        res.redirect(`${config.feUrl}/authentication/confirm-email/`);
     } catch (err) {
         next(err);
     }
