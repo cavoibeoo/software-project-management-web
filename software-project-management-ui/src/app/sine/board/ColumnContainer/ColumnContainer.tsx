@@ -98,7 +98,7 @@ export default function ColumnContainer(props: {
 	const handleClickOpenModal = () => {
 		setOpenModal(true);
 	};
-	
+
 	const handleCloseModal = () => {
 		setOpenModal(false);
 	};
@@ -337,7 +337,6 @@ export default function ColumnContainer(props: {
 			if (!issue.error) {
 				callUpdate();
 			}
-			
 		} catch (error) {
 			console.log("error", error);
 			toast.error("Failed to create backlog!");
@@ -465,7 +464,12 @@ export default function ColumnContainer(props: {
 					<Box>
 						<SortableContext items={tasksIds}>
 							{tasks.map((task) => (
-								<TaskCard key={task.id} task={task} project={project} callUpdate={callUpdate} />
+								<TaskCard
+									key={task.id}
+									task={task}
+									project={project}
+									callUpdate={callUpdate}
+								/>
 							))}
 						</SortableContext>
 						{backlogs

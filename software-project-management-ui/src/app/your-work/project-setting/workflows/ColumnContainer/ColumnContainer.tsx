@@ -1,6 +1,6 @@
 "use client";
 
-import { Column, Id, Task } from "@/type";
+import { Column, ColumnWorkflow, Id, Task } from "@/type";
 import { Box, Card, Tooltip } from "@mui/material";
 
 import React, { useState, FormEvent, useMemo } from "react";
@@ -37,9 +37,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import WorkFlowCard from "../WorkFlowCard/WorkFlowCard";
+import "./Column.css";
 
 export default function ColumnContainer(props: {
-	column: Column;
+	column: ColumnWorkflow;
 	tasks: Task[];
 	deleteColumn: (id: Id) => void;
 	updateColumn: (id: Id, title: string) => void;

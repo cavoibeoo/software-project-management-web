@@ -2,8 +2,8 @@
 import * as React from "react";
 import NextLink from "next/link";
 import { Box, Button, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
-import { Column, Id, Task } from "@/type";
+import { useState } from "react";
+import { ColumnWorkflow, Id, Task } from "@/type";
 import {
 	DndContext,
 	DragOverlay,
@@ -18,19 +18,12 @@ import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import dynamic from "next/dynamic";
-
-const ColumnContainer = dynamic(
-	() => import("./ColumnContainer/ColumnContainer"),
-	{ ssr: false }
-);
-const WorkFlowCard = dynamic(() => import("./WorkFlowCard/WorkFlowCard"), {
-	ssr: false,
-});
-
+import ColumnContainer from "./ColumnContainer/ColumnContainer";
+import WorkFlowCard from "./WorkFlowCard/WorkFlowCard";
+import "./ColumnContainer/Column.css";
 
 export default function Page() {
-	const [columns, setColumns] = useState<Column[]>([
+	const [columns, setColumns] = useState<ColumnWorkflow[]>([
 		{
 			Id: generateId(),
 			title: "To Do",
@@ -280,24 +273,22 @@ export default function Page() {
 										</SortableContext>
 									</div>
 								</div>
-								<DragOverlay>
-									{activeColumn && (
-										<ColumnContainer
-											column={activeColumn}
-											deleteColumn={deleteColumn}
-											updateColumn={updateColumn}
-											createTask={createTask}
-											tasks={tasks.filter(
-												(task) => task.columnId === activeColumn.Id
-											)}
-										/>
-									)}
-									{activeTask && <WorkFlowCard task={activeTask} />}
-								</DragOverlay>
-								,
-								{/* {createPortal(
+								{createPortal(
+									<DragOverlay>
+										{activeColumn && (
+											<ColumnContainer
+												column={activeColumn}
+												deleteColumn={deleteColumn}
+												updateColumn={updateColumn}
+												createTask={createTask}
+												tasks={tasks.filter(
+													(task) => task.columnId === activeColumn.Id
+												)}
+											/>
+										)}
+									</DragOverlay>,
 									document.body
-								)} */}
+								)}
 							</DndContext>
 							<Button
 								variant="contained"

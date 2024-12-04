@@ -35,3 +35,8 @@ export type Issue = {
 	summary: string;
 	// Add other properties if necessary
 };
+
+export type ColumnWorkflow = {
+	Id: string;
+	title: string;
+};
