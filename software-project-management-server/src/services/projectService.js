@@ -156,12 +156,13 @@ const removeActor = async (params, data) => {
 
         // Check if user is in project
         const index = currentProject.actors.findIndex(
-            (actor) => actor.user.toString() === params.userId.toString()
+            (actor) => actor.user.toString() === getObjectId(params.userId).toString()
         );
         if (index === -1) {
             throw new ApiError(StatusCodes.NOT_FOUND, `User not in project!`);
         }
-        if (currentProject.actors[index].user == currentProject.author) {
+
+        if (currentProject.actors[index].user.toString() == currentProject.author.toString()) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot remove project author!");
         }
         // Remove the user from project actors using slice for better performance

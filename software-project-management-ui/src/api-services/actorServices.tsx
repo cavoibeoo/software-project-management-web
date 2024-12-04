@@ -49,7 +49,27 @@ export const updateActor = async (data: any) => {
         toast.success("Update member succeeded!");
         return response.data;
     } catch (error: any) {
-        toast.error(`Add member failed. ${error?.response?.data?.message}`);
+        toast.error(`Update member failed. ${error?.response?.data?.message}`);
+        console.log(error);
+        await handleTokenExpired(error);
+    }
+};
+
+export const removeActor = async (data: any) => {
+    try {
+        let { projectId, userId } = data;
+        // await RefreshToken();
+        const response = await axios.delete(`/project/remove-actor/${projectId}/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
+            },
+            withCredentials: true,
+        });
+
+        toast.success("Remove member succeeded!");
+        return response.data;
+    } catch (error: any) {
+        toast.error(`Remove member failed. ${error?.response?.data?.message}`);
         console.log(error);
         await handleTokenExpired(error);
     }
