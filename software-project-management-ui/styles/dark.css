@@ -571,3 +571,7 @@
 .dark-theme .chat-form-custom {
 	color: #262626 !important;
 }
+
+.dark-theme .task-card {
+	border-color: rgb(5, 245, 245);
+}

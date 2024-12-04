@@ -35,7 +35,6 @@ const Profile: React.FC<ProfileProps> = () => {
 		const fetchUser = async () => {
 			let user = await useFetchUser();
 			setUser(user);
-			console.log(user);
 		};
 		fetchUser();
 	}, []);

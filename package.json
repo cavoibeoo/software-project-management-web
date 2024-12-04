@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "@dnd-kit/modifiers": "^7.0.0"
+    "@dnd-kit/modifiers": "^7.0.0",
+    "@types/mongoose": "^5.11.96",
+    "mongoose": "^8.8.3"
   }
 }

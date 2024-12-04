@@ -1557,3 +1557,8 @@ table tfoot tr p {
 .chat-form-custom {
 	color: #000 !important;
 }
+
+.task-card {
+	border-color: rgb(122 122 122 / 58%);
+}
+
