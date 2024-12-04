@@ -254,7 +254,7 @@ const changePasswordWithOtp = async (query, data) => {
         let user = await User.findOne({ email: query?.email });
 
         const salt = await bcrypt.genSalt(Number(config.salt));
-        const hashedPassword = await bcrypt.hash(data?.newPassword, salt);
+        const hashedPassword = await bcrypt.hash(data?.password, salt);
 
         user.password = hashedPassword;
         user.otp.expires = new Date();
