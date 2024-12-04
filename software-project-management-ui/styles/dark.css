@@ -575,3 +575,8 @@
 .dark-theme .task-card {
 	border-color: rgb(5, 245, 245);
 }
+
+.dark-theme .addrolesBtn {
+	background-color: #1c93ee94 !important;
+	color: #fff !important;
+}

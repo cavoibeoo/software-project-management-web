@@ -20,6 +20,9 @@ const ProjectPermissions = Object.freeze({
     ADD_COMMENT: "add_comment",
     UPDATE_COMMENT: "update_comment",
     DELETE_COMMENT: "delete_comment",
+    ADD_ROLE: "add_role",
+    UPDATE_ROLE: "update_role",
+    DELETE_ROLE: "delete_role",
 });
 
 export default ProjectPermissions;

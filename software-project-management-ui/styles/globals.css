@@ -1562,3 +1562,12 @@ table tfoot tr p {
 	border-color: rgb(122 122 122 / 58%);
 }
 
+.addrolesBtn {
+	background-color: #0f8dc6d8 !important;
+	color: #fff !important;
+}
+
+.createIssueBtn {
+	background-color: #605dff !important;
+	color: #fff !important;
+}

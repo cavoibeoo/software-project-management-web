@@ -17,7 +17,7 @@ const createUser = async (req, res, next) => {
 const verifyUser = async (req, res, next) => {
     try {
         let result = await authService.verifyEmailService(req.query);
-        res.status(StatusCodes.CREATED).send(result);
+        res.redirect(`${config.feUrl}/authentication/confirm-email/`);
     } catch (err) {
         next(err);
     }
@@ -74,7 +74,7 @@ const loginWithGoogle = async (req, res, next) => {
 
 const isAuthenticated = async (req, res, next) => {
     try {
-        let result = { isAuthenticated: await authService.isLoggedIn(req.cookies) };
+        let result = await authService.isLoggedIn(req.cookies);
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);

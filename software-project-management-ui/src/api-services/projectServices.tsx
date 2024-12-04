@@ -2,51 +2,34 @@ import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { getAccessTokenFromCookie } from "./CookieServices";
-import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Projects-----------------------------------
 
 export const fetchAllProjects = async () => {
 	try {
-		const response = await axios.get("/project/my-projects", {
-			headers: { Authorization: `Bearer ${getAccessTokenFromCookie()}` },
-			withCredentials: true,
-		});
+		const response = await axios.get("/project/my-projects");
 		return response.data;
 	} catch (error: any) {
-		if (error?.response?.status === 401) {
-			await handleTokenExpired(error);
-		}
+		console.log(error);
 	}
 };
 
 export const fetchById = async (projectId: any) => {
 	try {
-		const response = await axios.get(`/project/${projectId}`, {
-			headers: { Authorization: `Bearer ${getAccessTokenFromCookie()}` },
-			withCredentials: true,
-		});
+		const response = await axios.get(`/project/${projectId}`);
 		return response.data;
 	} catch (error: any) {
-		if (error?.response?.status === 401) {
-			await handleTokenExpired(error);
-		}
+		console.log(error);
 	}
 };
 
 export const createProject = async (projectData: any) => {
 	try {
-		const response = await axios.post("/project/create", projectData, {
-			headers: {
-				Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-			},
-			withCredentials: true,
-		});
+		const response = await axios.post("/project/create", projectData, {});
 		toast.success("Successfully created project!");
 		return response.data;
 	} catch (error) {
-		await handleTokenExpired(error);
-		toast.error("Failed to create project!");
+		toast.error("Failed to create project! Please try again.");
 	}
 };
 
@@ -55,20 +38,15 @@ export const moveToTrash = async (projectId: string, projectName: string) => {
 		const response = await axios.delete(
 			"project/temporary-delete/" + projectId,
 			{
-				data: {
-					projectName: projectName,
-				},
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-				withCredentials: true,
+				data: { projectName: projectName },
 			}
 		);
 		toast.success("Successfully deleted project!");
 		return response.data;
-	} catch (error) {
-		await handleTokenExpired(error);
-		toast.error("Failed to delete project!");
+	} catch (error: any) {
+		toast.error(`${error?.response?.data?.message}`);
+		console.log(error);
+		return { error: error };
 	}
 };
 
@@ -77,15 +55,10 @@ export const moveToTrash = async (projectId: string, projectName: string) => {
 export const fetchTrashProjects = async () => {
 	try {
 		// await RefreshToken();
-		const response = await axios.get("/project/my-deleted-projects", {
-			headers: {
-				Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-			},
-			withCredentials: true,
-		});
+		const response = await axios.get("/project/my-deleted-projects", {});
 		return response.data;
 	} catch (error) {
-		await handleTokenExpired(error);
+		console.log(error);
 	}
 };
 
@@ -94,24 +67,16 @@ export const recoverProject = async (
 	projectName: string
 ) => {
 	try {
-		// await RefreshToken();
-
-		const response = await axios.put(
-			"/project/recover/" + projectId,
-			{
-				projectName: projectName,
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-			}
-		);
+		const response = await axios.put("/project/recover/" + projectId, {
+			projectName: projectName,
+		});
 		toast.success("Successfully recovered project!");
 		return response.data;
-	} catch (error) {
-		await handleTokenExpired(error);
-		toast.error("Failed to recover project!");
+	} catch (error: any) {
+		toast.error(`${error?.response?.data?.message}`);
+		console.log(error);
+
+		return { error: error };
 	}
 };
 
@@ -123,17 +88,15 @@ export const deleteProject = async (projectId: string, projectName: string) => {
 				data: {
 					projectName: projectName,
 				},
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-				withCredentials: true,
 			}
 		);
 		toast.success("Successfully deleted project!");
 		return response.data;
-	} catch (error) {
-		await handleTokenExpired(error);
-		toast.error("Failed to delete project!");
+	} catch (error: any) {
+		toast.error(`${error?.response?.data?.message}`);
+		console.log(error);
+
+		return { error: error };
 	}
 };
 
@@ -147,16 +110,15 @@ export const updateProject = async (projectId: any, projectData: any) => {
 
 		const response = await axios.put(`/project/update/${projectId}`, formData, {
 			headers: {
-				Authorization: `Bearer ${getAccessTokenFromCookie()}`,
 				"Content-Type": "multipart/form-data",
 			},
-			withCredentials: true,
 		});
 		toast.success("Successfully updated project!");
 		return response.data;
 	} catch (error: any) {
+		toast.error(`${error?.response?.data?.message}`);
 		console.log(error);
-		toast.error(error?.response?.data?.message);
-		await handleTokenExpired(error);
+
+		return { error: error };
 	}
 };

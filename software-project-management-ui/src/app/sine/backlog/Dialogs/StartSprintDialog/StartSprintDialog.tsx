@@ -96,7 +96,7 @@ const StartSprintDialog: React.FC<{
 			goal: sprintGoal,
 			status: nextAction,
 		});
-		if (!result.error) {
+		if (!result?.error) {
 			callUpdate();
 			handleClose();
 		}

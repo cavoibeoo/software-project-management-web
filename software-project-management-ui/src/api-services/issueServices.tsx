@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { getAccessTokenFromCookie } from "./CookieServices";
-import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
@@ -34,18 +33,14 @@ export const createIssue = async (data: any) => {
 		};
 
 		// await RefreshToken();
-		const response = await axios.post(`/issue/${projectId}`, processedData, {
-			headers: {
-				Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-			},
-			withCredentials: true,
-		});
+		const response = await axios.post(`/issue/${projectId}`, processedData, {});
 		toast.success("Create issue successfully!");
 		return response.data;
-	} catch (error) {
+	} catch (error: any) {
+		toast.error(`${error?.response?.data?.message}`);
 		console.log(error);
-		toast.error("Failed to create issue!");
-		await handleTokenExpired(error);
+
+		return { error: error };
 	}
 };
 
@@ -67,19 +62,14 @@ export const updateIssue = async (data: any) => {
 		const response = await axios.put(
 			`/issue/${projectId}/${issueId}`,
 			processedData,
-			{
-				headers: {
-					Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-				},
-				withCredentials: true,
-			}
+			{}
 		);
 		toast.success("Update issue successfully!");
 		return response.data;
 	} catch (error: any) {
 		toast.error(`${error?.response?.data?.message}`);
 		console.log(error);
-		await handleTokenExpired(error);
+
 		return { error: error };
 	}
 };
@@ -89,15 +79,12 @@ export const deleteIssue = async (data: any) => {
 		let { projectId, issueId } = data;
 
 		// await RefreshToken();
-		const response = await axios.delete(`/issue/${projectId}/${issueId}`, {
-			headers: {
-				Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-			},
-			withCredentials: true,
-		});
+		const response = await axios.delete(`/issue/${projectId}/${issueId}`, {});
+		toast.success("Delete issue successfully!");
 		return response.data;
-	} catch (error) {
+	} catch (error: any) {
+		toast.error(`${error?.response?.data?.message}`);
 		console.log(error);
-		await handleTokenExpired(error);
+		return { error: error };
 	}
 };

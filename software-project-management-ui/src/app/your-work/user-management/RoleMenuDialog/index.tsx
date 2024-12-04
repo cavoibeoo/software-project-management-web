@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
 	Typography,
 	Button,
@@ -18,6 +18,10 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransitionProps } from "@mui/material/transitions";
+import { set } from "react-hook-form";
+
+import * as roleServices from "@/api-services/roleServices";
+import { permission } from "process";
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
@@ -28,47 +32,41 @@ const Transition = React.forwardRef(function Transition(
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const RoleMenuDialog = () => {
+const RoleMenuDialog = ({
+	project,
+	callUpdate,
+}: {
+	project: any;
+	callUpdate: () => void;
+}) => {
 	const [open, setOpen] = useState(false);
-	const [selectedRole, setSelectedRole] = useState<string | null>(null);
-	const [currentPermissions, setCurrentPermissions] = useState<string[]>([]);
+	const [selectedRole, setSelectedRole] = useState<string | null>(
+		project?.roles[0].name
+	);
+	const [currentRoleId, setCurrentRoleId] = useState<string | null>(
+		project?.roles[0]._id
+	);
+	const [currentPermissions, setCurrentPermissions] = useState<string[]>(
+		project?.roles[0]?.permissions
+	);
 	const [addRoleDialogOpen, setAddRoleDialogOpen] = useState(false);
 	const [newRoleName, setNewRoleName] = useState("");
 
-	const rolePermissions = {
-		admin: [
-			"update_project",
-			"delete_project",
-			"archive_project",
-			"add_sprint",
-			"update_sprint",
-			"delete_sprint",
-			"add_issue_type",
-			"update_issue_type",
-			"delete_issue_type",
-			"add_issue",
-			"update_issue",
-			"delete_issue",
-			"add_workflow",
-			"update_workflow",
-			"delete_workflow",
-			"add_actor",
-			"update_actor_role",
-			"remove_actor",
-			"add_comment",
-			"update_comment",
-			"delete_comment",
-		],
-		member: [
-			"add_sprint",
-			"update_sprint",
-			"add_issue",
-			"update_issue",
-			"add_comment",
-			"update_comment",
-		],
-		viewer: [],
-	};
+	const [rolePermissions, setRolePermissions] = useState<any>(project?.roles);
+	const [roles, setRoles] = useState<any>(project?.roles);
+
+	const [isUpdateRoleName, setIsUpdateRoleName] = useState(false);
+	const [updatedName, setUpdatedName] = useState("");
+	const [isDeleteRole, setIsDeleteRole] = useState(false);
+
+	useEffect(() => {
+		setRolePermissions(project?.roles);
+		setCurrentPermissions(project?.roles[0]?.permissions);
+		setSelectedRole(project?.roles[0]?.name);
+		setCurrentRoleId(project?.roles[0]?._id);
+		setUpdatedName(project?.roles[0]?.name);
+		setRoles(project?.roles);
+	}, [project]);
 
 	const customRoleColor = "#5e5bfc";
 
@@ -84,23 +82,24 @@ const RoleMenuDialog = () => {
 		setOpen(false);
 	};
 
-	const handleRoleClick = (role: string) => {
-		setSelectedRole(role);
-		setCurrentPermissions(
-			rolePermissions[role as keyof typeof rolePermissions] || []
-		);
+	const handleRoleClick = (index: number) => {
+		setSelectedRole(rolePermissions?.permissions);
+		setSelectedRole(project?.roles[index]?.name);
+		setCurrentRoleId(project?.roles[index]?._id);
+		setCurrentPermissions(roles[index]?.permissions || []);
+		setUpdatedName(project?.roles[index]?.name);
 	};
 
 	const handlePermissionChange = (permission: string) => {
-		setCurrentPermissions((prevPermissions) =>
-			prevPermissions.includes(permission)
-				? prevPermissions.filter((p) => p !== permission)
+		setCurrentPermissions((prevPermissions: any) =>
+			prevPermissions?.includes(permission)
+				? prevPermissions.filter((p: any) => p !== permission)
 				: [...prevPermissions, permission]
 		);
 	};
 
 	const isPermissionChecked = (permission: string) => {
-		return currentPermissions.includes(permission);
+		return currentPermissions?.includes(permission);
 	};
 
 	const handleAddRoleClick = () => {
@@ -109,6 +108,49 @@ const RoleMenuDialog = () => {
 
 	const handleAddRoleClose = () => {
 		setAddRoleDialogOpen(false);
+	};
+
+	const handleAddRole = async () => {
+		const result = await roleServices.addNewRole({
+			projectId: project._id,
+			roleName: newRoleName,
+			permissions: [
+				"add_sprint",
+				"update_sprint",
+				"delete_sprint",
+				"add_issue",
+				"update_issue",
+				"delete_issue",
+			],
+		});
+		if (!result?.error) {
+			callUpdate();
+			setAddRoleDialogOpen(false);
+		}
+	};
+
+	const handleUpdateRole = async () => {
+		const result = await roleServices.updateRole({
+			projectId: project._id,
+			roleId: currentRoleId,
+			...(updatedName !== selectedRole && { roleName: updatedName }),
+			permissions: currentPermissions,
+		});
+		if (!result?.error) {
+			callUpdate();
+			setAddRoleDialogOpen(false);
+			setIsUpdateRoleName(false);
+		}
+	};
+	const handleDeleteRole = async () => {
+		const result = await roleServices.deleteRole({
+			projectId: project._id,
+			roleId: currentRoleId,
+		});
+		if (!result?.error) {
+			callUpdate();
+			setIsDeleteRole(false);
+		}
 	};
 
 	const handleRoleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,7 +192,21 @@ const RoleMenuDialog = () => {
 						<Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
 							Role Settings
 						</Typography>
-						<Button autoFocus color="inherit" onClick={handleClose}>
+						<Button
+							autoFocus
+							color="inherit"
+							onClick={() => setIsUpdateRoleName(true)}
+						>
+							update role name
+						</Button>
+						<Button
+							autoFocus
+							color="inherit"
+							onClick={() => setIsDeleteRole(true)}
+						>
+							delete role
+						</Button>
+						<Button autoFocus color="inherit" onClick={handleUpdateRole}>
 							save
 						</Button>
 					</Toolbar>
@@ -170,44 +226,36 @@ const RoleMenuDialog = () => {
 									Role Name
 								</Typography>
 								<Box sx={{ display: "flex", flexDirection: "column" }}>
-									<Button
-										variant="contained"
-										color="primary"
-										sx={{ mb: 1, backgroundColor: "#099f9d  !important" }}
-										onClick={() => handleRoleClick("admin")}
-									>
-										Admin
-									</Button>
-									<Button
-										variant="contained"
-										color="primary"
-										sx={{ mb: 1, backgroundColor: "#099f9d94   !important" }}
-										onClick={() => handleRoleClick("member")}
-									>
-										Member
-									</Button>
-									<Button
-										variant="contained"
-										color="primary"
-										sx={{ mb: 1, backgroundColor: "#099f9d2b  !important" }}
-										onClick={() => handleRoleClick("viewer")}
-									>
-										Viewer
-									</Button>
-									<Button
-										variant="contained"
-										color="primary"
-										sx={{ mb: 1, backgroundColor: "#d7d7d73d  !important" }}
-										onClick={() => handleRoleClick("custom")}
-									>
-										Custom Role
-									</Button>
+									{roles?.map((role: any, index: number) => (
+										<Button
+											key={index}
+											variant="contained"
+											color="primary"
+											sx={
+												selectedRole == role.name
+													? {
+															mb: 1,
+															backgroundColor: "#34c3c194 !important",
+														}
+													: {
+															mb: 1,
+															backgroundColor: "#099f9d2b  !important",
+														}
+											}
+											onClick={() => handleRoleClick(index)}
+										>
+											{role?.name}
+										</Button>
+									))}
 									<Button
 										variant="outlined"
-										color="primary"
 										onClick={handleAddRoleClick}
+										className="addrolesBtn"
+										sx={{
+											mb: 1,
+										}}
 									>
-										Add more Roles
+										+ ADD
 									</Button>
 								</Box>
 							</Paper>
@@ -371,7 +419,90 @@ const RoleMenuDialog = () => {
 						/>
 					</Box>
 					<Box sx={{ padding: 2, display: "flex", justifyContent: "flex-end" }}>
-						<Button variant="text" color="primary" onClick={handleAddRoleClose}>
+						<Button variant="text" color="primary" onClick={handleAddRole}>
+							Save
+						</Button>
+					</Box>
+				</Container>
+			</Dialog>
+			<Dialog
+				open={isUpdateRoleName}
+				onClose={() => setIsUpdateRoleName(false)}
+			>
+				<AppBar
+					sx={{ position: "relative", backgroundColor: "#283045 !important" }}
+				>
+					<Toolbar>
+						<IconButton
+							edge="start"
+							color="inherit"
+							onClick={() => setIsUpdateRoleName(false)}
+							aria-label="close"
+						>
+							<CloseIcon />
+						</IconButton>
+						<Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+							Update role name
+						</Typography>
+					</Toolbar>
+				</AppBar>
+				<Container>
+					<Box sx={{ padding: 1 }}>
+						<Typography variant="h6" component="div" gutterBottom>
+							Enter new role name
+						</Typography>
+						<TextField
+							fullWidth
+							variant="outlined"
+							value={updatedName}
+							onChange={(e) => setUpdatedName(e.target.value)}
+							placeholder={selectedRole || ""}
+						/>
+					</Box>
+					<Box sx={{ padding: 2, display: "flex", justifyContent: "flex-end" }}>
+						<Button variant="text" color="primary" onClick={handleUpdateRole}>
+							Save
+						</Button>
+					</Box>
+				</Container>
+			</Dialog>
+			<Dialog open={isDeleteRole} onClose={() => setIsDeleteRole(false)}>
+				<AppBar
+					sx={{ position: "relative", backgroundColor: "#283045 !important" }}
+				>
+					<Toolbar>
+						<Typography
+							id="modal-modal-title"
+							variant="h6"
+							sx={{
+								fontWeight: "600",
+								color: "#fff !important",
+							}}
+							className="text-black"
+						>
+							Delete role
+						</Typography>
+					</Toolbar>
+				</AppBar>
+
+				<Container>
+					<Box sx={{ padding: 1 }}>
+						<Typography width="100%">
+							Do you want to delete role '{selectedRole}'?
+						</Typography>
+						<Typography width="100%" paddingTop={"10px"}>
+							You can’t undo this.
+						</Typography>
+					</Box>
+					<Box sx={{ padding: 2, display: "flex", justifyContent: "flex-end" }}>
+						<Button
+							variant="text"
+							color="primary"
+							onClick={() => setIsDeleteRole(false)}
+						>
+							Cancel
+						</Button>
+						<Button variant="text" color="primary" onClick={handleDeleteRole}>
 							Save
 						</Button>
 					</Box>
