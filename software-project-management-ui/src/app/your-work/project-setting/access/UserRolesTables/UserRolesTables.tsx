@@ -205,8 +205,19 @@ export const UserRolesTables: React.FC<{ project: any; callUpdate: () => void }>
 
     // Remove User Dialog
     const [openDelete, setOpenDelete] = useState(false);
+    const [currentDeleteUser, setCurrentDeleteUser] = useState<any>();
     const handleClickOpenDelete = () => {
         setOpenDelete(true);
+    };
+    const handleRemoveUser = async () => {
+        let result = await actorServices.removeActor({
+            userId: currentDeleteUser,
+            projectId: project?._id,
+        });
+        if (!result.error) {
+            callUpdate()
+            setOpenDelete(false);
+        }
     };
     const handleCloseDelete = () => {
         setOpenDelete(false);
@@ -438,7 +449,10 @@ export const UserRolesTables: React.FC<{ project: any; callUpdate: () => void }>
                                                     <i
                                                         className="material-symbols-outlined"
                                                         style={{ fontSize: "16px" }}
-                                                        onClick={handleClickOpenDelete}
+                                                        onClick={() => {
+                                                            setCurrentDeleteUser(row?.user._id);
+                                                            handleClickOpenDelete();
+                                                        }}
                                                     >
                                                         delete
                                                     </i>
@@ -584,10 +598,10 @@ export const UserRolesTables: React.FC<{ project: any; callUpdate: () => void }>
                                             }}
                                         >
                                             <Button
-                                                type="submit"
                                                 variant="contained"
                                                 component="button"
                                                 size="medium"
+                                                onClick={handleRemoveUser}
                                                 sx={{
                                                     textTransform: "capitalize",
                                                     fontWeight: "500",

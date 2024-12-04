@@ -2,23 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { getAccessTokenFromCookie } from "./CookieServices";
-import { handleTokenExpired, RefreshToken } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
 export const fetchIssue = async (projectId: any) => {
     try {
         // await RefreshToken();
-        const response = await axios.get(`/issue/get-backlog/${projectId}`, {
-            headers: {
-                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-            },
-            withCredentials: true,
-        });
+        const response = await axios.get(`/issue/get-backlog/${projectId}`, {});
         return response.data;
     } catch (error) {
         console.log(error);
-        await handleTokenExpired(error);
     }
 };
 
@@ -33,16 +26,13 @@ export const createIssue = async (data: any) => {
         };
 
         // await RefreshToken();
-        const response = await axios.post(`/issue/${projectId}`, processedData, {
-            headers: {
-                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-            },
-            withCredentials: true,
-        });
+        const response = await axios.post(`/issue/${projectId}`, processedData, {});
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        toast.error(`${error?.response?.data?.message}`);
         console.log(error);
-        await handleTokenExpired(error);
+
+        return { error: error };
     }
 };
 
@@ -61,18 +51,13 @@ export const updateIssue = async (data: any) => {
         };
 
         // await RefreshToken();
-        const response = await axios.put(`/issue/${projectId}/${issueId}`, processedData, {
-            headers: {
-                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-            },
-            withCredentials: true,
-        });
+        const response = await axios.put(`/issue/${projectId}/${issueId}`, processedData, {});
         toast.success("Update issue successfully!");
         return response.data;
     } catch (error: any) {
         toast.error(`${error?.response?.data?.message}`);
         console.log(error);
-        await handleTokenExpired(error);
+
         return { error: error };
     }
 };
@@ -82,15 +67,11 @@ export const deleteIssue = async (data: any) => {
         let { projectId, issueId } = data;
 
         // await RefreshToken();
-        const response = await axios.delete(`/issue/${projectId}/${issueId}`, {
-            headers: {
-                Authorization: `Bearer ${getAccessTokenFromCookie()}`,
-            },
-            withCredentials: true,
-        });
+        const response = await axios.delete(`/issue/${projectId}/${issueId}`, {});
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        toast.error(`${error?.response?.data?.message}`);
         console.log(error);
-        await handleTokenExpired(error);
+        return { error: error };
     }
 };

@@ -43,6 +43,7 @@ import { UserRolesTables } from "./UserRolesTables/UserRolesTables";
 import RoleMenuDialog from "@/app/your-work/user-management/RoleMenuDialog";
 
 import * as projectServices from "@/api-services/projectServices";
+import { useSearchParams } from "next/navigation";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 1;
@@ -111,9 +112,10 @@ export default function Page() {
         callUpdate();
     }, []);
 
+    const projectId = useSearchParams().get("projectId");
     React.useEffect(() => {
         const fetchApi = async () => {
-            let response = await projectServices.fetchById("674abb142bfd95785b28d213");
+            let response = await projectServices.fetchById("6750752d218a90dad6730ec0");
             setFetchedProject(response);
         };
         fetchApi();
@@ -325,7 +327,7 @@ export default function Page() {
                             gap: "20px",
                         }}
                     >
-                        <RoleMenuDialog />
+                        <RoleMenuDialog project={fetchedProject} callUpdate={callUpdate} />
                         <form className={styles.searchBox} style={{ maxWidth: "30%" }}>
                             <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
                                 <label>

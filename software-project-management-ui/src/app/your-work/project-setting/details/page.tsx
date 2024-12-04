@@ -128,7 +128,7 @@ export default function Page() {
             return;
         }
 
-        if (keyInput.length > 10) {
+        if (keyInput?.length > 10) {
             toast.error("Project key cannot exceed 10 characters.");
             return;
         }
@@ -189,7 +189,9 @@ export default function Page() {
                 file = new File([blob], "viewavatar (3).svg", { type: blob.type });
             }
             let result = await projectService.updateProject(projectId, { img: file });
-            setActualImg(result.img);
+            if (!result.error) {
+                setActualImg(result.img);
+            }
             setOpenChangeLogoDialog(false);
         } catch (error) {
             console.error("Error updating project image:", error);
@@ -445,7 +447,8 @@ export default function Page() {
                     <Typography
                         variant="body2"
                         style={{
-                            display: keyInput.length > 0 && keyInput.length > 10 ? "block" : "none",
+                            display:
+                                keyInput?.length > 0 && keyInput?.length > 10 ? "block" : "none",
                             color: "#ff5630",
                         }}
                     >
@@ -454,7 +457,7 @@ export default function Page() {
                     <Typography
                         variant="body2"
                         style={{
-                            display: keyInput.length > 0 ? "block" : "none",
+                            display: keyInput?.length > 0 ? "block" : "none",
                             color: "#cc9c00",
                         }}
                     >

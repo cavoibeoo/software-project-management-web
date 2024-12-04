@@ -1,9 +1,6 @@
-import { authRequest } from "@/utils/request";
-import axios from "axios";
 import axios2 from "@/utils/axios";
+import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
-import { getRefreshTokenFromCookie } from "./CookieServices";
-import { ex } from "@fullcalendar/core/internal-common";
 // -----------------------Login Services-----------------------
 
 export const loginGoogle = async () => {
@@ -18,13 +15,14 @@ export const loginGoogle = async () => {
 
 export const CheckCookieServices = async () => {
     try {
-        const response = await authRequest.get("/is-login", {
+        const response = await axios2.get("/auth/is-login", {
             withCredentials: true,
         });
         if (response.data.isAuthenticated) {
-            window.location.href = "/your-work";
             toast.success("You have already logged in!");
+            window.location.href = "/your-work";
         } else {
+            toast.success("Please login again!");
             window.location.href = "/authentication/sign-in/";
         }
     } catch (error) {
@@ -35,16 +33,9 @@ export const CheckCookieServices = async () => {
 
 export const FormLoginServices = async (email: any, password: any) => {
     try {
-        await axios2.post(
-            "/auth/login",
-            {
-                email: email,
-                password: password,
-            },
-            { withCredentials: true }
-        );
-        CheckCookieServices();
-        toast.success("Sucessful signing in!");
+        await axios2.post("/auth/login", { email: email, password: password });
+        toast.success("Successful signing in!");
+        window.location.href = "/your-work";
     } catch (error: any) {
         toast.error(error.response.data.message);
         console.log(error);
@@ -54,24 +45,9 @@ export const FormLoginServices = async (email: any, password: any) => {
 export const GGLoginServices = async () => {
     try {
         window.location.href = "https://spm-server.vercel.app/api/auth/google";
-        // const response = await authRequest.get("/google", {
-        // 	withCredentials: true,
-        // });
-        // console.log(response.data);
-        // window.location.href = "/your-work";
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            const statusCode = error.response.status;
-            if (statusCode === 400) {
-                toast.error("User not existed!");
-            } else if (statusCode === 401) {
-                toast.error("Invalid Password!");
-            } else if (statusCode === 422) {
-                toast.error("Please Input with correct form!");
-            }
-        } else {
-            toast.error("Đăng Nhập Không Thành Công!");
-        }
+        console.log(error);
+        toast.error("Login failed");
     }
 };
 
@@ -92,34 +68,12 @@ export const LogoutServices = async () => {
     }
 };
 
-export const handleTokenExpired = async (error: any) => {
-    if (axios.isAxiosError(error) && error.response) {
-        const statusCode = error.response.status;
-        if (statusCode === 401) {
-            await RefreshToken();
-        }
-    }
-};
-
-export const RefreshToken = async () => {
-    try {
-        await authRequest.get("/refresh", {
-            withCredentials: true,
-        });
-    } catch (error) {
-        document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
-        document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
-        toast.error("Please login again!");
-        window.location.href = "/authentication/sign-in/";
-    }
-};
-
 // -----------------------Register Services-----------------------
 
 export const FormRegisterServices = async (name: any, email: any, password: any) => {
     try {
-        const response = await authRequest.post(
-            "/register",
+        const response = await axios2.post(
+            "/auth/register",
             {
                 name: name,
                 email: email,
@@ -127,19 +81,12 @@ export const FormRegisterServices = async (name: any, email: any, password: any)
             },
             { withCredentials: true }
         );
-        toast.success("Sucessful signing up!");
+        toast.success("Successful signing up please verify your email!");
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-            const statusCode = error.response.status;
-            if (statusCode === 400) {
-                toast.error("User not existed!");
-            } else if (statusCode === 401) {
-                toast.error("Invalid Password!");
-            } else if (statusCode === 422) {
-                toast.error("Please Input with correct form!");
-            }
-        } else {
-            toast.error("Đăng Nhập Không Thành Công!");
+        if (isAxiosError(error) && error.response) {
+            toast.error(error.response.data.message);
+            console.log(error);
         }
+        return error;
     }
 };

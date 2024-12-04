@@ -74,7 +74,7 @@ const loginWithGoogle = async (req, res, next) => {
 
 const isAuthenticated = async (req, res, next) => {
     try {
-        let result = { isAuthenticated: await authService.isLoggedIn(req.cookies) };
+        let result = await authService.isLoggedIn(req.cookies);
         res.status(StatusCodes.OK).send(result);
     } catch (err) {
         next(err);
