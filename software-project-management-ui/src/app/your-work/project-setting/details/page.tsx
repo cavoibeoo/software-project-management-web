@@ -128,7 +128,7 @@ export default function Page() {
             return;
         }
 
-        if (keyInput.length > 10) {
+        if (keyInput?.length > 10) {
             toast.error("Project key cannot exceed 10 characters.");
             return;
         }
@@ -445,7 +445,8 @@ export default function Page() {
                     <Typography
                         variant="body2"
                         style={{
-                            display: keyInput.length > 0 && keyInput.length > 10 ? "block" : "none",
+                            display:
+                                keyInput?.length > 0 && keyInput?.length > 10 ? "block" : "none",
                             color: "#ff5630",
                         }}
                     >
@@ -454,7 +455,7 @@ export default function Page() {
                     <Typography
                         variant="body2"
                         style={{
-                            display: keyInput.length > 0 ? "block" : "none",
+                            display: keyInput?.length > 0 ? "block" : "none",
                             color: "#cc9c00",
                         }}
                     >

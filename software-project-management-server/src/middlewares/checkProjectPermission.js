@@ -26,6 +26,9 @@ const checkPermission = (requiredPermissions) => {
             }
             // Check if the user has the required permission
             if (requiredPermissions) {
+                console.log(prj.roles);
+                console.log(isActor.role);
+                console.log(requiredPermissions);
                 if (
                     !prj.roles.some(
                         (role) =>

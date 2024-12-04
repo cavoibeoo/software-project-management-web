@@ -149,6 +149,34 @@ const addActor = async (project, data, isAdded) => {
     }
 };
 
+const removeActor = async (params, data) => {
+    try {
+        let prjId = getObjectId(params?.prjId);
+        let currentProject = await Project.findById(prjId);
+
+        // Check if user is in project
+        const index = currentProject.actors.findIndex(
+            (actor) => actor.user.toString() === params.userId.toString()
+        );
+        if (index === -1) {
+            throw new ApiError(StatusCodes.NOT_FOUND, `User not in project!`);
+        }
+        if (currentProject.actors[index].user == currentProject.author) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot remove project author!");
+        }
+        // Remove the user from project actors using slice for better performance
+
+        if (index !== -1) {
+            currentProject.actors.splice(index, 1);
+        }
+
+        let result = await currentProject.save();
+        return result ? result : null;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const updateProject = async (project, data) => {
     try {
         let prjId = getObjectId(project.prjId);
@@ -244,6 +272,7 @@ export {
     getCurrentUserProjects,
     getById,
     addActor,
+    removeActor,
     changeProjectStatus,
     hardDeleteProject,
     updateProject,

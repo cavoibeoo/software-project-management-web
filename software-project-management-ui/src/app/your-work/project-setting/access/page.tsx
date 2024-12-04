@@ -113,7 +113,7 @@ export default function Page() {
 
     React.useEffect(() => {
         const fetchApi = async () => {
-            let response = await projectServices.fetchById("674abb142bfd95785b28d213");
+            let response = await projectServices.fetchById("67501055fb8aa2b3ce0e1f77");
             setFetchedProject(response);
         };
         fetchApi();

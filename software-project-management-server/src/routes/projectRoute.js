@@ -39,6 +39,12 @@ router.put(
     validation(validationSchema.addMember),
     controller.changeActorRole
 );
+router.delete(
+    "/remove-actor/:prjId/:userId",
+    checkStatus,
+    checkPermission(Permission.REMOVE_ACTOR),
+    controller.removeActor
+);
 
 router.put(
     "/update/:prjId",
