@@ -45,6 +45,8 @@ import RoleMenuDialog from "@/app/your-work/user-management/RoleMenuDialog";
 import * as projectServices from "@/api-services/projectServices";
 import { useSearchParams } from "next/navigation";
 
+import { useProject } from "@/app/context/ProjectContext";
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 1;
 const MenuProps = {
@@ -112,10 +114,10 @@ export default function Page() {
         callUpdate();
     }, []);
 
-    const projectId = useSearchParams().get("projectId");
+    const { projectID, setProjectID } = useProject();
     React.useEffect(() => {
         const fetchApi = async () => {
-            let response = await projectServices.fetchById("6750752d218a90dad6730ec0");
+            let response = await projectServices.fetchById(projectID);
             setFetchedProject(response);
         };
         fetchApi();

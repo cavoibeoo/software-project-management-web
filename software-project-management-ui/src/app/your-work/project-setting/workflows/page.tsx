@@ -32,10 +32,14 @@ import AddIcon from "@mui/icons-material/Add";
 import ColumnContainer from "./ColumnContainer/ColumnContainer";
 import WorkFlowCard from "./WorkFlowCard/WorkFlowCard";
 import "./ColumnContainer/Column.css";
+
 import * as workflowService from "@/api-services/workflowService";
+import { useProject } from "@/app/context/ProjectContext";
+
 
 export default function Page() {
-	const projectId = "674734010395942535480a60";
+	const {projectID, setProjectID} = useProject()
+	const projectId = projectID;
 
 	const [update, setUpdate] = useState(false);
 	const [workflow, setWorkflow] = useState<any>();

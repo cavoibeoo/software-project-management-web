@@ -362,6 +362,9 @@ const RoleMenuDialog = ({
 									"add_comment",
 									"update_comment",
 									"delete_comment",
+									"add_role",
+									"update_role",
+									"delete_role",
 								].map((right) => (
 									<Box
 										key={right}

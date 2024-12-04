@@ -39,7 +39,7 @@ import Link from "next/link";
 
 import { createProject } from "../../../api-services/projectServices";
 import * as projectService from "../../../api-services/projectServices";
-import { RefreshToken } from "@/api-services/AuthServices";
+import { useProject } from "@/app/context/ProjectContext";
 
 interface Data {
     id: number;
@@ -84,6 +84,8 @@ export default function EnhancedTable() {
 
     const [update, setUpdate] = useState(false);
     const [sortedProjects, setSortedProjects] = useState<Data[]>([]);
+
+    const { projectID, setProjectID } = useProject();
 
     useEffect(() => {
         const fetchAPI = async () => {
@@ -468,7 +470,7 @@ export default function EnhancedTable() {
                             />
                             <TableBody>
                                 {visibleRows.map((project: any, index: any) => {
-                                    const isItemSelected = selected.includes(project.id);
+                                    const isItemSelected = selected.includes(project?._id);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -484,7 +486,7 @@ export default function EnhancedTable() {
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     onClick={(event) =>
-                                                        handleClick(event, project.id)
+                                                        handleClick(event, project?._id)
                                                     }
                                                     color="primary"
                                                     checked={isItemSelected}
@@ -497,7 +499,7 @@ export default function EnhancedTable() {
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
-                                                padding="none"
+                                                padding="none"  
                                                 className="project-cell hover"
                                             >
                                                 <Typography
@@ -515,11 +517,12 @@ export default function EnhancedTable() {
                                                             query: { projectId: `${project._id}` },
                                                         }}
                                                         className="project-link"
-                                                        onClick={() =>
+                                                        onClick={() => {
                                                             projectName?.setProjectName(
                                                                 project.name
-                                                            )
-                                                        }
+                                                            );
+                                                            setProjectID(project._id);
+                                                        }}
                                                     >
                                                         <img
                                                             src={project.img}
