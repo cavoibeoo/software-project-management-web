@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "@/utils/axios";
 import { toast } from "react-toastify";
 import { getAccessTokenFromCookie } from "./CookieServices";
-import { handleTokenExpired } from "./AuthServices";
 
 // -----------------------------------Issue-----------------------------------
 
