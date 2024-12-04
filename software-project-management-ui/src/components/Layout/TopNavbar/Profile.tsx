@@ -67,7 +67,7 @@ const Profile: React.FC<ProfileProps> = () => {
 					aria-expanded={open ? "true" : undefined}
 				>
 					<Avatar
-						src={user?.avatar || "/default-avatar.png"}
+						src={user?.avatar || "/images/default-avatar.png"}
 						alt="Olivia"
 						sx={{
 							width: { xs: "20px", sm: "28px" },

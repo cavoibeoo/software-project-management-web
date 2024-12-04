@@ -5,7 +5,10 @@ import { Box, Typography, MenuItem, Button, Menu } from "@mui/material";
 import Image from "next/image";
 import { EditUserInfo } from "@/app/user/components/CoverImage/EditUserInfo/EditUserInfo";
 
-const CoverImage: React.FC = () => {
+const CoverImage: React.FC<{ myInfo: any; callUpdate: () => void }> = ({
+	myInfo,
+	callUpdate,
+}) => {
 	// Dropdown
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -95,7 +98,7 @@ const CoverImage: React.FC = () => {
 										fontSize: { sx: "20px", md: "22px", lg: "24px" },
 									}}
 								>
-									Duc Quang
+									{myInfo.name}
 								</Typography>
 
 								<Typography
@@ -104,7 +107,7 @@ const CoverImage: React.FC = () => {
 										fontWeight: "500",
 									}}
 								>
-									Web Developer
+									{myInfo.jobTitle ? myInfo.jobTitle : "N/A"}
 								</Typography>
 							</Box>
 						</Box>
@@ -118,7 +121,7 @@ const CoverImage: React.FC = () => {
 							}}
 						>
 							<Box>
-								<EditUserInfo />
+								<EditUserInfo myInfo={myInfo} callUpdate={callUpdate} />
 
 								<Menu
 									anchorEl={anchorEl}

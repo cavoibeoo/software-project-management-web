@@ -47,7 +47,15 @@ export const FormLoginServices = async (email: any, password: any) => {
 		toast.success("Sucessful signing in!");
 		window.location.href = "/your-work/";
 	} catch (error: any) {
-		console.log(error);
+		if (
+			axios.isAxiosError(error) &&
+			error.response &&
+			error.response.status === 401
+		) {
+			toast.error("Your password not correct, please retry");
+		} else {
+			console.log(error);
+		}
 	}
 };
 
@@ -80,12 +88,10 @@ export const LogoutServices = async () => {
 		await axios2.get("/auth/logout", {
 			withCredentials: true,
 		});
-		if (typeof window !== "undefined") {
-			document.cookie =
-				"accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
-			document.cookie =
-				"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
-		}
+		document.cookie =
+			"accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+		document.cookie =
+			"refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
 
 		window.location.href = "/authentication/logout/";
 		toast.success("Sucessful logout!");

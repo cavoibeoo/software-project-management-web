@@ -1,8 +1,19 @@
 "use client";
 import * as React from "react";
 import NextLink from "next/link";
-import { Box, Button, Grid } from "@mui/material";
-import { useState } from "react";
+import {
+	Box,
+	Button,
+	MenuItem,
+	Select,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	TextField,
+	Dialog,
+	Grid,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { ColumnWorkflow, Id, Task } from "@/type";
 import {
 	DndContext,
@@ -21,8 +32,35 @@ import AddIcon from "@mui/icons-material/Add";
 import ColumnContainer from "./ColumnContainer/ColumnContainer";
 import WorkFlowCard from "./WorkFlowCard/WorkFlowCard";
 import "./ColumnContainer/Column.css";
+import * as workflowService from "@/api-services/workflowService";
 
 export default function Page() {
+	const projectId = "674734010395942535480a60";
+
+	const [update, setUpdate] = useState(false);
+	const [workflow, setWorkflow] = useState<any>();
+
+	const callUpdate = () => {
+		setUpdate(!update);
+	};
+
+	useEffect(() => {
+		const fetchAPI = async () => {
+			const workflow = await workflowService.fetchWorkflow(projectId);
+			setWorkflow(workflow);
+			console.log(workflow);
+
+			// Convert API data to ColumnWorkflow format
+			const apiColumns: ColumnWorkflow[] = workflow.map((item: any) => ({
+				Id: item._id,
+				title: item.name,
+			}));
+
+			setColumns(apiColumns);
+		};
+		fetchAPI();
+	}, [update]);
+
 	const [columns, setColumns] = useState<ColumnWorkflow[]>([
 		{
 			Id: generateId(),
@@ -38,14 +76,26 @@ export default function Page() {
 		},
 	]);
 	const [tasks, setTasks] = useState<Task[]>([]);
-	console.log(columns);
+	// function handleAddColumn() {
+	// 	const newColumn = {
+	// 		Id: generateId(),
+	// 		title: `Column ${columns.length + 1}`,
+	// 	};
+	// 	setColumns([...columns, newColumn]);
+	// }
 
-	function handleAddColumn() {
-		const newColumn = {
-			Id: generateId(),
-			title: `Column ${columns.length + 1}`,
-		};
-		setColumns([...columns, newColumn]);
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [newColumnName, setNewColumnName] = useState("");
+	const [newColumnType, setNewColumnType] = useState("");
+
+	async function handleAddColumn() {
+		await workflowService.createWorkflow(
+			projectId,
+			newColumnName,
+			newColumnType
+		);
+		callUpdate();
+		setDialogOpen(false);
 	}
 
 	function generateId() {
@@ -293,8 +343,8 @@ export default function Page() {
 							<Button
 								variant="contained"
 								color="primary"
-								onClick={handleAddColumn}
-								sx={{ marginTop: "4vh", paddingX: "10px", marginLeft: "20px" }}
+								onClick={() => setDialogOpen(true)}
+								sx={{ marginTop: "4vh" }}
 							>
 								<AddIcon />
 							</Button>
@@ -302,6 +352,41 @@ export default function Page() {
 					</div>
 				</div>
 			</Box>
+			<Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+				<DialogTitle>Add New Column</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						label="Column Name"
+						type="text"
+						fullWidth
+						value={newColumnName}
+						onChange={(e) => setNewColumnName(e.target.value)}
+					/>
+					<Select
+						fullWidth
+						value={newColumnType}
+						onChange={(e) => setNewColumnType(e.target.value)}
+						displayEmpty
+					>
+						<MenuItem value="" disabled>
+							Select Column Type
+						</MenuItem>
+						<MenuItem value="Todo">Todo</MenuItem>
+						<MenuItem value="Progress">In Progress</MenuItem>
+						<MenuItem value="Done">Done</MenuItem>
+					</Select>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={() => setDialogOpen(false)} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleAddColumn} color="primary">
+						Save
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 }
