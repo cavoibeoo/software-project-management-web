@@ -133,7 +133,7 @@ const updateIssue = async (params, data) => {
         issue.parent = data?.parent || issue?.parent;
         issue.sprint = data?.sprint == "" ? null : data?.sprint || issue?.sprint;
         issue.comments = data?.comments || issue?.comments;
-        issue.assignee = data?.assignee || issue?.assignee;
+        issue.assignee = data?.assignee == "" ? null : data?.assignee;
         console.log(data?.assignee);
 
         return foundedIssue.save();
