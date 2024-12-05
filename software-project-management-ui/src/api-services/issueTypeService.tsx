@@ -59,12 +59,17 @@ export const updateIssueType = async (data: any) => {
 					({
 						_id,
 						isDefault,
+						dataType,
 						...rest
 					}: {
 						_id?: string;
 						isDefault?: boolean;
+						dataType?: string;
 						[key: string]: any;
-					}) => rest
+					}) => ({
+						...rest,
+						dataType: dataType === "People" ? "Object" : dataType,
+					})
 				),
 			}),
 		};

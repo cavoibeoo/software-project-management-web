@@ -144,6 +144,10 @@ export default function Page() {
 		let updatedField = [...issueTypeField];
 		if (updatedField[index]) {
 			updatedField[index][field] = value;
+			if (field === "dataType" && value === "People") {
+				updatedField[index].dataType = "Object";
+				updatedField[index].advanceData = "User";
+			}
 		}
 		setIssueTypeField(updatedField);
 	};
@@ -219,7 +223,7 @@ export default function Page() {
 		{ type: "Number", icon: "123", label: "Number" },
 		{ type: "People", icon: "account_circle", label: "People" },
 		{ type: "Boolean", icon: "rule", label: "Boolean" },
-		{ type: "Array", icon: "stat_minus_2", label: "Combobox" },
+		// { type: "Array", icon: "stat_minus_2", label: "Combobox" },
 		{ type: "Date", icon: "calendar_month", label: "Date" },
 	];
 
@@ -227,7 +231,7 @@ export default function Page() {
 		String: "text_fields",
 		// Paragraph: "subject",
 		Number: "123",
-		People: "account_circle",
+		Object: "account_circle",
 		Boolean: "rule",
 		Array: "stat_minus_2",
 		Date: "calendar_month",

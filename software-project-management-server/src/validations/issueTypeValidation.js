@@ -34,6 +34,7 @@ const issueTypeUpdate = Joi.object({
                     .strict(),
                 isRequired: Joi.boolean().strict().default(false).optional(),
                 description: Joi.string().max(255).trim().strict().optional().allow(""),
+                advanceData: Joi.optional().allow(null),
             })
         )
         .strict(),
