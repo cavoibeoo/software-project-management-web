@@ -108,6 +108,13 @@ export default function Backlog() {
 
 			const getIssueType = await issueTypeService.fetchIssueType(projectId);
 			setIssueType(getIssueType);
+
+			const refreshProject = async () => {
+				const result = await projectService.fetchById(projectId);
+				setProject(result);
+				setActors(result.actors);
+			};
+			refreshProject();
 		};
 		fetchAPI();
 	}, [update]);
