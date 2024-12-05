@@ -410,10 +410,16 @@ const IssueDetailDialog: React.FC<{
 							value={summaryValue}
 							onChange={(e) => setSummaryValue(e.target.value)}
 							onBlur={() => setIsEditingSummary(false)}
+							sx={{
+								"& .MuiInputBase-input": {
+									fontSize: "20px",
+								},
+							}}
 							fullWidth
 						/>
 					) : (
 						<Typography
+							variant="h5"
 							onClick={() => setIsEditingSummary(true)}
 							sx={{ cursor: "pointer" }}
 						>
