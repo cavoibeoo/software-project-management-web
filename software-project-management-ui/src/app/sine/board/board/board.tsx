@@ -74,7 +74,9 @@ export default function Page() {
 		const fetchProjectData = async () => {
 			let projectData = await projectService.fetchById(projectId);
 			setProjectData(projectData);
-			setWorkflows(projectData.workflow);
+
+			const workflow = await workflowService.fetchWorkflow(projectId);
+			setWorkflows(workflow);
 
 			const sprints = await sprintService.fetchAllSprint(projectId);
 			setFetchedSprint(sprints);
@@ -254,145 +256,168 @@ export default function Page() {
 					</Typography>
 				</Breadcrumbs>
 				<div style={{ minHeight: "78vh" }}>
-					<Typography
-						variant="h5"
-						gutterBottom
-						fontWeight="600"
-						sx={{ marginTop: "20px", display: "flex", alignItems: "center" }}
-					>
-						<Select
-							value={selectedSprint}
-							style={{ marginTop: "20px" }}
-							onChange={(e) => {
-								const newSelectedSprint = e.target.value;
-								setSelectedSprint(newSelectedSprint);
-								const sprint = sprints.find(
-									(sprint) => sprint.name === newSelectedSprint
-								);
-								if (sprint) {
-									setSelectedSprintId(sprint._id);
-								}
-							}}
-							displayEmpty
-						>
-							{sprints.map((sprint) => (
-								<MenuItem key={sprint.id} value={sprint.name}>
-									{sprint.name}
-								</MenuItem>
-							))}
-						</Select>
-					</Typography>
-
-					<Box
-						style={{
-							margin: "auto",
-							display: "flex",
-							alignItems: "center",
-							overflowX: "auto",
-							overflowY: "hidden",
-							width: "100%",
-							paddingLeft: "40px",
-							paddingRight: "40px",
-						}}
-					>
-						<Box
-							display="flex"
-							flexDirection="row"
-							alignItems="flex-start"
-							gap="10px"
-						>
-							<DndContext
-								sensors={sensors}
-								onDragStart={handleDragStart}
-								onDragEnd={handleDragEnd}
-								onDragOver={handleDragOver}
+					{sprints.some((sprint) => sprint.status === "started") ? (
+						<Box>
+							<Typography
+								variant="h5"
+								gutterBottom
+								fontWeight="600"
+								sx={{
+									marginTop: "20px",
+									display: "flex",
+									alignItems: "center",
+								}}
 							>
-								<div className="w-[350px] min-w-[350px]">
-									<div
-										style={{ display: "flex", gap: "5vh", marginTop: "3vh" }}
+								<Select
+									value={selectedSprint}
+									style={{ marginTop: "20px" }}
+									onChange={(e) => {
+										const newSelectedSprint = e.target.value;
+										setSelectedSprint(newSelectedSprint);
+										const sprint = sprints.find(
+											(sprint) => sprint.name === newSelectedSprint
+										);
+										if (sprint) {
+											setSelectedSprintId(sprint._id);
+										}
+									}}
+									displayEmpty
+								>
+									{sprints.map((sprint) => (
+										<MenuItem key={sprint.id} value={sprint.name}>
+											{sprint.name}
+										</MenuItem>
+									))}
+								</Select>
+							</Typography>
+
+							<Box
+								style={{
+									margin: "auto",
+									display: "flex",
+									alignItems: "center",
+									overflowX: "auto",
+									overflowY: "hidden",
+									width: "100%",
+									paddingLeft: "40px",
+									paddingRight: "40px",
+								}}
+							>
+								<Box
+									display="flex"
+									flexDirection="row"
+									alignItems="flex-start"
+									gap="10px"
+								>
+									<DndContext
+										sensors={sensors}
+										onDragStart={handleDragStart}
+										onDragEnd={handleDragEnd}
+										onDragOver={handleDragOver}
 									>
-										<SortableContext items={columnId}>
-											{workflows.map((column) => (
-												<div
-													key={column._id}
-													style={{
-														minWidth: "300px",
-														minHeight: "700px",
-													}}
-												>
+										<div className="w-[350px] min-w-[350px]">
+											<div
+												style={{
+													display: "flex",
+													gap: "5vh",
+													marginTop: "3vh",
+												}}
+											>
+												<SortableContext items={columnId}>
+													{workflows.map((column) => (
+														<div
+															key={column._id}
+															style={{
+																minWidth: "300px",
+																minHeight: "700px",
+															}}
+														>
+															<ColumnContainer
+																workflow={workflows}
+																callUpdate={callUpdate}
+																projectId={projectId}
+																project={projectData}
+																column={column}
+																selectedSprint={selectedSprintId}
+																backlogs={
+																	sprints.find(
+																		(sprint) => sprint.name === selectedSprint
+																	)?.issues || []
+																}
+																deleteColumn={() => deleteColumn(column._id)}
+																updateColumn={updateColumn}
+																createTask={createTask}
+																tasks={tasks.filter(
+																	(task) => task.columnId === column._id
+																)}
+															/>
+														</div>
+													))}
+												</SortableContext>
+											</div>
+										</div>
+										{createPortal(
+											<DragOverlay>
+												{activeColumn && (
 													<ColumnContainer
+														workflow={workflows}
+														project={projectData}
 														callUpdate={callUpdate}
 														projectId={projectId}
-														project={projectData}
-														column={column}
-														selectedSprint={selectedSprintId}
+														selectedSprint={selectedSprint}
+														column={activeColumn}
 														backlogs={
 															sprints.find(
 																(sprint) => sprint.name === selectedSprint
 															)?.issues || []
 														}
-														deleteColumn={() => deleteColumn(column._id)}
+														deleteColumn={() => deleteColumn(activeColumn._id)}
 														updateColumn={updateColumn}
 														createTask={createTask}
 														tasks={tasks.filter(
-															(task) => task.columnId === column._id
+															(task) => task.columnId === activeColumn.Id
 														)}
 													/>
-												</div>
-											))}
-										</SortableContext>
-									</div>
-								</div>
-								{createPortal(
-									<DragOverlay>
-										{activeColumn && (
-											<ColumnContainer
-												project={projectData}
-												callUpdate={callUpdate}
-												projectId={projectId}
-												selectedSprint={selectedSprint}
-												column={activeColumn}
-												backlogs={
-													sprints.find(
-														(sprint) => sprint.name === selectedSprint
-													)?.issues || []
-												}
-												deleteColumn={() => deleteColumn(activeColumn._id)}
-												updateColumn={updateColumn}
-												createTask={createTask}
-												tasks={tasks.filter(
-													(task) => task.columnId === activeColumn.Id
 												)}
-											/>
+												{activeTask && (
+													<TaskCard
+														task={activeTask}
+														project={projectData}
+														callUpdate={callUpdate}
+													/>
+												)}
+												{activeBacklog && (
+													<BacklogCard
+														workflow={workflows}
+														backlog={activeBacklog}
+														project={projectData}
+														callUpdate={callUpdate}
+													/>
+												)}
+											</DragOverlay>,
+											document.body
 										)}
-										{activeTask && (
-											<TaskCard
-												task={activeTask}
-												project={projectData}
-												callUpdate={callUpdate}
-											/>
-										)}
-										{activeBacklog && (
-											<BacklogCard
-												backlog={activeBacklog}
-												project={projectData}
-												callUpdate={callUpdate}
-											/>
-										)}
-									</DragOverlay>,
-									document.body
-								)}
-							</DndContext>
-							<Button
-								variant="contained"
-								color="primary"
-								onClick={() => setDialogOpen(true)}
-								sx={{ marginTop: "4vh" }}
-							>
-								<AddIcon />
-							</Button>
+									</DndContext>
+									<Button
+										variant="contained"
+										color="primary"
+										onClick={() => setDialogOpen(true)}
+										sx={{ marginTop: "4vh" }}
+									>
+										<AddIcon />
+									</Button>
+								</Box>
+							</Box>
 						</Box>
-					</Box>
+					) : (
+						<Typography
+							variant="h6"
+							color="text.secondary"
+							style={{ marginTop: "20px" }}
+						>
+							Not have sprint started
+						</Typography>
+					)}
 				</div>
 			</Box>
 			<Chatbot />

@@ -580,3 +580,7 @@
 	background-color: #1c93ee94 !important;
 	color: #fff !important;
 }
+
+.dark-theme .BacklogInput {
+	color: #fff !important;
+}
