@@ -6,49 +6,59 @@ import { getAccessTokenFromCookie } from "./CookieServices";
 // -----------------------------------Issue-----------------------------------
 
 export const addActor = async (data: any) => {
-    try {
-        console.log(data);
-        let { role, projectId, email } = data;
-        // await RefreshToken();
-        const response = await axios.post(`/project/add-actor/${projectId}`, {
-            email: email,
-            role,
-        });
+	try {
+		console.log(data);
+		let { role, projectId, email } = data;
+		// await RefreshToken();
+		const response = await axios.post(`/project/add-actor/${projectId}`, {
+			email: email,
+			role,
+		});
 
-        toast.success("Add member succeeded!");
-        return response.data;
-    } catch (error: any) {
-        toast.error(`Add member failed. ${error?.response?.data?.message}`);
-        console.log(error);
-    }
+		toast.success("Add member succeeded!");
+		return response.data;
+	} catch (error: any) {
+		if (error?.response?.status === 404) {
+			toast.error("User not found or may not exist, please retry");
+		} else {
+			toast.error(`Add member failed. ${error?.response?.data?.message}`);
+		}
+		console.log(error);
+	}
 };
 
 export const updateActor = async (data: any) => {
-    try {
-        let { role, projectId, email } = data;
-        // await RefreshToken();
-        const response = await axios.put(`/project/change-actor-role/${projectId}`, {
-            email: email,
-            role,
-        });
+	try {
+		let { role, projectId, email } = data;
+		// await RefreshToken();
+		const response = await axios.put(
+			`/project/change-actor-role/${projectId}`,
+			{
+				email: email,
+				role,
+			}
+		);
 
-        toast.success("Update member succeeded!");
-        return response.data;
-    } catch (error: any) {
-        toast.error(`Update member failed. ${error?.response?.data?.message}`);
-        console.log(error);
-    }
+		toast.success("Update member succeeded!");
+		return response.data;
+	} catch (error: any) {
+		toast.error(`Update member failed. ${error?.response?.data?.message}`);
+		console.log(error);
+	}
 };
 
 export const removeActor = async (data: any) => {
-    try {
-        let { projectId, userId } = data;
-        const response = await axios.delete(`/project/remove-actor/${projectId}/${userId}`, {});
+	try {
+		let { projectId, userId } = data;
+		const response = await axios.delete(
+			`/project/remove-actor/${projectId}/${userId}`,
+			{}
+		);
 
-        toast.success("Remove member succeeded!");
-        return response.data;
-    } catch (error: any) {
-        toast.error(`Remove member failed. ${error?.response?.data?.message}`);
-        console.log(error);
-    }
+		toast.success("Remove member succeeded!");
+		return response.data;
+	} catch (error: any) {
+		toast.error(`Remove member failed. ${error?.response?.data?.message}`);
+		console.log(error);
+	}
 };

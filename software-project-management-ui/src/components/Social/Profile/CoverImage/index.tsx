@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Typography, MenuItem, Button, Menu } from "@mui/material";
+import { Box, Typography, MenuItem, Button, Menu, Avatar } from "@mui/material";
 import Image from "next/image";
 import { EditUserInfo } from "@/app/user/components/CoverImage/EditUserInfo/EditUserInfo";
 
@@ -68,12 +68,16 @@ const CoverImage: React.FC<{ myInfo: any; callUpdate: () => void }> = ({
 									width: { xs: "120px", sm: "160px" },
 								}}
 							>
-								<Image
-									src="/images/avt_quang.jpg"
+								<Avatar
+									src={myInfo.avatar || "/images/default-avatar.png"}
 									className="profile-image rounded-circle"
 									alt="profile-image"
-									width={240}
-									height={240}
+									sx={{
+										width: 150,
+										height: 150,
+										backgroundColor: "#fff",
+										border: "2px solid #213b65",
+									}}
 								/>
 
 								<Image
