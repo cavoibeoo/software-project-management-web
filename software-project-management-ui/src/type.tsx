@@ -39,4 +39,5 @@ export type Issue = {
 export type ColumnWorkflow = {
 	Id: string;
 	title: string;
+	workflowType: string;
 };

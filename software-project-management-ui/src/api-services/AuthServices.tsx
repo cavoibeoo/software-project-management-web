@@ -37,7 +37,11 @@ export const FormLoginServices = async (email: any, password: any) => {
 		toast.success("Successful signing in!");
 		window.location.href = "/your-work";
 	} catch (error: any) {
-		toast.error(error.response.data.message);
+		if (error.response.status === 400) {
+			toast.error("Invalid information, please retry");
+		} else {
+			toast.error(error.response.data.message);
+		}
 		console.log(error);
 	}
 };
