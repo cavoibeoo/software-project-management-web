@@ -4,17 +4,17 @@ import NextLink from "next/link";
 import {
 	Box,
 	Button,
-	Grid,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	TextField,
-	Select,
 	MenuItem,
+	Select,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	TextField,
+	Dialog,
+	Grid,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Column, Id, Sprint, Task } from "@/type";
+import { ColumnWorkflow, Id, Task } from "@/type";
 import {
 	DndContext,
 	DragOverlay,
@@ -29,74 +29,53 @@ import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { Chatbot } from "@/components/Chatbot";
-import * as workflowService from "@/api-services/workflowService";
-import * as projectService from "@/api-services/projectServices";
-import * as sprintService from "@/api-services/sprintService";
 import ColumnContainer from "../ColumnContainer/ColumnContainer";
-import TaskCard from "../ColumnContainer/TaskCard/TaskCard";
-import BacklogCard from "../ColumnContainer/TaskCard/BacklogCard";
-import * as issueService from "@/api-services/issueServices";
-import { toast } from "react-toastify";
+import "../ColumnContainer/Column.css";
+import * as workflowService from "@/api-services/workflowService";
 import { useProject } from "@/app/context/ProjectContext";
 
-export default function Page() {
+export default function Workflows() {
 	const { projectID, setProjectID } = useProject();
 	const projectId = projectID;
 
-	const [fetchedSprint, setFetchedSprint] = useState<Sprint[]>([]);
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [newColumnName, setNewColumnName] = useState("");
-	const [newColumnType, setNewColumnType] = useState("");
-	const [workflows, setWorkflows] = useState<Column[]>([]);
-	const columnId = workflows.map((column) => column._id);
-	const [projectData, setProjectData] = React.useState<any>();
-	const [update, setUpdate] = React.useState(false);
-	const [tasks, setTasks] = useState<Task[]>([]);
+	const [update, setUpdate] = useState(false);
+	const [workflow, setWorkflow] = useState<any>();
 
 	const callUpdate = () => {
 		setUpdate(!update);
 	};
 
-	const sensors = useSensors(
-		useSensor(PointerSensor, {
-			activationConstraint: {
-				distance: 1,
-			},
-		})
-	);
+	useEffect(() => {
+		const fetchAPI = async () => {
+			const workflow = await workflowService.fetchWorkflow(projectId);
+			setWorkflow(workflow);
+			console.log(workflow);
 
-	const [activeColumn, setActiveColumn] = useState<any | null>(null);
-	const [activeTask, setActiveTask] = useState<any | null>(null);
-	const [activeBacklog, setActiveBacklog] = useState<any | null>(null);
+			// Convert API data to ColumnWorkflow format
+			const apiColumns: ColumnWorkflow[] = workflow.map((item: any) => ({
+				Id: item._id,
+				title: item.name,
+				workflowType: item.workflowType,
+			}));
 
-	React.useEffect(() => {
-		const fetchProjectData = async () => {
-			let projectData = await projectService.fetchById(projectId);
-			setProjectData(projectData);
-			setWorkflows(projectData.workflow);
-
-			const sprints = await sprintService.fetchAllSprint(projectId);
-			setFetchedSprint(sprints);
+			setColumns(apiColumns);
 		};
-		fetchProjectData();
+		fetchAPI();
 	}, [update]);
 
-	const [sprints, setSprints] = React.useState<any[]>([]);
+	const [columns, setColumns] = useState<ColumnWorkflow[]>([]);
+	const [tasks, setTasks] = useState<Task[]>([]);
+	// function handleAddColumn() {
+	// 	const newColumn = {
+	// 		Id: generateId(),
+	// 		title: `Column ${columns.length + 1}`,
+	// 	};
+	// 	setColumns([...columns, newColumn]);
+	// }
 
-	useEffect(() => {
-		if (fetchedSprint?.length > 0) {
-			const sprintNames = fetchedSprint.map((sprint) => sprint);
-			setSprints(sprintNames);
-		}
-	}, [fetchedSprint]);
-
-	useEffect(() => {
-		if (sprints.length > 0 && !selectedSprint) {
-			setSelectedSprint(sprints[0].name);
-			setSelectedSprintId(sprints[0]._id);
-		}
-	}, [sprints]);
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [newColumnName, setNewColumnName] = useState("");
+	const [newColumnType, setNewColumnType] = useState("");
 
 	async function handleAddColumn() {
 		await workflowService.createWorkflow(
@@ -111,6 +90,7 @@ export default function Page() {
 	function generateId() {
 		return Math.random().toString(36).substring(2, 15);
 	}
+	const columnId = columns.map((column) => column.Id);
 
 	async function deleteColumn(id: string) {
 		await workflowService.deleteWorkflow(projectId, id);
@@ -128,37 +108,28 @@ export default function Page() {
 	}
 
 	function createTask(columnId: Id) {
-		// const newTask = {
-		// 	id: generateId(),
-		// 	columnId,
-		// 	summary: `Task ${tasks.length + 1}`,
-		// 	description: "Create Sylabus program",
-		// 	daysLeft: "16 days left",
-		// 	TeamMembers: [
-		// 		{
-		// 			img: "/images/avt_quang.jpg",
-		// 		},
-		// 	],
-		// 	bgClass: "bg-primary-100",
-		// 	issueType: "Story",
-		// };
-		// setTasks([...tasks, newTask]);
-	}
-
-	async function createTaskCard(
-		projectId: string,
-		issueType: string,
-		summary: string
-	) {
-		await issueService.createIssue({
-			projectId: projectId,
-			summary: summary,
-			issueType: issueType,
-		});
-		callUpdate();
+		const newTask = {
+			id: generateId(),
+			columnId,
+			summary: `Task ${tasks.length + 1}`,
+			description:
+				"A brief description of the project, its objectives, and its importance to the organization.",
+			daysLeft: "16 days left",
+			TeamMembers: [
+				{
+					img: "/images/users/user16.jpg",
+				},
+				{
+					img: "/images/users/user17.jpg",
+				},
+			],
+			bgClass: "bg-primary-100",
+		};
+		setTasks([...tasks, newTask]);
 	}
 
 	function handleDragStart(event: DragStartEvent) {
+		console.log(event);
 		if (event.active.data.current?.type === "column") {
 			setActiveColumn(event.active.data.current.column);
 			return;
@@ -167,21 +138,27 @@ export default function Page() {
 			setActiveTask(event.active.data.current.task);
 			return;
 		}
-		if (event.active.data.current?.type === "backlog") {
-			setActiveBacklog(event.active.data.current.backlog);
-			return;
-		}
 	}
 
 	function handleDragEnd(event: DragEndEvent) {
 		setActiveColumn(null);
 		setActiveTask(null);
-		setActiveBacklog(null);
+
 		const { active, over } = event;
 		if (!over) return;
 		const activeColumnId = active.id;
 		const overColumnId = over.id;
 		if (activeColumnId === overColumnId) return;
+
+		setColumns((columns) => {
+			const activeColumnIndex = columns.findIndex(
+				(column) => column.Id === activeColumnId
+			);
+			const overColumnIndex = columns.findIndex(
+				(column) => column.Id === overColumnId
+			);
+			return arrayMove(columns, activeColumnIndex, overColumnIndex);
+		});
 	}
 	function handleDragOver(event: DragOverEvent) {
 		const { active, over } = event;
@@ -224,14 +201,19 @@ export default function Page() {
 		}
 	}
 
-	const [selectedSprint, setSelectedSprint] = useState<any>(
-		sprints.length > 0 ? sprints[0] : ""
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 1,
+			},
+		})
 	);
-	const [selectedSprintId, setSelectedSprintId] = useState<any>();
 
+	const [activeColumn, setActiveColumn] = useState<any | null>(null);
+	const [activeTask, setActiveTask] = useState<any | null>(null);
 	return (
 		<>
-			<Box sx={{ marginLeft: "20px" }}>
+			<Box sx={{ marginLeft: "80px", marginTop: "7px" }}>
 				<Breadcrumbs separator="›" aria-label="breadcrumb">
 					<Link
 						className="hover-underlined"
@@ -247,43 +229,30 @@ export default function Page() {
 						color="inherit"
 						href="/sine/board/"
 					>
-						{projectData?.name}
+						Sine_SPM
 					</Link>
 					<Typography key="3" color="text.primary">
 						Kanban Board
 					</Typography>
 				</Breadcrumbs>
-				<div style={{ minHeight: "78vh" }}>
+				<div
+					style={{ minHeight: "78vh", marginLeft: "5px", marginTop: "10px" }}
+				>
 					<Typography
 						variant="h5"
 						gutterBottom
 						fontWeight="600"
-						sx={{ marginTop: "20px", display: "flex", alignItems: "center" }}
+						sx={{ marginTop: "20px" }}
 					>
-						<Select
-							value={selectedSprint}
-							style={{ marginTop: "20px" }}
-							onChange={(e) => {
-								const newSelectedSprint = e.target.value;
-								setSelectedSprint(newSelectedSprint);
-								const sprint = sprints.find(
-									(sprint) => sprint.name === newSelectedSprint
-								);
-								if (sprint) {
-									setSelectedSprintId(sprint._id);
-								}
-							}}
-							displayEmpty
-						>
-							{sprints.map((sprint) => (
-								<MenuItem key={sprint.id} value={sprint.name}>
-									{sprint.name}
-								</MenuItem>
-							))}
-						</Select>
+						Columns and statuses
+					</Typography>
+					<Typography variant="subtitle1" gutterBottom>
+						Use columns and statuses to define how work progresses on your
+						board. Store statuses in the left panel to hide their associated
+						issues from the board and backlog.
 					</Typography>
 
-					<Box
+					<div
 						style={{
 							margin: "auto",
 							display: "flex",
@@ -293,6 +262,7 @@ export default function Page() {
 							width: "100%",
 							paddingLeft: "40px",
 							paddingRight: "40px",
+							marginTop: "80px",
 						}}
 					>
 						<Box
@@ -312,34 +282,35 @@ export default function Page() {
 										style={{ display: "flex", gap: "5vh", marginTop: "3vh" }}
 									>
 										<SortableContext items={columnId}>
-											{workflows.map((column) => (
-												<div
-													key={column._id}
-													style={{
-														minWidth: "300px",
-														minHeight: "700px",
-													}}
-												>
-													<ColumnContainer
-														callUpdate={callUpdate}
-														projectId={projectId}
-														project={projectData}
-														column={column}
-														selectedSprint={selectedSprintId}
-														backlogs={
-															sprints.find(
-																(sprint) => sprint.name === selectedSprint
-															)?.issues || []
-														}
-														deleteColumn={() => deleteColumn(column._id)}
-														updateColumn={updateColumn}
-														createTask={createTask}
-														tasks={tasks.filter(
-															(task) => task.columnId === column._id
-														)}
-													/>
-												</div>
-											))}
+											{columns.map((column) => {
+												const columnClass =
+													column.title === "To Do"
+														? "column-todo"
+														: column.title === "In Progress"
+															? "column-in-progress"
+															: column.title === "Done"
+																? "column-done"
+																: "";
+
+												return (
+													<div
+														key={column.Id}
+														className={`column ${columnClass}`}
+													>
+														<ColumnContainer
+															projectId={projectId}
+															column={column}
+															workflowType={newColumnType}
+															deleteColumn={() => deleteColumn(column.Id)}
+															updateColumn={updateColumn}
+															createTask={createTask}
+															tasks={tasks.filter(
+																(task) => task.columnId === column.Id
+															)}
+														/>
+													</div>
+												);
+											})}
 										</SortableContext>
 									</div>
 								</div>
@@ -347,36 +318,15 @@ export default function Page() {
 									<DragOverlay>
 										{activeColumn && (
 											<ColumnContainer
-												project={projectData}
-												callUpdate={callUpdate}
 												projectId={projectId}
-												selectedSprint={selectedSprint}
 												column={activeColumn}
-												backlogs={
-													sprints.find(
-														(sprint) => sprint.name === selectedSprint
-													)?.issues || []
-												}
-												deleteColumn={() => deleteColumn(activeColumn._id)}
+												workflowType={activeColumn.workflowType}
+												deleteColumn={() => deleteColumn(activeColumn.Id)}
 												updateColumn={updateColumn}
 												createTask={createTask}
 												tasks={tasks.filter(
 													(task) => task.columnId === activeColumn.Id
 												)}
-											/>
-										)}
-										{activeTask && (
-											<TaskCard
-												task={activeTask}
-												project={projectData}
-												callUpdate={callUpdate}
-											/>
-										)}
-										{activeBacklog && (
-											<BacklogCard
-												backlog={activeBacklog}
-												project={projectData}
-												callUpdate={callUpdate}
 											/>
 										)}
 									</DragOverlay>,
@@ -392,11 +342,9 @@ export default function Page() {
 								<AddIcon />
 							</Button>
 						</Box>
-					</Box>
+					</div>
 				</div>
 			</Box>
-			<Chatbot />
-
 			<Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
 				<DialogTitle>Add New Column</DialogTitle>
 				<DialogContent>
