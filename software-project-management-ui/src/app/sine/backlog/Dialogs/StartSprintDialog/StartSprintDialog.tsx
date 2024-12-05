@@ -262,14 +262,12 @@ const StartSprintDialog: React.FC<{
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DatePicker
 							readOnly={isReadonly}
-							className="datePicker"
 							value={endDate}
 							onChange={(event: any) => {
 								setEndDate(event.target.value);
 							}}
 							sx={{
 								width: "100%",
-								backgroundColor: "#0a0e19 !important",
 								"& fieldset": {
 									border: "1px solid #D5D9E2",
 									borderRadius: "7px",
