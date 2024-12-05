@@ -230,6 +230,8 @@ const IssueDetailDialog: React.FC<{
 		setSprintValue(event.target.value as string);
 	};
 
+	const [isEditingSummary, setIsEditingSummary] = useState<boolean>(false);
+
 	return (
 		<>
 			<Button
@@ -403,7 +405,27 @@ const IssueDetailDialog: React.FC<{
 						paddingTop: "0px !important",
 					}}
 				>
-					{issue.summary}
+					{isEditingSummary ? (
+						<TextField
+							value={summaryValue}
+							onChange={(e) => setSummaryValue(e.target.value)}
+							onBlur={() => setIsEditingSummary(false)}
+							sx={{
+								"& .MuiInputBase-input": {
+									fontSize: "20px",
+								},
+							}}
+							fullWidth
+						/>
+					) : (
+						<Typography
+							variant="h5"
+							onClick={() => setIsEditingSummary(true)}
+							sx={{ cursor: "pointer" }}
+						>
+							{summaryValue}
+						</Typography>
+					)}
 				</DialogTitle>
 				<DialogContent sx={{ width: "100%" }}>
 					<strong

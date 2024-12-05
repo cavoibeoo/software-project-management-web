@@ -57,7 +57,16 @@ export const updateUserStatus = async (userId: string, isDeleted: boolean) => {
 
 export const updateUserInfo = async (data: any) => {
 	try {
-		const response = await axios.put(`/user/update-info`, data, {});
+		const formData = new FormData();
+		for (const key in data) {
+			formData.append(key, data[key]);
+		}
+
+		const response = await axios.put(`/user/update-info`, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
 		toast.success("User info updated successfully");
 		return response.data;
 	} catch (error: any) {
