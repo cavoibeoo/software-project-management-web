@@ -41,6 +41,10 @@ import {
 } from "@mui/material";
 import { UserRolesTables } from "./UserRolesTables/UserRolesTables";
 import RoleMenuDialog from "@/app/your-work/user-management/RoleMenuDialog";
+
+import * as projectServices from "@/api-services/projectServices";
+import { useProject } from "@/app/context/ProjectContext";
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 1;
 const MenuProps = {
@@ -96,6 +100,26 @@ export default function Page() {
 		children: PropTypes.node,
 		onClose: PropTypes.func.isRequired,
 	};
+
+	const [update, setUpdate] = React.useState(false);
+	const [fetchedProject, setFetchedProject] = React.useState<any>(null);
+
+	const callUpdate = () => {
+		setUpdate(!update);
+	};
+
+	React.useEffect(() => {
+		callUpdate();
+	}, []);
+	const { projectID, setProjectID } = useProject();
+	const projectId = projectID;
+	React.useEffect(() => {
+		const fetchApi = async () => {
+			let response = await projectServices.fetchById(projectId);
+			setFetchedProject(response);
+		};
+		fetchApi();
+	}, [update]);
 
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -311,7 +335,7 @@ export default function Page() {
 							gap: "20px",
 						}}
 					>
-						<RoleMenuDialog />
+						<RoleMenuDialog project={fetchedProject} callUpdate={callUpdate} />
 						<form className={styles.searchBox} style={{ maxWidth: "30%" }}>
 							<Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
 								<label>
@@ -371,7 +395,7 @@ export default function Page() {
 						</Select>
 					</FormControl> */}
 					</Box>
-					<UserRolesTables />
+					<UserRolesTables project={fetchedProject} callUpdate={callUpdate} />
 				</Box>
 			</Box>
 		</>

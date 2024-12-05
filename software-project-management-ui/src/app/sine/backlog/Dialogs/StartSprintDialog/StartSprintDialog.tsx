@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Button,
 	DialogActions,
@@ -30,13 +30,6 @@ const StartSprintDialog: React.FC<{
 	const [open, setOpen] = React.useState(false);
 
 	const handleClickOpen = () => {
-		console.log(sprint?.status, "vs created");
-		console.log(sprint?.status?.toString() == "created");
-		console.log(
-			sprint?.status?.toString() == "created"
-				? "Start Sprint"
-				: "Complete Sprint"
-		);
 		setOpen(true);
 	};
 
@@ -50,6 +43,13 @@ const StartSprintDialog: React.FC<{
 				? "started"
 				: "completed"
 			: null
+	);
+	const [btnName, setBtnName] = useState<string | null>(
+		sprint?.status.toString() != "completed"
+			? sprint?.status?.toString() == "created"
+				? "Start sprint"
+				: "Complete sprint"
+			: "Sprint details"
 	);
 
 	const [isReadonly, setReadOnly] = useState<boolean>(
@@ -69,6 +69,23 @@ const StartSprintDialog: React.FC<{
 		}
 	};
 
+	useEffect(() => {
+		setNextAction(
+			sprint?.status.toString() != "completed"
+				? sprint?.status?.toString() == "created"
+					? "started"
+					: "completed"
+				: null
+		);
+		setBtnName(
+			sprint?.status.toString() != "completed"
+				? sprint?.status?.toString() == "created"
+					? "Start sprint"
+					: "Complete sprint"
+				: "Sprint details"
+		);
+	}, [sprint]);
+
 	const handleSubmit = async () => {
 		const result = await updateSprint({
 			projectId: sprint.project,
@@ -79,7 +96,7 @@ const StartSprintDialog: React.FC<{
 			goal: sprintGoal,
 			status: nextAction,
 		});
-		if (!result.error) {
+		if (!result?.error) {
 			callUpdate();
 			handleClose();
 		}
@@ -97,11 +114,7 @@ const StartSprintDialog: React.FC<{
 				}}
 				onClick={handleClickOpen}
 			>
-				{nextAction
-					? nextAction == "started"
-						? "Start Sprint"
-						: "Complete Sprint"
-					: "Sprint details"}
+				{btnName}
 			</Button>
 			<Dialog
 				open={open}

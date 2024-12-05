@@ -28,7 +28,10 @@ import PropTypes from "prop-types";
 import { FormEvent } from "react";
 import ProjectDefaultLogo from "@/app/img/icon/ProjectDefaultLogo";
 import { TransitionProps } from "@mui/material/transitions";
-import { TextFields } from "@mui/icons-material";
+import * as projectService from "@/api-services/projectServices";
+
+import { useProject } from "@/app/context/ProjectContext";
+
 
 export default function Page() {
 	interface BootstrapDialogTitleProps {
@@ -81,6 +84,21 @@ export default function Page() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+	const {projectID, setProjectID} = useProject();
+	const projectId = projectID;
+	const [fetchedProject, setFetchProject] = React.useState<any>();
+	React.useEffect(() => {
+		const fetchProject = async () => {
+			const result = await projectService.fetchById(projectId);
+			setFetchProject(result);
+			setProjectInput(result?.name);
+			setNameInput(result?.name);
+			setKeyInput(result?.key);
+			setSelectedFileName(result?.img);
+			setActualImg(result?.img);
+		};
+		fetchProject();
+	}, []);
 
 	// Modal
 	const [openNotification, setOpenNotification] = useState(false);
@@ -102,27 +120,30 @@ export default function Page() {
 	};
 	const [nameInput, setNameInput] = useState("");
 	const [keyInput, setKeyInput] = useState("");
+	const [isEdit, setIsEdit] = useState(false);
 	const handleUpdateProject = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		if (nameInput.length <= 2) {
+		if (nameInput?.length <= 2) {
 			toast.error("Project name must be longer than 2 characters.");
 			return;
 		}
 
-		if (!keyInput) {
-			toast.error("Project key cannot be empty.");
-			return;
-		}
-
-		if (keyInput.length > 10) {
+		if (!keyInput || keyInput.length > 10) {
 			toast.error("Project key cannot exceed 10 characters.");
 			return;
 		}
 
-		toast.info(
-			"This change would re-index your project, and may break some external integrations."
-		);
-		toast.success("Project updated successfully!");
+		// toast.info(
+		//     "This change would re-index your project, and may break some external integrations."
+		// );
+		// toast.success("Project updated successfully!");
+		let result = await projectService.updateProject(projectId, {
+			name: nameInput,
+			key: keyInput,
+		});
+		setNameInput(result.name);
+		setKeyInput(result.key);
+		setIsEdit(false);
 
 		// Proceed with the update logic here
 	};
@@ -148,11 +169,40 @@ export default function Page() {
 
 	const [selectedFileName, setSelectedFileName] =
 		useState<string>("cavoibeo.svg");
+	const [actualImg, setActualImg] = useState<string>("");
+	const [selectedFile, setSelectedFile] = useState<any>(
+		"/images/uploadImg.png"
+	);
 	const [selectedAvatarIndex, setSelectedAvatarIndex] = useState<number | null>(
 		null
 	);
 
 	const [openSelectAvatarDialog, setOpenSelectAvatarDialog] = useState(false);
+
+	const handleUpdateImg = async () => {
+		if (!selectedFile) {
+			toast.error("Please select another image");
+			return;
+		}
+		try {
+			let file = selectedFile;
+			if (typeof selectedFile === "string") {
+				const response = await fetch(selectedFile); // Fetch file from public directory
+				if (!response.ok) throw new Error("File not found");
+
+				const blob = await response.blob(); // Get file as a blob
+				file = new File([blob], "viewavatar (3).svg", { type: blob.type });
+			}
+			let result = await projectService.updateProject(projectId, { img: file });
+			if (!result?.error) {
+				setActualImg(result.img);
+			}
+			setOpenChangeLogoDialog(false);
+		} catch (error) {
+			console.error("Error updating project image:", error);
+			toast.error("Failed to update project image");
+		}
+	};
 
 	const handleOpenSelectAvatarDialog = () => {
 		setOpenSelectAvatarDialog(true);
@@ -337,7 +387,7 @@ export default function Page() {
 					gap: "20px",
 				}}
 			>
-				<ProjectDefaultLogo src={selectedFileName} />
+				<ProjectDefaultLogo src={actualImg} />
 				<Button
 					variant="outlined"
 					size="medium"
@@ -354,6 +404,7 @@ export default function Page() {
 						flexDirection: "column",
 						gap: "10px",
 						alignContent: "start",
+						width: "50vh",
 					}}
 				>
 					<Typography variant="subtitle1" style={{ fontStyle: "italic" }}>
@@ -372,7 +423,9 @@ export default function Page() {
 						id="name"
 						autoFocus
 						value={nameInput}
-						onChange={(e) => setNameInput(e.target.value)}
+						onChange={(e) => {
+							setNameInput(e.target.value), setIsEdit(true);
+						}}
 						InputProps={{
 							style: { borderRadius: 8 },
 						}}
@@ -381,7 +434,7 @@ export default function Page() {
 						variant="body2"
 						style={{
 							display:
-								nameInput.length > 0 && nameInput.length <= 2
+								nameInput?.length > 0 && nameInput?.length <= 2
 									? "block"
 									: "none",
 							color: "#ff5630",
@@ -400,7 +453,9 @@ export default function Page() {
 						fullWidth
 						id="projectKey"
 						value={keyInput}
-						onChange={(e) => setKeyInput(e.target.value)}
+						onChange={(e) => {
+							setKeyInput(e.target.value), setIsEdit(true);
+						}}
 						InputProps={{
 							style: { borderRadius: 8 },
 						}}
@@ -409,7 +464,9 @@ export default function Page() {
 						variant="body2"
 						style={{
 							display:
-								keyInput.length > 0 && keyInput.length > 10 ? "block" : "none",
+								keyInput?.length > 0 && keyInput?.length > 10
+									? "block"
+									: "none",
 							color: "#ff5630",
 						}}
 					>
@@ -418,7 +475,7 @@ export default function Page() {
 					<Typography
 						variant="body2"
 						style={{
-							display: keyInput.length > 0 ? "block" : "none",
+							display: keyInput?.length > 0 ? "block" : "none",
 							color: "#cc9c00",
 						}}
 					>
@@ -426,14 +483,16 @@ export default function Page() {
 						some external integrations.
 					</Typography>
 
-					<Button
-						variant="contained"
-						size="medium"
-						type="submit"
-						style={{ marginTop: "10px" }}
-					>
-						Save
-					</Button>
+					{isEdit ? (
+						<Button
+							variant="contained"
+							size="medium"
+							type="submit"
+							style={{ marginTop: "10px" }}
+						>
+							Save
+						</Button>
+					) : null}
 				</Box>
 			</Box>
 			<Dialog
@@ -496,13 +555,17 @@ export default function Page() {
 									>
 										<Box className="css-1790nmb" gap={"7px"}>
 											<img
-												style={{ width: "100px", height: "auto" }}
-												src="/images/uploadImg.png"
+												style={{
+													width: "300px",
+													height: "auto",
+													borderRadius: "50%",
+												}}
+												src={selectedFileName}
 												alt=""
 											/>
-											<Typography style={{ textAlign: "center" }}>
-												Drag & Drop Your Image Here..
-											</Typography>
+											{/* <Typography style={{ textAlign: "center" }}>
+                                                Drag & Drop Your Image Here..
+                                            </Typography> */}
 										</Box>
 										<Box
 											sx={{
@@ -513,7 +576,6 @@ export default function Page() {
 												marginTop: "5px",
 											}}
 										>
-											<Typography>or</Typography>
 											<input
 												type="file"
 												id="file-upload"
@@ -521,7 +583,8 @@ export default function Page() {
 												onChange={(e) => {
 													const file = e.target.files?.[0];
 													if (file) {
-														setSelectedFileName(file.name);
+														setSelectedFileName(URL.createObjectURL(file));
+														setSelectedFile(file);
 													}
 												}}
 											/>
@@ -536,14 +599,6 @@ export default function Page() {
 													Upload a photo
 												</Button>
 											</label>
-											<Typography
-												variant="caption"
-												sx={{
-													fontStyle: "italic",
-												}}
-											>
-												{selectedFileName ? selectedFileName : ""}
-											</Typography>
 										</Box>
 									</Box>
 									<Box
@@ -581,7 +636,12 @@ export default function Page() {
 													borderRadius: "50%",
 												}}
 												onClick={() => {
-													setSelectedFileName(`viewavatar (${index + 1}).svg`);
+													setSelectedFileName(
+														`/images/projectIcon/viewavatar (${index + 1}).svg`
+													);
+													setSelectedFile(
+														`/images/projectIcon/viewavatar (${index + 1}).svg`
+													);
 													setSelectedAvatarIndex(index);
 												}}
 											/>
@@ -644,7 +704,7 @@ export default function Page() {
 													padding: "5px 15px",
 													color: "#fff !important",
 												}}
-												onClick={handleCloseChangeLogoDialog}
+												onClick={handleUpdateImg}
 											>
 												Save
 											</Button>
@@ -732,7 +792,12 @@ export default function Page() {
 									borderRadius: "50%",
 								}}
 								onClick={() => {
-									setSelectedFileName(`viewavatar (${index + 1}).svg`);
+									setSelectedFileName(
+										`/images/projectIcon/viewavatar (${index + 1}).svg`
+									);
+									setSelectedFile(
+										`/images/projectIcon/viewavatar (${index + 1}).svg`
+									);
 									setSelectedAvatarIndex(index);
 									handleCloseSelectAvatarDialog();
 								}}

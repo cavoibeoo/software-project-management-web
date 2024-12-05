@@ -32,6 +32,11 @@ import { useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import Button from "@mui/material/Button";
 
+import FormDialog from "@/app/sine/backlog/Dialogs/AddMemberDialog/AddMemberDialog";
+import { set } from "react-hook-form";
+
+import * as actorServices from "@/api-services/actorServices";
+
 interface TablePaginationActionsProps {
 	count: number;
 	page: number;
@@ -132,32 +137,35 @@ function createData(
 	};
 }
 
-const rows = [
-	createData(
-		"#854",
-		[
-			{
-				image: "/images/avt_quang.jpg",
-			},
-		],
-		"Duc Quang",
-		"quangcuatuonglai@gmail.com",
-		"Administrator"
-	),
-	createData(
-		"#853",
-		[
-			{
-				image: "/images/cavoibeoLogo.png",
-			},
-		],
-		"Binh Phuoc",
-		"cavoibeo@gmail.com",
-		"Administrator"
-	),
-].sort((b, a) => (a.id < b.id ? -1 : 1));
+// const rows = [
+//     createData(
+//         "#854",
+//         [
+//             {
+//                 image: "/images/avt_quang.jpg",
+//             },
+//         ],
+//         "Duc Quang",
+//         "quangcuatuonglai@gmail.com",
+//         "Administrator"
+//     ),
+//     createData(
+//         "#853",
+//         [
+//             {
+//                 image: "/images/cavoibeoLogo.png",
+//             },
+//         ],
+//         "Binh Phuoc",
+//         "cavoibeo@gmail.com",
+//         "Administrator"
+//     ),
+// ].sort((b, a) => (a.id < b.id ? -1 : 1));
 
-export const UserRolesTables: React.FC = () => {
+export const UserRolesTables: React.FC<{
+	project: any;
+	callUpdate: () => void;
+}> = ({ project, callUpdate }) => {
 	// Modal
 	const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 		"& .MuiDialogContent-root": {
@@ -174,9 +182,22 @@ export const UserRolesTables: React.FC = () => {
 		setSelect(event.target.value as string);
 	};
 
-	const handleChangeRoles = (event: SelectChangeEvent) => {
-		setSelectChangeRoles(event.target.value as string);
+	const handleChangeRoles = async (event: SelectChangeEvent, email: any) => {
+		let result = await actorServices.updateActor({
+			role: event.target.value as string,
+			projectId: project?._id,
+			email: email,
+		});
+		callUpdate();
 	};
+
+	const [rows, setRows] = useState<any>();
+	React.useEffect(() => {
+		let sortedRow = project?.actors.sort((b: any, a: any) =>
+			a.id < b.id ? -1 : 1
+		);
+		setRows(sortedRow);
+	}, [project]);
 
 	// Table
 	const [page, setPage] = React.useState(0);
@@ -184,7 +205,7 @@ export const UserRolesTables: React.FC = () => {
 
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows =
-		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows?.length) : 0;
 
 	const handleChangePage = (
 		event: React.MouseEvent<HTMLButtonElement> | null,
@@ -202,8 +223,19 @@ export const UserRolesTables: React.FC = () => {
 
 	// Remove User Dialog
 	const [openDelete, setOpenDelete] = useState(false);
+	const [currentDeleteUser, setCurrentDeleteUser] = useState<any>();
 	const handleClickOpenDelete = () => {
 		setOpenDelete(true);
+	};
+	const handleRemoveUser = async () => {
+		let result = await actorServices.removeActor({
+			userId: currentDeleteUser,
+			projectId: project?._id,
+		});
+		if (!result?.error) {
+			callUpdate();
+			setOpenDelete(false);
+		}
 	};
 	const handleCloseDelete = () => {
 		setOpenDelete(false);
@@ -245,6 +277,12 @@ export const UserRolesTables: React.FC = () => {
 							alignItems: "center",
 						}}
 					>
+						{project ? (
+							<FormDialog
+								project={project}
+								callUpdate={callUpdate}
+							></FormDialog>
+						) : null}
 						<FormControl sx={{ minWidth: "115px" }} size="small">
 							<InputLabel id="demo-select-small">Roles</InputLabel>
 							<Select
@@ -255,10 +293,9 @@ export const UserRolesTables: React.FC = () => {
 								onChange={handleChange}
 								className="select"
 							>
-								<MenuItem value={0}>All</MenuItem>
-								<MenuItem value={1}>Administrator</MenuItem>
-								<MenuItem value={2}>Member</MenuItem>
-								<MenuItem value={3}>Viewer</MenuItem>
+								{project?.roles?.map((role: any, index: number) => (
+									<MenuItem value={index}>{role?.name}</MenuItem>
+								))}
 							</Select>
 						</FormControl>
 					</Box>
@@ -330,13 +367,13 @@ export const UserRolesTables: React.FC = () => {
 
 							<TableBody>
 								{(rowsPerPage > 0
-									? rows.slice(
+									? rows?.slice(
 											page * rowsPerPage,
 											page * rowsPerPage + rowsPerPage
 										)
 									: rows
-								).map((row) => (
-									<TableRow key={row.id}>
+								)?.map((row: any) => (
+									<TableRow key={row?.user?.id}>
 										<TableCell
 											sx={{
 												padding: "15px 20px",
@@ -352,34 +389,14 @@ export const UserRolesTables: React.FC = () => {
 													verticalAlign: "middle",
 												}}
 											>
-												<AvatarGroup
-													max={4}
-													sx={{
-														justifyContent: "flex-end",
-
-														"& .MuiAvatar-root": {
-															border: "2px solid #fff",
-															backgroundColor: "#f0f0f0",
-															color: "#000",
-															width: "32px",
-															height: "32px",
-														},
-														"& .MuiAvatarGroup-avatar": {
-															backgroundColor: "#605dff", // Custom background color for the total avatar
-															color: "#fff", // Custom color for the text
-															fontSize: "10px",
-														},
-													}}
-												>
-													{row.avatar.map((assignee, index) => (
-														<Avatar
-															key={index}
-															src={assignee.image}
-															alt="Assignee"
-														/>
-													))}
-												</AvatarGroup>
-												<Typography marginLeft="10px">{row.name}</Typography>
+												<Avatar
+													key={row?.user?._id}
+													src={row?.user?.avatar}
+													alt="Assignee"
+												/>
+												<Typography marginLeft="10px">
+													{row?.user?.name}
+												</Typography>
 											</Box>
 										</TableCell>
 
@@ -390,7 +407,7 @@ export const UserRolesTables: React.FC = () => {
 											}}
 											className="border-bottom"
 										>
-											{row.email}
+											{row?.user?.email}
 										</TableCell>
 
 										<TableCell
@@ -404,23 +421,25 @@ export const UserRolesTables: React.FC = () => {
 										>
 											<Box>
 												<FormControl fullWidth>
-													<InputLabel id="demo-simple-select-label">
-														Roles
-													</InputLabel>
 													<Select
 														sx={{ width: "300px" }}
 														labelId="demo-simple-select-label"
 														id="demo-simple-select"
-														value={selectChangeRoles}
-														label={row.roles}
-														onChange={handleChangeRoles}
+														value={row?.role}
+														onChange={(event: any) =>
+															handleChangeRoles(event, row?.user?.email)
+														}
 														className="select"
 													>
-														<MenuItem value="Administrator">
-															Administrator
-														</MenuItem>
-														<MenuItem value="Member">Member</MenuItem>
-														<MenuItem value="Viewer">Viewer</MenuItem>
+														{row?.user?._id == project?.author?._id ? (
+															<MenuItem value={"Admin"}>Admin</MenuItem>
+														) : (
+															project?.roles?.map((role: any) => (
+																<MenuItem value={role?.name}>
+																	{role?.name}
+																</MenuItem>
+															))
+														)}
 													</Select>
 												</FormControl>
 											</Box>
@@ -446,7 +465,10 @@ export const UserRolesTables: React.FC = () => {
 													<i
 														className="material-symbols-outlined"
 														style={{ fontSize: "16px" }}
-														onClick={handleClickOpenDelete}
+														onClick={() => {
+															setCurrentDeleteUser(row?.user._id);
+															handleClickOpenDelete();
+														}}
 													>
 														delete
 													</i>
@@ -472,7 +494,7 @@ export const UserRolesTables: React.FC = () => {
 											{ label: "All", value: -1 },
 										]}
 										colSpan={8}
-										count={rows.length}
+										count={rows?.length}
 										rowsPerPage={rowsPerPage}
 										page={page}
 										slotProps={{
@@ -596,10 +618,10 @@ export const UserRolesTables: React.FC = () => {
 											}}
 										>
 											<Button
-												type="submit"
 												variant="contained"
 												component="button"
 												size="medium"
+												onClick={handleRemoveUser}
 												sx={{
 													textTransform: "capitalize",
 													fontWeight: "500",

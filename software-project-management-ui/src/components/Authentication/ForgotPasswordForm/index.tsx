@@ -24,6 +24,8 @@ import {
 	DialogActions,
 } from "@mui/material";
 import { constrainPoint } from "@fullcalendar/core/internal";
+import { useState } from "react";
+import { sendOtp, verifyOtp } from "@/api-services/otpServices";
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
@@ -35,15 +37,19 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const ForgotPasswordForm: React.FC = () => {
+	const [email, setEmail] = useState("");
+
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
 		const emailInput = document.getElementById("email") as HTMLInputElement;
-		const email = emailInput.value;
-		const emailError = validateEmail(email);
+		const emailValue = emailInput.value;
+		setEmail(emailValue);
+		const emailError = validateEmail(emailValue);
 
 		if (emailError) {
 			toast.error(emailError);
 		} else {
+			sendOtp(emailValue);
 			handleOTPDialogOpen();
 		}
 	};
@@ -55,6 +61,19 @@ const ForgotPasswordForm: React.FC = () => {
 
 	const handleOTPDialogClose = () => {
 		setOTPDialogOpen(false);
+	};
+
+	const [otp, setOtp] = useState("");
+
+	const handleOtpChange = (index: number, value: string) => {
+		const otpArray = otp.split("");
+		otpArray[index] = value;
+		setOtp(otpArray.join(""));
+	};
+
+	const handleVerifyOtp = () => {
+		console.log(otp);
+		verifyOtp(email, otp);
 	};
 
 	React.useEffect(() => {
@@ -254,8 +273,7 @@ const ForgotPasswordForm: React.FC = () => {
 				<DialogTitle>{"Enter the OTP sent to your email"}</DialogTitle>
 				<DialogContent>
 					<DialogContentText id="alert-dialog-slide-description">
-						Check your email{" "}
-						<span style={{ fontWeight: "bold" }}>ducquang&#64;sine.com</span>{" "}
+						Check your email <span style={{ fontWeight: "bold" }}>{email}</span>{" "}
 						for the OTP and enter it below.
 					</DialogContentText>
 					<Box
@@ -272,7 +290,12 @@ const ForgotPasswordForm: React.FC = () => {
 								margin="dense"
 								type="text"
 								variant="outlined"
-								inputProps={{ maxLength: 1, style: { textAlign: "center" } }}
+								inputProps={{
+									maxLength: 1,
+									style: { textAlign: "center" },
+									inputMode: "numeric",
+									pattern: "[0-9]*",
+								}}
 								sx={{
 									width: "50px",
 									"& .MuiOutlinedInput-root": {
@@ -280,6 +303,8 @@ const ForgotPasswordForm: React.FC = () => {
 									},
 								}}
 								onChange={(e) => {
+									const value = e.target.value;
+									handleOtpChange(index, value);
 									if (typeof window !== "undefined") {
 										const nextSibling = document.getElementById(
 											`otp-${index + 1}`
@@ -287,7 +312,7 @@ const ForgotPasswordForm: React.FC = () => {
 										const prevSibling = document.getElementById(
 											`otp-${index - 1}`
 										);
-										if (e.target.value) {
+										if (value) {
 											if (nextSibling) {
 												nextSibling.focus();
 											}
@@ -309,7 +334,7 @@ const ForgotPasswordForm: React.FC = () => {
 					</Button>
 					<Button
 						variant="contained"
-						onClick={handleOTPDialogClose}
+						onClick={handleVerifyOtp}
 						sx={{ backgroundColor: "#1976d2" }}
 					>
 						Verify

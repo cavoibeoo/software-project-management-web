@@ -23,14 +23,15 @@ import IssueDetailDialog from "@/app/sine/backlog/Dialogs/IssueDetailDialog/Issu
 import EditIssueDialog from "../../Components/Dialog/EditIssueDialog/EditIssueDialog";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { deepPurple } from "@mui/material/colors";
 import AssignMemberDialog from "@/app/sine/backlog/Dialogs/AssignMemberDialog/AssignMemberDialog";
-type TaskCardProps = {
-	task: Task;
+type BacklogCardProps = {
+	backlog: any;
 	project: any;
 	callUpdate: () => void;
 };
 
-const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
+const BacklogCard = ({ backlog, project, callUpdate }: BacklogCardProps) => {
 	// Modal for Delete Confirmation
 	const [openDeleteTaskModal, setOpenDeleteTaskModal] = useState(false);
 	const handleClickOpenDeleteTaskModal = () => {
@@ -93,10 +94,10 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 		transform,
 		isDragging,
 	} = useSortable({
-		id: task.id,
+		id: backlog.id,
 		data: {
-			type: "task",
-			task,
+			type: "backlog",
+			backlog,
 		},
 	});
 
@@ -110,11 +111,9 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 			<Box ref={setNodeRef} style={style}>
 				<Box>
 					<Box
-						className={`bg-purple-100 ${task.bgClass} task-card`}
+						className={`bg-purple-100 ${backlog.bgClass} task-card`}
 						style={{
-							opacity: 0.3,
 							borderWidth: "2px",
-							borderColor: "rgb(5, 245, 245)",
 							borderStyle: "solid",
 						}}
 						sx={{
@@ -137,9 +136,9 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 								fontSize="15px"
 								className="text-black"
 							>
-								{task.description}
+								{backlog.summary}
 							</Typography>
-							<EditIssueDialog description={task.description} />
+							<EditIssueDialog description={backlog.description} />
 						</Box>
 
 						<Box
@@ -152,36 +151,20 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 						>
 							<Box sx={{ display: "flex", alignItems: "center" }}>
 								<img
-									src="/images/issueType/Task.svg"
-									alt="Task"
+									src={`/images/issueType/${backlog.issueType.name}.svg`}
+									alt={backlog.issueType.name}
 									width={25}
 									height={25}
 									style={{ marginRight: 8 }}
 								/>
-								<Typography>WIH-1</Typography>
+								<Typography>{backlog.key}</Typography>
 							</Box>
 
-							<AvatarGroup
-								max={3}
-								sx={{
-									"& .MuiAvatar-root": {
-										border: "2px solid #fff",
-										backgroundColor: "#f0f0f0",
-										color: "#000",
-										width: "28px",
-										height: "28px",
-									},
-									"& .MuiAvatarGroup-avatar": {
-										backgroundColor: "#605dff", // Custom background color for the total avatar
-										color: "#fff", // Custom color for the text
-										fontSize: "10px",
-									},
-								}}
-							>
-								{/* {task.TeamMembers.map((member, i) => (
-									<Avatar key={i} alt="Remy Sharp" src={member.img} />
-								))} */}
-							</AvatarGroup>
+							<AssignMemberDialog
+								actors={project.actors}
+								issue={backlog}
+								callUpdate={callUpdate}
+							/>
 						</Box>
 					</Box>
 				</Box>
@@ -194,7 +177,7 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 			<Box ref={setNodeRef} style={style} {...listeners} {...attributes}>
 				<Box>
 					<Box
-						className={`bg-purple-100 ${task.bgClass} task-card`}
+						className={`bg-purple-100 ${backlog.bgClass} task-card`}
 						sx={{
 							padding: "25px",
 							borderRadius: "7px",
@@ -215,12 +198,12 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 								fontSize="15px"
 								className="text-black"
 							>
-								{task.summary}
+								{backlog.summary}
 							</Typography>
-							<EditIssueDialog description={task.description} />
+							<EditIssueDialog description={backlog.description} />
 						</Box>
 
-						<Typography mb="15px">{task.description}</Typography>
+						<Typography mb="15px">{backlog.description}</Typography>
 
 						<Box
 							sx={{
@@ -240,12 +223,13 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 								/>
 								<Typography>WIH-1</Typography>
 							</Box>
-
-							<AssignMemberDialog
-								actors={project.actors}
-								issue={task}
-								callUpdate={callUpdate}
-							/>
+							<Button>
+								<Avatar
+									src={backlog.assignee?.avatar}
+									sx={{ bgcolor: deepPurple[500] }}
+									// onClick={handleClickOpen}
+								></Avatar>
+							</Button>
 						</Box>
 					</Box>
 				</Box>
@@ -254,4 +238,4 @@ const TaskCard = ({ task, project, callUpdate }: TaskCardProps) => {
 	);
 };
 
-export default TaskCard;
+export default BacklogCard;

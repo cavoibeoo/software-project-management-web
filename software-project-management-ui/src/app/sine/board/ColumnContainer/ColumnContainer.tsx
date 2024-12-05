@@ -1,9 +1,9 @@
 "use client";
 
-import { Column, Id, Task } from "@/type";
+import { Column, Id, Issue, Task } from "@/type";
 import { Box, Card } from "@mui/material";
 
-import React, { useState, FormEvent, useMemo } from "react";
+import React, { useState, FormEvent, useMemo, useEffect, useRef } from "react";
 import {
 	Typography,
 	Menu,
@@ -37,22 +37,48 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import TaskCard from "./TaskCard/TaskCard";
-import CreateCardDialog from "../Components/Dialog/CreareCardDialog";
 import DeleteColumnDialog from "../Components/Dialog/DeleteColumnDialog";
+import BacklogCard from "./TaskCard/BacklogCard";
+import * as issueTypeService from "@/api-services/issueTypeService";
+import { toast } from "react-toastify";
+import * as issueService from "@/api-services/issueServices";
 
 export default function ColumnContainer(props: {
+	callUpdate: () => void;
+	selectedSprint: any;
+	projectId: string;
 	column: Column;
+	backlogs: any[];
 	tasks: Task[];
+	project: any;
 	deleteColumn: (id: Id) => void;
-	updateColumn: (id: Id, title: string) => void;
+
+	updateColumn: (
+		projectId: string,
+		id: string,
+		description: string,
+		workflowType: string
+	) => void;
 	createTask: (columnId: Id) => void;
 }) {
-	const { column, tasks, deleteColumn, updateColumn, createTask } = props;
+	const {
+		column,
+		callUpdate,
+		selectedSprint,
+		tasks,
+		backlogs,
+		deleteColumn,
+		project,
+		updateColumn,
+		createTask,
+		projectId,
+	} = props;
 	// const { setNodeRef } = useDroppable({ id: "todo" });
 
 	// Dropdown
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
+	const [issueName, setIssueName] = useState("");
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -65,6 +91,7 @@ export default function ColumnContainer(props: {
 	const handleClickOpenModal = () => {
 		setOpenModal(true);
 	};
+
 	const handleCloseModal = () => {
 		setOpenModal(false);
 	};
@@ -73,11 +100,7 @@ export default function ColumnContainer(props: {
 		setOpenModal(false);
 	};
 
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		setOpenModal(false);
-		handleCreateTask(column.Id);
-	};
+	const [columnName, setColumnName] = useState(column.name);
 
 	// Textarea
 	const blue = {
@@ -162,7 +185,7 @@ export default function ColumnContainer(props: {
 		transform,
 		isDragging,
 	} = useSortable({
-		id: column.Id,
+		id: column._id,
 		data: {
 			type: "column",
 			column,
@@ -260,14 +283,60 @@ export default function ColumnContainer(props: {
 	// End Modal
 
 	function handleDeleteColumn() {
-		deleteColumn(column.Id);
+		deleteColumn(column._id);
 	}
 
-	const [selectedIssueType, setSelectedIssueType] = useState("");
-	const handleIssueTypeChange = (event: SelectChangeEvent) => {
-		setSelectedIssueType(event.target.value);
+	const [issueTypeValue, setIssueTypeValue] = useState<string>("Task");
+
+	const handleIssueTypeValueChange = (event: SelectChangeEvent) => {
+		setIssueTypeValue(event.target.value as string);
 	};
 
+	const [issueType, setIssueType] = useState<any[]>([]);
+
+	const [update, setUpdate] = useState(false);
+
+	useEffect(() => {
+		const fetchAPI = async () => {
+			const getIssueType = await issueTypeService.fetchIssueType(projectId);
+			setIssueType(getIssueType);
+		};
+		fetchAPI();
+	}, [update]);
+
+	const issueNameRef = useRef("");
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		issueNameRef.current = e.target.value;
+	};
+
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		try {
+			console.log("projectId", projectId);
+			console.log("issueNameRef.current", issueNameRef.current);
+			console.log("selectedSprint", selectedSprint);
+			console.log("column.name", column.name);
+			console.log("issueTypeValue", issueTypeValue);
+
+			let issue = await issueService.createIssue({
+				projectId: projectId,
+				summary: issueNameRef.current,
+				sprint: selectedSprint,
+				workflow: column.name,
+				issueType: issueTypeValue,
+			});
+
+			if (!issue.error) {
+				callUpdate();
+			}
+		} catch (error) {
+			console.log("error", error);
+			toast.error("Failed to create backlog!");
+		} finally {
+			setOpenModal(false);
+		}
+	};
 	return (
 		<>
 			<Card
@@ -279,6 +348,14 @@ export default function ColumnContainer(props: {
 					mb: "25px",
 					padding: { xs: "18px", sm: "20px", lg: "25px" },
 					maxWidth: "350px",
+					backgroundColor:
+						column.workflowType === "Todo"
+							? "#ededed"
+							: column.workflowType === "Progress"
+								? "#ffc05e40"
+								: column.workflowType === "Done"
+									? "#00c49f40"
+									: "#ece8ff",
 				}}
 				className="rmui-card"
 			>
@@ -301,7 +378,7 @@ export default function ColumnContainer(props: {
 						}}
 						className="text-black"
 					>
-						{!editMode && column.title}
+						{!editMode && column.name}
 						{editMode && (
 							<input
 								style={{
@@ -317,12 +394,18 @@ export default function ColumnContainer(props: {
 									fontWeight: 700,
 									width: "100%",
 								}}
-								value={column.title}
-								onChange={(e) => updateColumn(column.Id, e.target.value)}
+								value={columnName}
+								onChange={(e: any) => setColumnName(e.target.value)}
 								autoFocus
 								onBlur={() => setEditMode(false)}
-								onKeyDown={(e) => {
+								onKeyDown={(e: any) => {
 									if (e.key !== "Enter") return;
+									updateColumn(
+										projectId,
+										column._id,
+										columnName,
+										column.workflowType
+									);
 									setEditMode(false);
 								}}
 							/>
@@ -374,9 +457,24 @@ export default function ColumnContainer(props: {
 					<Box>
 						<SortableContext items={tasksIds}>
 							{tasks.map((task) => (
-								<TaskCard key={task.id} task={task} />
+								<TaskCard
+									key={task.id}
+									task={task}
+									project={project}
+									callUpdate={callUpdate}
+								/>
 							))}
 						</SortableContext>
+						{backlogs
+							.filter((backlog) => backlog.workflow === column.name)
+							.map((backlog) => (
+								<BacklogCard
+									key={backlog._id}
+									backlog={backlog}
+									project={project}
+									callUpdate={callUpdate}
+								/>
+							))}
 					</Box>
 				</div>
 				<Box>
@@ -483,9 +581,14 @@ export default function ColumnContainer(props: {
 										fullWidth
 										id="taskName"
 										label="Task Name"
+										defaultValue={issueNameRef.current}
+										onChange={handleInputChange}
 										autoFocus
 										InputProps={{
 											style: { borderRadius: 8 },
+										}}
+										InputLabelProps={{
+											shrink: true,
 										}}
 									/>
 								</Grid>
@@ -507,8 +610,8 @@ export default function ColumnContainer(props: {
 										required
 										id="issueType"
 										placeholder="Select Issue Type"
-										value={selectedIssueType}
-										onChange={handleIssueTypeChange}
+										value={issueTypeValue}
+										onChange={handleIssueTypeValueChange}
 										displayEmpty
 										inputProps={{ "aria-label": "Select Issue Type" }}
 										sx={{
@@ -523,31 +626,29 @@ export default function ColumnContainer(props: {
 										<MenuItem value="" disabled>
 											Select Issue Type
 										</MenuItem>
-										<MenuItem value="bug">
-											<img
-												src="/images/issueType/Bug.svg"
-												alt="Bug"
-												style={{ marginRight: 8 }}
-											/>
-											Bug
-										</MenuItem>
-										<MenuItem value="feature">
-											<img
-												src="/images/issueType/Story.svg"
-												alt="Story"
-												style={{ marginRight: 8 }}
-											/>
-											Story
-										</MenuItem>
-										<MenuItem value="task">
-											<img
-												src="/images/issueType/Task.svg"
-												alt="Task"
-												style={{ marginRight: 8 }}
-											/>
-											Task
-										</MenuItem>
-										{/* Add more issue types as needed */}
+										{issueType?.map((type: any, index: any) => (
+											<MenuItem key={index} value={type.name}>
+												<div
+													style={{
+														paddingTop: "5px",
+														display: "flex",
+														justifyContent: "center",
+													}}
+												>
+													<img
+														width="20px"
+														height="20px"
+														style={{
+															marginRight: "5px",
+														}}
+														src={type.img}
+														alt="Issue Logo"
+														className="icon_issue"
+													/>
+													{type.name}
+												</div>
+											</MenuItem>
+										))}
 									</Select>
 								</Grid>
 

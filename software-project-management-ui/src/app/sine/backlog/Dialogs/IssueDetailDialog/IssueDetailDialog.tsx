@@ -236,7 +236,10 @@ const IssueDetailDialog: React.FC<{
 				className="hover-underlined"
 				color="inherit"
 				onClick={handleClickOpen}
-				style={{ textTransform: "none" }}
+				sx={{
+					textTransform: "none",
+					textAlign: "left",
+				}}
 			>
 				{issue.summary}
 			</Button>

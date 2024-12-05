@@ -138,7 +138,7 @@ export default function Page() {
 								<Link className="hover-underlined breadcrumb-link" href="#">
 									Sineizabes
 								</Link>
-								<Link className="hover-underlined breadcrumb-link" href="#">
+								<Link className="hover-underlined breadcrumb-link" href="/your-work/project-setting/details">
 									Project Settings
 								</Link>
 								<Link className="breadcrumb-link" href="#">

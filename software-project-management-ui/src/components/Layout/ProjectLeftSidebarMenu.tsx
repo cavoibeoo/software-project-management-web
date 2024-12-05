@@ -14,6 +14,7 @@ import MuiAccordionSummary, {
 } from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { Box, Typography } from "@mui/material";
+import { useFetchUser } from "@/api-services/userServices";
 
 const Accordion = styled((props: AccordionProps) => (
 	<MuiAccordion disableGutters elevation={0} square {...props} />
@@ -62,15 +63,22 @@ const ProjectLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 	// Thêm trạng thái để theo dõi trang hiện tại
 	const [activePage, setActivePage] = React.useState<string>(pathname);
 
-	const handleChange =
-		(panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-			setExpanded(newExpanded ? panel : false);
-		};
+	// Thêm trạng thái để lưu trữ vai trò người dùng
+	const [userRole, setUserRole] = React.useState<string>("");
 
-	// Cập nhật activePage khi pathname thay đổi
 	React.useEffect(() => {
 		setActivePage(pathname);
 	}, [pathname]);
+
+	React.useEffect(() => {
+		const getMyAccount = async () => {
+			const myAccount = await useFetchUser();
+			console.log(myAccount);
+			// Giả sử myAccount có thuộc tính role
+			setUserRole(myAccount.role);
+		};
+		getMyAccount();
+	}, [activePage]);
 
 	return (
 		<>
@@ -112,13 +120,15 @@ const ProjectLeftSidebarMenu: React.FC<LeftSidebarProps> = ({
 								</i>
 								<span className="title">Projects</span>
 							</Link>
-							<Link
-								href="/your-work/user-management/"
-								className="sidebar-menu-link"
-							>
-								<i className="material-symbols-outlined">person</i>
-								<span className="title">User Management</span>
-							</Link>
+							{userRole === "admin" && (
+								<Link
+									href="/your-work/user-management/"
+									className="sidebar-menu-link"
+								>
+									<i className="material-symbols-outlined">person</i>
+									<span className="title">User Management</span>
+								</Link>
+							)}
 							<div
 								style={{
 									borderTopWidth: "1px",

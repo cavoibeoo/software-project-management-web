@@ -1,8 +1,10 @@
 export type Id = string | number;
 
 export type Column = {
-	Id: string;
-	title: string;
+	_id: string;
+	name: string;
+	description: string;
+	workflowType: string;
 };
 
 export type Task = {
@@ -15,4 +17,27 @@ export type Task = {
 		img: string;
 	}>;
 	bgClass: string;
+};
+
+export type Sprint = {
+	_id: string;
+	name: string;
+	status: string;
+	startDate: Date;
+	endDate: Date;
+	sprintGoal: string;
+	issues: [any];
+};
+
+export type Issue = {
+	_id: string;
+	key: string;
+	summary: string;
+	// Add other properties if necessary
+};
+
+export type ColumnWorkflow = {
+	Id: string;
+	title: string;
+	workflowType: string;
 };

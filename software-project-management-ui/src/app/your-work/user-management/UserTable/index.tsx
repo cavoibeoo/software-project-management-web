@@ -33,6 +33,14 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import { useEffect } from "react";
+import { useState } from "react";
+import {
+	fetchUsers,
+	updateUserStatus,
+	useFetchUser,
+} from "@/api-services/userServices";
+import { toast } from "react-toastify";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 interface TablePaginationActionsProps {
@@ -114,7 +122,9 @@ function createData(
 	createDate: Date,
 	department: string,
 	jobTitle: string,
-	organization: string
+	organization: string,
+	name: string,
+	isDeleted: boolean
 ) {
 	return {
 		id,
@@ -124,77 +134,42 @@ function createData(
 		department,
 		jobTitle,
 		organization,
+		name,
+		isDeleted,
 	};
 }
 
-const rows = [
-	createData(
-		1,
-		"/images/avt_quang.jpg",
-		"quangcuatuonglai@gmail.com",
-		new Date("2023-11-26"),
-		"UTE",
-		"Frontend Developer",
-		"Sine Corp"
-	),
-	createData(
-		2,
-		"/images/cavoibeoLogo.png",
-		"cavoibeo@gmail.com",
-		new Date("2023-11-25"),
-		"UTE",
-		"Fullstack Developer",
-		"Sine Corp"
-	),
-	createData(
-		3,
-		"/images/users/user3.jpg",
-		"yicheal@sine.com",
-		new Date("2023-11-23"),
-		"UTE",
-		"Backend Developer",
-		"Sine Corp"
-	),
-	createData(
-		4,
-		"/images/users/user3.jpg",
-		"micheal@sine.com",
-		new Date("2023-11-23"),
-		"UTE",
-		"Backend Developer",
-		"Sine Corp"
-	),
-	createData(
-		5,
-		"/images/users/user6.jpg",
-		"jack@sine.com",
-		new Date("2023-11-23"),
-		"UTE",
-		"Backend Developer",
-		"Sine Corp"
-	),
-	createData(
-		6,
-		"/images/users/user4.jpg",
-		"john@sine.com",
-		new Date("2023-11-23"),
-		"UTE",
-		"Backend Developer",
-		"Sine Corp"
-	),
-	createData(
-		7,
-		"/images/users/user5.jpg",
-		"jane@sine.com",
-		new Date("2023-11-23"),
-		"UTE",
-		"Backend Developer",
-		"Sine Corp"
-	),
-	// ... thêm dữ liệu khác nếu cần ...
-].sort((b, a) => (a.id < b.id ? -1 : 1));
-
 const UserTable: React.FC = () => {
+	const [update, setUpdate] = useState(false);
+	const [users, setUsers] = useState<any[]>([]);
+
+	const callUpdate = () => {
+		setUpdate(!update);
+	};
+
+	useEffect(() => {
+		const fetchAPI = async () => {
+			const users = await fetchUsers();
+			const formattedUsers = users.map((user: any) =>
+				createData(
+					user._id, // Assuming _id is unique
+					user.avatar ? user.avatar : "/images/default-avatar.png",
+					user.email,
+					new Date(user.createDate),
+					user.organization,
+					user.jobTitle,
+					user.department,
+					user.name,
+					user.isDeleted
+				)
+			);
+			setUsers(formattedUsers);
+
+			console.log(formattedUsers);
+		};
+		fetchAPI();
+	}, [update]);
+
 	// Select
 	const [select, setSelect] = React.useState("");
 	const handleChange = (event: SelectChangeEvent) => {
@@ -207,7 +182,7 @@ const UserTable: React.FC = () => {
 
 	// Avoid a layout jump when reaching the last page with empty rows.
 	const emptyRows =
-		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+		page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
 	const handleChangePage = (
 		event: React.MouseEvent<HTMLButtonElement> | null,
@@ -236,7 +211,7 @@ const UserTable: React.FC = () => {
 	};
 
 	const sortedRows = React.useMemo(() => {
-		return rows.slice().sort((a, b) => {
+		return users.slice().sort((a, b) => {
 			let comparison = 0;
 			if (orderBy === "email") {
 				comparison = a.email.localeCompare(b.email);
@@ -252,7 +227,7 @@ const UserTable: React.FC = () => {
 
 			return order === "asc" ? comparison : -comparison;
 		});
-	}, [order, orderBy, rows]);
+	}, [order, orderBy, users]);
 
 	// State for dialogs
 	const [openDialog, setOpenDialog] = React.useState<{
@@ -278,10 +253,18 @@ const UserTable: React.FC = () => {
 
 	// Filtered rows based on search term
 	const filteredRows = React.useMemo(() => {
-		return rows.filter((row) =>
-			row.email.toLowerCase().includes(searchTerm.toLowerCase())
-		);
-	}, [searchTerm, rows]);
+		return users.filter((row) => {
+			const searchLower = searchTerm.toLowerCase();
+			return (
+				row.email?.toLowerCase().includes(searchLower) ||
+				row.name?.toLowerCase().includes(searchLower) ||
+				row.department?.toLowerCase().includes(searchLower) ||
+				row.jobTitle?.toLowerCase().includes(searchLower) ||
+				row.organization?.toLowerCase().includes(searchLower) ||
+				row.createDate?.toLocaleDateString().toLowerCase().includes(searchLower)
+			);
+		});
+	}, [searchTerm, users]);
 
 	const sortedAndFilteredRows = React.useMemo(() => {
 		return filteredRows.slice().sort((a, b) => {
@@ -303,7 +286,17 @@ const UserTable: React.FC = () => {
 	}, [order, orderBy, filteredRows]);
 
 	// Get current row data
-	const currentRow = rows.find((row) => row.id === openDialog.rowId);
+	const currentRow = users.find((row) => row.id === openDialog.rowId);
+
+	const handleConfirm = async () => {
+		if (openDialog.type === "ban" && currentRow) {
+			const newStatus = currentRow.isDeleted ? false : true;
+			await updateUserStatus(currentRow.id, newStatus);
+			callUpdate();
+			toast.success("User status updated successfully");
+			handleCloseDialog();
+		}
+	};
 
 	return (
 		<>
@@ -362,8 +355,11 @@ const UserTable: React.FC = () => {
 										height={100}
 										style={{ borderRadius: "50%" }}
 									/>
-									<Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-										{currentRow.email.split("@")[0]}
+									<Typography
+										variant="h6"
+										sx={{ mt: 2, mb: 1, textAlign: "center" }}
+									>
+										{currentRow.name}
 									</Typography>
 								</Box>
 								<Box
@@ -383,13 +379,16 @@ const UserTable: React.FC = () => {
 										{currentRow.createDate.toLocaleDateString()}
 									</Typography>
 									<Typography variant="body1" sx={{ mb: 1 }}>
-										<strong>Department:</strong> {currentRow.department}
+										<strong>Organization:</strong>{" "}
+										{currentRow.organization ? currentRow.organization : "N/A"}
 									</Typography>
 									<Typography variant="body1" sx={{ mb: 1 }}>
-										<strong>Job Title:</strong> {currentRow.jobTitle}
+										<strong>Job Title:</strong>{" "}
+										{currentRow.jobTitle ? currentRow.jobTitle : "N/A"}
 									</Typography>
 									<Typography variant="body1" sx={{ mb: 1 }}>
-										<strong>Organization:</strong> {currentRow.organization}
+										<strong>Department:</strong>{" "}
+										{currentRow.department ? currentRow.department : "N/A"}
 									</Typography>
 								</Box>
 							</Box>
@@ -437,7 +436,7 @@ const UserTable: React.FC = () => {
 						<Button onClick={handleCloseDialog} color="primary">
 							Cancel
 						</Button>
-						<Button onClick={handleCloseDialog} color="primary" autoFocus>
+						<Button onClick={handleConfirm} color="primary" autoFocus>
 							{openDialog.type === "ban" ? "Confirm" : "Close"}
 						</Button>
 					</DialogActions>
@@ -605,7 +604,7 @@ const UserTable: React.FC = () => {
 														sx={{ fontSize: "15px", fontWeight: "500" }}
 														className="text-black"
 													>
-														{row.email.split("@")[0]}
+														{row.name}
 													</Typography>
 												</Box>
 											</TableCell>
@@ -625,13 +624,13 @@ const UserTable: React.FC = () => {
 												sx={{ padding: "15px 20px", fontSize: "14px" }}
 												className="text-black border-bottom"
 											>
-												{row.department}
+												{row.department ? row.department : "N/A"}
 											</TableCell>
 											<TableCell
 												sx={{ padding: "15px 20px", fontSize: "14px" }}
 												className="text-black border-bottom"
 											>
-												{row.jobTitle}
+												{row.jobTitle ? row.jobTitle : "N/A"}
 											</TableCell>
 											<TableCell
 												sx={{ padding: "15px 20px", fontSize: "14px" }}
@@ -651,27 +650,14 @@ const UserTable: React.FC = () => {
 															visibility
 														</i>
 													</IconButton>
-													{/* <IconButton
-														aria-label="edit"
-														color="secondary"
-														sx={{ padding: "5px" }}
-														onClick={() => handleOpenDialog("edit", row.id)}
-													>
-														<i
-															className="material-symbols-outlined"
-															style={{ fontSize: "16px" }}
-														>
-															edit
-														</i>
-													</IconButton> */}
 													<IconButton
-														aria-label="ban"
-														color="error"
+														aria-label={row.isDeleted ? "unban" : "ban"}
+														color={row.isDeleted ? "success" : "error"}
 														sx={{ padding: "5px" }}
 														onClick={() => handleOpenDialog("ban", row.id)}
 													>
 														<span className="material-symbols-outlined">
-															block
+															{row.isDeleted ? "check_circle" : "block"}
 														</span>
 													</IconButton>
 												</Box>
@@ -695,7 +681,7 @@ const UserTable: React.FC = () => {
 												{ label: "All", value: -1 },
 											]}
 											colSpan={6}
-											count={rows.length}
+											count={users.length}
 											rowsPerPage={rowsPerPage}
 											page={page}
 											slotProps={{
