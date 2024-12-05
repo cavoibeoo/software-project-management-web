@@ -21,6 +21,7 @@ import {
     AccordionSummary,
     DialogTitle,
     Checkbox,
+    Select,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -31,8 +32,11 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Tooltip from "@mui/material/Tooltip";
 
 import { useProject } from "@/app/context/ProjectContext";
-import * as issueTypeService from "@/api-services/issueTypeService";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
+import { set } from "react-hook-form";
+
+import * as issueTypeService from "@/api-services/issueTypeService";
+import * as projectService from "@/api-services/projectServices";
 
 export default function Page() {
     interface BootstrapDialogTitleProps {
@@ -87,7 +91,24 @@ export default function Page() {
     };
 
     const { projectID, setProjectID, issueTypeId, setIssueTypeId } = useProject();
+    const [fetchedProject, setFetchedProject] = useState<any | null>();
     const [issueType, setIssueType] = React.useState<any | null>();
+    const [defaultIssueType, setDefaultIssueType] = React.useState<any | null>();
+
+    const [issueTypeField, setIssueTypeField] = useState<any>(issueType?.fields);
+    const [update, setUpdate] = useState<boolean>(false);
+
+    const [isUpdateName, setIsUpdateName] = useState<boolean>(false);
+    const [isUpdateDes, setIsUpdateDes] = useState<boolean>(false);
+
+    const [selectedIssueType, setSelectedIssueType] = useState<any | null>();
+    const handleFieldChange = (value: any, field: any, index: number) => {
+        let updatedField = [...issueTypeField];
+        if (updatedField[index]) {
+            updatedField[index][field] = value;
+        }
+        setIssueTypeField(updatedField);
+    };
 
     React.useEffect(() => {
         const fetchApi = async () => {
@@ -95,10 +116,16 @@ export default function Page() {
                 projectId: projectID,
                 issueTypeId: issueTypeId,
             });
+
+            const project = await projectService.fetchById(projectID);
+
+            setFetchedProject(project);
             setIssueType(data);
+            setIssueTypeField(data.fields);
+            setDefaultIssueType(data);
         };
         fetchApi();
-    }, [issueTypeId]);
+    }, [issueTypeId, update]);
 
     const handleAddField = (dataType: any) => {
         // Add a field to the issue type
@@ -108,6 +135,35 @@ export default function Page() {
         ];
         let newIssueType = { ...issueType, fields: newFields };
         setIssueType(newIssueType);
+        setIssueTypeField(newFields);
+    };
+
+    const handleRemoveField = (index: number) => {
+        console.log(index);
+
+        const newFields = issueType?.fields?.filter((_: any, i: number) => i !== index);
+        const newIssueType = { ...issueType, fields: newFields };
+
+        setIssueType(newIssueType);
+        setIssueTypeField(newFields);
+    };
+
+    const handleUpdateIssueType = async () => {
+        // Update the issue type
+        const data = await issueTypeService.updateIssueType({
+            projectId: projectID,
+            issueTypeId: issueTypeId,
+            updateData: {
+                name: issueType?.name,
+                description: issueType?.description,
+                fields: issueTypeField,
+            },
+        });
+        if (!data?.error) {
+            setUpdate(!update);
+            setIssueType(data);
+            setIssueTypeField(data?.fields);
+        }
     };
 
     // Modal
@@ -121,38 +177,14 @@ export default function Page() {
     const [projectInput, setProjectInput] = useState("");
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // if (projectInput === projectName) {
-        // 	await moveToTrash(_id, projectName);
-        // 	onDeleteSuccess();
-        // } else {
-        // 	toast.error("Project name does not match!");
-        // }
-    };
-    const [nameInput, setNameInput] = useState("");
-    const [keyInput, setKeyInput] = useState("");
-    const handleUpdateProject = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (nameInput.length <= 2) {
-            toast.error("Project name must be longer than 2 characters.");
-            return;
+        let result = await issueTypeService.deleteIssueType({
+            projectId: projectID,
+            issueTypeId: issueTypeId,
+            newIssueType: selectedIssueType,
+        });
+        if (!result?.error) {
+            setUpdate(!update);
         }
-
-        if (!keyInput) {
-            toast.error("Project key cannot be empty.");
-            return;
-        }
-
-        if (keyInput.length > 10) {
-            toast.error("Project key cannot exceed 10 characters.");
-            return;
-        }
-
-        toast.info(
-            "This change would re-index your project, and may break some external integrations."
-        );
-        toast.success("Project updated successfully!");
-
-        // Proceed with the update logic here
     };
 
     return (
@@ -205,7 +237,7 @@ export default function Page() {
                                 TransitionComponent={Fade}
                             >
                                 <MenuItem onClick={handleClickOpenNotification}>
-                                    Move to trash
+                                    Delete issue type
                                 </MenuItem>
                             </Menu>
                         </Box>
@@ -216,15 +248,83 @@ export default function Page() {
                                 alignItems="center"
                                 gap={1}
                                 marginBottom={2}
+                                onClick={() => {
+                                    setIsUpdateName(true);
+                                }}
                             >
                                 <img
                                     style={{ width: "30px", height: "30px" }}
                                     src={issueType?.img}
                                     alt="BugIcon"
                                 />{" "}
-                                {issueType?.name}
+                                {!isUpdateName ? (
+                                    <Typography variant="h4">{issueType?.name}</Typography>
+                                ) : (
+                                    <TextField
+                                        value={issueType?.name}
+                                        onChange={(e) =>
+                                            setIssueType({ ...issueType, name: e.target.value })
+                                        }
+                                        onBlur={() => setIsUpdateName(false)}
+                                        sx={{
+                                            "& .MuiInputBase-input": {
+                                                fontVariant: "h4",
+                                            },
+                                            "& .MuiInputBase-root": {
+                                                border: "1px solid #D5D9E2 !important",
+                                                backgroundColor: "#fff",
+                                                borderRadius: "7px",
+                                            },
+                                            "& .MuiInputBase-root::before": {
+                                                border: "none",
+                                            },
+                                            "& .MuiInputBase-root:hover::before": {
+                                                border: "none",
+                                            },
+                                            width: "80%",
+                                            marginBottom: "20px",
+                                        }}
+                                    />
+                                )}
                             </Typography>
-                            <Typography variant="subtitle1">{issueType?.description}</Typography>
+                            <Typography
+                                variant="subtitle1"
+                                onClick={() => {
+                                    setIsUpdateDes(true);
+                                }}
+                            >
+                                {!isUpdateDes ? (
+                                    issueType?.description
+                                ) : (
+                                    <TextField
+                                        label="Issue type description"
+                                        variant="filled"
+                                        value={issueType?.description}
+                                        onChange={(e) =>
+                                            setIssueType({
+                                                ...issueType,
+                                                description: e.target.value,
+                                            })
+                                        }
+                                        onBlur={() => setIsUpdateDes(false)}
+                                        sx={{
+                                            "& .MuiInputBase-root": {
+                                                border: "1px solid #D5D9E2 !important",
+                                                backgroundColor: "#fff",
+                                                borderRadius: "7px",
+                                            },
+                                            "& .MuiInputBase-root::before": {
+                                                border: "none",
+                                            },
+                                            "& .MuiInputBase-root:hover::before": {
+                                                border: "none",
+                                            },
+                                            width: "80%",
+                                            marginBottom: "20px",
+                                        }}
+                                    />
+                                )}
+                            </Typography>
                             <Box display="flex" flexDirection="column" gap={1} marginTop={3}>
                                 <Box display="flex" alignItems="center" gap={1}>
                                     <Typography variant="h6">Description fields</Typography>
@@ -401,7 +501,7 @@ export default function Page() {
                                     }}
                                 />
 
-                                {issueType?.fields.map((field: any) => (
+                                {issueTypeField?.map((field: any, index: number) => (
                                     <>
                                         <Accordion
                                             variant="outlined"
@@ -464,10 +564,16 @@ export default function Page() {
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <TextField
-                                                    label="Issue type name"
+                                                    label="Field name"
                                                     variant="filled"
                                                     value={field?.name}
-                                                    // onClick={() => setIsEditingDescription(true)}
+                                                    onChange={(e) =>
+                                                        handleFieldChange(
+                                                            e.target.value,
+                                                            "name",
+                                                            index
+                                                        )
+                                                    }
                                                     sx={{
                                                         "& .MuiInputBase-root": {
                                                             border: "1px solid #D5D9E2 !important",
@@ -488,7 +594,13 @@ export default function Page() {
                                                     label="Description"
                                                     variant="filled"
                                                     value={field?.description}
-                                                    // onClick={() => setIsEditingDescription(true)}
+                                                    onChange={(e) =>
+                                                        handleFieldChange(
+                                                            e.target.value,
+                                                            "description",
+                                                            index
+                                                        )
+                                                    }
                                                     sx={{
                                                         "& .MuiInputBase-root": {
                                                             border: "1px solid #D5D9E2 !important",
@@ -517,7 +629,14 @@ export default function Page() {
                                                 >
                                                     <Typography>Required</Typography>
                                                     <Checkbox
-                                                        value={field?.isRequired}
+                                                        checked={field?.isRequired}
+                                                        onChange={(e) =>
+                                                            handleFieldChange(
+                                                                e.target.checked,
+                                                                "isRequired",
+                                                                index
+                                                            )
+                                                        }
                                                         sx={{
                                                             color: `#099f9d !important`,
                                                             "&.Mui-checked": {
@@ -525,7 +644,13 @@ export default function Page() {
                                                             },
                                                         }}
                                                     />
-                                                    <Button variant="contained">Remove</Button>
+                                                    <Button
+                                                        id={`field-${index}`}
+                                                        onClick={() => handleRemoveField(index)}
+                                                        variant="contained"
+                                                    >
+                                                        Remove
+                                                    </Button>
                                                 </Box>
                                             </AccordionDetails>
                                         </Accordion>
@@ -541,10 +666,21 @@ export default function Page() {
                                 width="100%"
                                 paddingRight={"50px"}
                             >
-                                <Button variant="outlined" sx={{ width: "20%" }}>
+                                <Button
+                                    onClick={() => {
+                                        setIssueType(defaultIssueType);
+                                        setIssueTypeField(defaultIssueType?.fields);
+                                    }}
+                                    variant="outlined"
+                                    sx={{ width: "20%" }}
+                                >
                                     Discard
                                 </Button>
-                                <Button variant="contained" sx={{ width: "20%" }}>
+                                <Button
+                                    onClick={handleUpdateIssueType}
+                                    variant="contained"
+                                    sx={{ width: "20%" }}
+                                >
                                     Save changes
                                 </Button>
                             </Box>
@@ -711,6 +847,7 @@ export default function Page() {
                 aria-labelledby="customized-dialog-title"
                 open={openNotification}
                 className="rmu-modal"
+                maxWidth="xs"
             >
                 <Box>
                     <Box
@@ -732,7 +869,7 @@ export default function Page() {
                             }}
                             className="text-black"
                         >
-                            Move to Trash
+                            Delete issue type
                         </Typography>
 
                         <IconButton
@@ -748,25 +885,47 @@ export default function Page() {
                         <Box component="form" noValidate onSubmit={handleSubmit}>
                             <Box
                                 sx={{
-                                    padding: "25px",
+                                    padding: { xs: "15px 20px", md: "25px" },
                                     borderRadius: "8px",
                                 }}
                                 className="bg-white"
                             >
                                 <Grid container alignItems="center" spacing={2}>
-                                    <Typography>
-                                        Please input <strong>ProjectName</strong> to Temporary
-                                        Delete
+                                    <Typography sx={{ mt: "15px", ml: "15px" }}>
+                                        Please select the issue type to migrate issues to.
                                     </Typography>
-                                    <TextField
-                                        sx={{ mt: 2 }}
-                                        label="Project Name"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={projectInput}
-                                        onChange={(e) => setProjectInput(e.target.value)}
-                                    />
-
+                                    <Select
+                                        id="demo-simple-select"
+                                        value={selectedIssueType || ""}
+                                        className="select"
+                                        onChange={(e) => {
+                                            // Only update the selected value, don't trigger any dialog
+                                            setSelectedIssueType(e.target.value);
+                                        }}
+                                        sx={{
+                                            width: "100%",
+                                            marginTop: "10px",
+                                            marginLeft: "15px",
+                                        }}
+                                    >
+                                        {fetchedProject?.issueTypes
+                                            ?.filter((type: any) => type._id !== issueTypeId)
+                                            ?.map((type: any) => (
+                                                <MenuItem key={type._id} value={type._id}>
+                                                    <img
+                                                        width="14px"
+                                                        height="14px"
+                                                        style={{
+                                                            marginRight: "5px",
+                                                        }}
+                                                        src={type.img}
+                                                        alt="Issue Logo"
+                                                        className="icon_issue"
+                                                    />
+                                                    {type?.name}
+                                                </MenuItem>
+                                            ))}
+                                    </Select>
                                     <Grid
                                         item
                                         xs={12}
@@ -809,7 +968,7 @@ export default function Page() {
                                                 }}
                                                 className="text-dark"
                                             >
-                                                Move
+                                                Delete
                                             </Button>
                                         </Box>
                                     </Grid>

@@ -1,6 +1,6 @@
 "use strict";
 
-import mongoose, { mongo } from "mongoose";
+import mongoose, { mongo, Mongoose } from "mongoose";
 
 const ProjectSchema = mongoose.Schema(
     {
@@ -96,6 +96,7 @@ const ProjectSchema = mongoose.Schema(
                             enum: ["String", "Number", "Boolean", "Date", "Array", "Object"],
                             required: true,
                         },
+                        advanceData: mongoose.Schema.Types.Mixed,
                         isRequired: {
                             type: Boolean,
                             default: false,
