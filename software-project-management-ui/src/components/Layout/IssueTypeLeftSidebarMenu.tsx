@@ -55,7 +55,7 @@ interface LeftSidebarProps {
 
 const IssueTypeLeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) => {
     const pathname = usePathname();
-    const { projectID, setProjectID } = useProject();
+    const { projectID, setProjectID, setIssueTypeId } = useProject();
     const [project, setProject] = React.useState<any | null>();
 
     React.useEffect(() => {
@@ -126,6 +126,7 @@ const IssueTypeLeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) 
                             ></div>
                             {project?.issueTypes?.map((issueType: any) => (
                                 <Link
+                                    onClick={() => setIssueTypeId(issueType._id)}
                                     style={{ display: "flex", alignItems: "center", gap: 20 }}
                                     href="/your-work/project-setting/issue-types/bug"
                                     className="sidebar-menu-link"
@@ -139,30 +140,6 @@ const IssueTypeLeftSidebarMenu: React.FC<LeftSidebarProps> = ({ toggleActive }) 
                                 </Link>
                             ))}
 
-                            {/* <Link
-                                style={{ display: "flex", alignItems: "center", gap: 20 }}
-                                href="/your-work/project-setting/issue-types/story"
-                                className="sidebar-menu-link"
-                            >
-                                <img
-                                    style={{ width: "25px", height: "25px" }}
-                                    src="/images/issueType/Story.svg"
-                                    alt="StoryIcon"
-                                />
-                                <span className="title">Story</span>
-                            </Link>
-                            <Link
-                                style={{ display: "flex", alignItems: "center", gap: 20 }}
-                                href="/your-work/project-setting/issue-types/task"
-                                className="sidebar-menu-link"
-                            >
-                                <img
-                                    style={{ width: "25px", height: "25px" }}
-                                    src="/images/issueType/Task.svg"
-                                    alt="TaskIcon"
-                                />
-                                <span className="title">Task</span>
-                            </Link> */}
                             <div
                                 className="sidebar-menu-divider"
                                 style={{ marginTop: 10, marginBottom: 10 }}
