@@ -30,6 +30,9 @@ import ProjectDefaultLogo from "@/app/img/icon/ProjectDefaultLogo";
 import { TransitionProps } from "@mui/material/transitions";
 import * as projectService from "@/api-services/projectServices";
 
+import { useProject } from "@/app/context/ProjectContext";
+
+
 export default function Page() {
 	interface BootstrapDialogTitleProps {
 		children?: React.ReactNode;
@@ -81,8 +84,8 @@ export default function Page() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-
-	const projectId = "674734010395942535480a60";
+	const {projectID, setProjectID} = useProject();
+	const projectId = projectID;
 	const [fetchedProject, setFetchProject] = React.useState<any>();
 	React.useEffect(() => {
 		const fetchProject = async () => {

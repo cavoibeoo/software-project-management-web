@@ -12,36 +12,36 @@ import getObjectId from "../utils/objectId.js";
 import crypto from "crypto";
 
 const registerService = async (data) => {
-	try {
-		//check if there are users existed
-		let user = await User.findOne({ email: data.email });
-		const salt = await bcrypt.genSalt(Number(config.salt));
-		const hashedPassword = await bcrypt.hash(data.password, salt);
-		if (user) {
-			if (user?.isVerified)
-				throw new ApiError(StatusCodes.BAD_REQUEST, "User already existed");
-			else {
-				user = await User.findOneAndUpdate(
-					{ email: data.email },
-					{
-						...data,
-						password: hashedPassword,
-					},
-					{ new: true, upsert: true }
-				);
-			}
-		} else {
-			user = await new User({
-				...data,
-				password: hashedPassword,
-			}).save();
-		}
+    try {
+        //check if there are users existed
+        let user = await User.findOne({ email: data.email });
+        const salt = await bcrypt.genSalt(Number(config.salt));
+        const hashedPassword = await bcrypt.hash(data.password, salt);
+        if (user) {
+            if (user?.isVerified)
+                throw new ApiError(StatusCodes.BAD_REQUEST, "User already existed");
+            else {
+                user = await User.findOneAndUpdate(
+                    { email: data.email },
+                    {
+                        ...data,
+                        password: hashedPassword,
+                    },
+                    { new: true, upsert: true }
+                );
+            }
+        } else {
+            user = await new User({
+                ...data,
+                password: hashedPassword,
+            }).save();
+        }
 
-		//send verification email
-		await jwtUtil.generateAccessToken(user).then((token) => {
-			let link = `${config.beURL}/api/auth/verify-email?token=${token}`;
-			// console.log(link);
-			let html = `<!DOCTYPE html>
+        //send verification email
+        await jwtUtil.generateAccessToken(user).then((token) => {
+            let link = `${config.beURL}/api/auth/verify-email?token=${token}`;
+            // console.log(link);
+            let html = `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -59,176 +59,149 @@ const registerService = async (data) => {
                 </div>
             </body>
             </html>`;
-			sendMail(user.email, "Verify your Email", html);
-		});
+            sendMail(user.email, "Verify your Email", html);
+        });
 
-		return { message: "Please verify your email" };
-	} catch (err) {
-		throw err;
-	}
+        return { message: "Please verify your email" };
+    } catch (err) {
+        throw err;
+    }
 };
 
 const loginService = async (data, isGoogle) => {
-	let user;
-	if (isGoogle) {
-		user = data;
-	} else {
-		user = await User.findOne({ email: data.email });
+    let user;
+    if (isGoogle) {
+        user = data;
+    } else {
+        user = await User.findOne({ email: data.email });
 
-		if (!user) {
-			throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
-		}
-		if (user.isDeleted || !user?.isVerified) {
-			throw new ApiError(
-				StatusCodes.UNAUTHORIZED,
-				`User ${user.name} has been disable`
-			);
-		}
+        if (!user) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
+        }
+        if (user.isDeleted || !user?.isVerified) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, `User ${user.name} has been disable`);
+        }
 
-		if (
-			!user?.password ||
-			!(await bcrypt.compare(data.password, user?.password))
-		) {
-			throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials");
-		}
-	}
+        if (!user?.password || !(await bcrypt.compare(data.password, user?.password))) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials");
+        }
+    }
 
-	const accessToken = await jwtUtil.generateAccessToken(user);
-	const refreshToken = await jwtUtil.generateRefreshToken(user);
+    const accessToken = await jwtUtil.generateAccessToken(user);
+    const refreshToken = await jwtUtil.generateRefreshToken(user);
 
-	user.refreshToken = [...user.refreshToken, refreshToken];
-	await user.save();
-	return {
-		accessToken: accessToken,
-		refreshToken: refreshToken,
-		messages: "Login successful",
-	};
+    user.refreshToken = [...user.refreshToken, refreshToken];
+    await user.save();
+    return {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        messages: "Login successful",
+    };
 };
 
 const isLoggedIn = async (data) => {
-	try {
-		if (!data?.accessToken && !data?.refreshToken) {
-			return false;
-		}
-		if (data?.accessToken) await jwtUtil.verifyAccessToken(data?.accessToken);
-		if (data?.refreshToken)
-			await jwtUtil.verifyRefreshToken(data?.refreshToken);
-		return {
-			isAuthenticated: true,
-			accessToken: data?.accessToken,
-			refreshToken: data?.refreshToken,
-		};
-	} catch (error) {
-		return false;
-	}
+    try {
+        if (!data?.accessToken && !data?.refreshToken) {
+            return false;
+        }
+        if (data?.accessToken) await jwtUtil.verifyAccessToken(data?.accessToken);
+        if (data?.refreshToken) await jwtUtil.verifyRefreshToken(data?.refreshToken);
+        return {
+            isAuthenticated: true,
+            accessToken: data?.accessToken,
+            refreshToken: data?.refreshToken,
+        };
+    } catch (error) {
+        return false;
+    }
 };
 
 const refreshTokenService = async (data) => {
-	let refreshToken = data?.refreshToken;
-	if (!refreshToken) {
-		throw new ApiError(
-			StatusCodes.BAD_REQUEST,
-			new Error("No refresh token provided").message
-		);
-	}
+    let refreshToken = data?.refreshToken;
+    if (!refreshToken) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, new Error("No refresh token provided").message);
+    }
 
-	let foundUser = await User.findOne({ refreshToken }).exec();
-	if (!foundUser) {
-		throw new ApiError(
-			StatusCodes.BAD_REQUEST,
-			new Error("Invalid refresh token").message
-		);
-	}
+    let foundUser = await User.findOne({ refreshToken }).exec();
+    if (!foundUser) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, new Error("Invalid refresh token").message);
+    }
 
-	const newRefreshTokenArray = foundUser.refreshToken.filter(
-		(rt) => rt !== refreshToken
-	);
-	try {
-		let tokenDetails = await jwtUtil.verifyRefreshToken(refreshToken);
-	} catch (err) {
-		foundUser.refreshToken = [...newRefreshTokenArray];
-		const result = await foundUser.save();
-		return { error: "Invalid refresh token" };
-	}
+    const newRefreshTokenArray = foundUser.refreshToken.filter((rt) => rt !== refreshToken);
+    try {
+        let tokenDetails = await jwtUtil.verifyRefreshToken(refreshToken);
+    } catch (err) {
+        foundUser.refreshToken = [...newRefreshTokenArray];
+        const result = await foundUser.save();
+        return { error: "Invalid refresh token" };
+    }
 
-	const accessToken = await jwtUtil.generateAccessToken(foundUser);
-	const newRefreshToken = await jwtUtil.generateRefreshToken(foundUser);
+    const accessToken = await jwtUtil.generateAccessToken(foundUser);
+    const newRefreshToken = await jwtUtil.generateRefreshToken(foundUser);
 
-	foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
-	await foundUser.save();
+    foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
+    await foundUser.save();
 
-	return {
-		refreshToken: newRefreshToken,
-		accessToken: accessToken,
-		messages: "Refresh successfully",
-	};
+    return {
+        refreshToken: newRefreshToken,
+        accessToken: accessToken,
+        messages: "Refresh successfully",
+    };
 };
 
 const logoutService = async (data) => {
-	try {
-		let refreshToken = data.refreshToken;
-		let foundUser = await User.findOne({ refreshToken }).exec();
-		if (!foundUser) {
-			throw new ApiError(
-				StatusCodes.BAD_REQUEST,
-				new Error("Invalid refresh token").message
-			);
-		}
+    try {
+        let refreshToken = data.refreshToken;
+        let foundUser = await User.findOne({ refreshToken }).exec();
+        if (!foundUser) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, new Error("Invalid refresh token").message);
+        }
 
-		// Delete refreshToken in db
-		foundUser.refreshToken = foundUser.refreshToken.filter(
-			(rt) => rt !== refreshToken
-		);
-		const result = await foundUser.save();
-		return { messages: "Logout successfully" };
-	} catch (error) {
-		throw error;
-	}
+        // Delete refreshToken in db
+        foundUser.refreshToken = foundUser.refreshToken.filter((rt) => rt !== refreshToken);
+        const result = await foundUser.save();
+        return { messages: "Logout successfully" };
+    } catch (error) {
+        throw error;
+    }
 };
 
 const verifyEmailService = async (data) => {
-	try {
-		let tokenDetails = await jwtUtil.verifyAccessToken(data?.token);
-		let objId = getObjectId(tokenDetails.userId);
-		let user = await User.findOneAndUpdate(
-			{ _id: objId },
-			{ isVerified: true },
-			{ new: true }
-		);
-		if (user.isVerified) {
-			return { message: "Email has been verified successfully" };
-		} else {
-			return { message: "Email verification failed" };
-		}
-	} catch (error) {
-		throw error;
-	}
+    try {
+        let tokenDetails = await jwtUtil.verifyAccessToken(data?.token);
+        let objId = getObjectId(tokenDetails.userId);
+        let user = await User.findOneAndUpdate({ _id: objId }, { isVerified: true }, { new: true });
+        if (user.isVerified) {
+            return { message: "Email has been verified successfully" };
+        } else {
+            return { message: "Email verification failed" };
+        }
+    } catch (error) {
+        throw error;
+    }
 };
 
 const forgotPasswordService = async (query, data) => {
-	try {
-		let user = await User.findOne({ email: query?.email });
-		if (!user) {
-			throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
-		}
-		if (user.isDeleted || !user.isVerified) {
-			throw new ApiError(
-				StatusCodes.UNAUTHORIZED,
-				`User ${user.name} has been disable`
-			);
-		}
+    try {
+        let user = await User.findOne({ email: query?.email });
+        if (!user) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
+        }
+        if (user.isDeleted || !user.isVerified) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, `User ${user.name} has been disable`);
+        }
 
-		let otp = Math.floor(100000 + Math.random() * 900000).toString();
+        let otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-		const salt = await bcrypt.genSalt(Number(config.salt));
-		const hashedOtp = await bcrypt.hash(otp, salt);
+        const salt = await bcrypt.genSalt(Number(config.salt));
+        const hashedOtp = await bcrypt.hash(otp, salt);
 
-		user.otp.code = hashedOtp;
-		user.otp.expires = new Date(new Date().getTime() + 10 * 60 * 1000); // 5 minutes
-		await user.save();
+        user.otp.code = hashedOtp;
+        user.otp.expires = new Date(new Date().getTime() + 10 * 60 * 1000); // 5 minutes
+        await user.save();
 
-		// send email
-		let html = `<!DOCTYPE html>
+        // send email
+        let html = `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -246,67 +219,60 @@ const forgotPasswordService = async (query, data) => {
                 </div>
             </body>
             </html>`;
-		sendMail(user.email, "Forgot password request", html);
+        sendMail(user.email, "Forgot password request", html);
 
-		return otp
-			? { message: "Please check your email." }
-			: { message: "Error failed to reset password." };
-	} catch (error) {
-		throw error;
-	}
+        return otp
+            ? { message: "Please check your email." }
+            : { message: "Error failed to reset password." };
+    } catch (error) {
+        throw error;
+    }
 };
 
 const verifyOtp = async (param, data) => {
-	try {
-		let user = await User.findOne({ email: param?.email });
-		if (!user) {
-			throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
-		}
-		if (user.isDeleted || !user.isVerified) {
-			throw new ApiError(
-				StatusCodes.UNAUTHORIZED,
-				`User ${user.name} has been disable`
-			);
-		}
-		if (user.otp.expires < new Date()) {
-			throw new ApiError(
-				StatusCodes.REQUEST_TIMEOUT,
-				`The OTP has been expired`
-			);
-		}
-		if (await bcrypt.compare(data?.otp, user.otp.code))
-			return { message: true };
-		else throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid OTP");
-	} catch (error) {
-		throw error;
-	}
+    try {
+        let user = await User.findOne({ email: param?.email });
+        if (!user) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "User not existed");
+        }
+        if (user.isDeleted || !user.isVerified) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, `User ${user.name} has been disable`);
+        }
+        if (user.otp.expires < new Date()) {
+            throw new ApiError(StatusCodes.REQUEST_TIMEOUT, `The OTP has been expired`);
+        }
+        if (await bcrypt.compare(data?.otp, user.otp.code)) return { message: true };
+        else throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid OTP");
+    } catch (error) {
+        throw error;
+    }
 };
 
 const changePasswordWithOtp = async (query, data) => {
-	try {
-		let otpVerify = await verifyOtp(query, query);
-		let user = await User.findOne({ email: query?.email });
+    try {
+        let otpVerify = await verifyOtp(query, query);
+        let user = await User.findOne({ email: query?.email });
 
-		const salt = await bcrypt.genSalt(Number(config.salt));
-		const hashedPassword = await bcrypt.hash(data?.password, salt);
+        const salt = await bcrypt.genSalt(Number(config.salt));
+        const hashedPassword = await bcrypt.hash(data?.password, salt);
 
-		user.password = hashedPassword;
-		user.otp.expires = new Date();
-		await user.save();
-		return { message: "Password has been changed successfully" };
-	} catch (error) {
-		throw error;
-	}
+        user.password = hashedPassword;
+        user.otp.expires = new Date();
+        await user.save();
+        return { message: "Password has been changed successfully" };
+    } catch (error) {
+        throw error;
+    }
 };
 
 export {
-	registerService,
-	loginService,
-	refreshTokenService,
-	logoutService,
-	verifyEmailService,
-	forgotPasswordService,
-	verifyOtp,
-	changePasswordWithOtp,
-	isLoggedIn,
+    registerService,
+    loginService,
+    refreshTokenService,
+    logoutService,
+    verifyEmailService,
+    forgotPasswordService,
+    verifyOtp,
+    changePasswordWithOtp,
+    isLoggedIn,
 };
