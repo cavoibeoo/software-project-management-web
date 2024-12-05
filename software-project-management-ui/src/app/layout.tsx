@@ -21,34 +21,36 @@ import theme from "@/theme";
 import LayoutProvider from "@/providers/LayoutProvider";
 import { ProjectNameProvider } from "@/providers/ProjectNameProvider";
 import { ProjectProvider } from "@/app/context/ProjectContext";
+import { Chatbot } from "@/components/Chatbot";
 
 export const metadata = {
-	title: "Sine - Issue | Project Tracking Software",
-	description: "Sine - Issue | Project Tracking Software",
+    title: "Sine - Issue | Project Tracking Software",
+    description: "Sine - Issue | Project Tracking Software",
 };
 
 export default function RootLayout(props: { children: React.ReactNode }) {
-	return (
-		<html lang="en">
-			<head>
-				<link
-					rel="stylesheet"
-					href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
-				/>
-			</head>
-			<body>
-				<AppRouterCacheProvider options={{ enableCssLayer: true }}>
-					<ThemeProvider theme={theme}>
-						<ProjectNameProvider>
-							<CssBaseline />
-							<ProjectProvider>
-								<LayoutProvider>{props.children}</LayoutProvider>
-							</ProjectProvider>
-						</ProjectNameProvider>
-					</ThemeProvider>
-					<ToastContainer position="bottom-right" />
-				</AppRouterCacheProvider>
-			</body>
-		</html>
-	);
+    return (
+        <html lang="en">
+            <head>
+                <link
+                    rel="stylesheet"
+                    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+                />
+            </head>
+            <body>
+                <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+                    <ThemeProvider theme={theme}>
+                        <ProjectNameProvider>
+                            <CssBaseline />
+                            <ProjectProvider>
+                                <Chatbot />
+                                <LayoutProvider>{props.children}</LayoutProvider>
+                            </ProjectProvider>
+                        </ProjectNameProvider>
+                    </ThemeProvider>
+                    <ToastContainer position="bottom-right" />
+                </AppRouterCacheProvider>
+            </body>
+        </html>
+    );
 }
