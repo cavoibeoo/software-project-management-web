@@ -11,8 +11,52 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
+import { resetPassword } from "@/api-services/otpServices";
+import { useState, useEffect } from "react";
+import { validatePassword } from "../SignInForm/formValidation";
 
 const ResetPasswordForm: React.FC = () => {
+	const [email, setEmail] = useState("");
+	const [newPassword, setNewPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [errors, setErrors] = useState<{
+		newPassword?: string;
+		confirmPassword?: string;
+	}>({});
+	const [otp, setOtp] = useState("");
+	useEffect(() => {
+		const storedEmail = localStorage.getItem("email");
+		if (storedEmail) {
+			setEmail(storedEmail);
+		}
+		const storedOtp = localStorage.getItem("otp");
+		if (storedOtp) {
+			setOtp(storedOtp);
+		}
+	}, []);
+
+	const validateForm = () => {
+		const newErrors: { newPassword?: string; confirmPassword?: string } = {};
+		if (!newPassword) {
+			newErrors.newPassword = "New password is required";
+		}
+		if (!confirmPassword) {
+			newErrors.confirmPassword = "Confirm password is required";
+		}
+		if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+			newErrors.confirmPassword = "Passwords do not match";
+		}
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
+
+	const handleResetPassword = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (validateForm()) {
+			resetPassword(email, newPassword, confirmPassword, otp);
+		}
+	};
+
 	return (
 		<>
 			<Box
@@ -90,7 +134,7 @@ const ResetPasswordForm: React.FC = () => {
 									</Typography>
 								</Box>
 
-								<Box component="form">
+								<Box component="form" onSubmit={handleResetPassword}>
 									<Box mb="15px">
 										<FormControl fullWidth>
 											<Typography
@@ -113,6 +157,8 @@ const ResetPasswordForm: React.FC = () => {
 												type="password"
 												id="newPassword"
 												name="newPassword"
+												value={newPassword}
+												onChange={(e) => setNewPassword(e.target.value)}
 												sx={{
 													"& .MuiInputBase-root": {
 														backgroundColor: "#fff",
@@ -126,6 +172,11 @@ const ResetPasswordForm: React.FC = () => {
 													},
 												}}
 											/>
+											<Typography
+												sx={{ fontSize: "12px", color: "red", mt: "5px" }}
+											>
+												{errors.newPassword}
+											</Typography>
 										</FormControl>
 									</Box>
 
@@ -141,16 +192,18 @@ const ResetPasswordForm: React.FC = () => {
 												}}
 												className="text-all-black"
 											>
-												Confrim Password
+												Confirm Password
 											</Typography>
 
 											<TextField
 												className="authentication-input"
-												label="Type your confrim password"
+												label="Type your confirm password"
 												variant="filled"
 												type="password"
-												id="confrimPassword"
-												name="confrimPassword"
+												id="confirmPassword"
+												name="confirmPassword"
+												value={confirmPassword}
+												onChange={(e) => setConfirmPassword(e.target.value)}
 												sx={{
 													"& .MuiInputBase-root": {
 														backgroundColor: "#fff",
@@ -164,6 +217,11 @@ const ResetPasswordForm: React.FC = () => {
 													},
 												}}
 											/>
+											<Typography
+												sx={{ fontSize: "12px", color: "red", mt: "5px" }}
+											>
+												{errors.confirmPassword}
+											</Typography>
 										</FormControl>
 									</Box>
 
@@ -181,6 +239,7 @@ const ResetPasswordForm: React.FC = () => {
 												boxShadow: "none",
 												width: "100%",
 											}}
+											onClick={handleResetPassword}
 										>
 											<i className="material-symbols-outlined mr-5">
 												autorenew

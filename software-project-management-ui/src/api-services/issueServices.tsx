@@ -17,7 +17,6 @@ export const fetchIssue = async (projectId: any) => {
 		return response.data;
 	} catch (error) {
 		console.log(error);
-		await handleTokenExpired(error);
 	}
 };
 

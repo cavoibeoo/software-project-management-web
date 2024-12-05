@@ -41,12 +41,27 @@ import "./Column.css";
 
 export default function ColumnContainer(props: {
 	column: ColumnWorkflow;
+	workflowType: string;
+	projectId: string;
 	tasks: Task[];
 	deleteColumn: (id: Id) => void;
-	updateColumn: (id: Id, title: string) => void;
+	updateColumn: (
+		projectId: string,
+		id: string,
+		description: string,
+		workflowType: string
+	) => void;
 	createTask: (columnId: Id) => void;
 }) {
-	const { column, tasks, deleteColumn, updateColumn, createTask } = props;
+	const {
+		column,
+		workflowType,
+		tasks,
+		deleteColumn,
+		updateColumn,
+		createTask,
+		projectId,
+	} = props;
 
 	// Dropdown
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -188,6 +203,8 @@ export default function ColumnContainer(props: {
 		handleCloseDeleteColumnModal();
 	};
 
+	const [columnName, setColumnName] = useState(column.title);
+
 	// Ensure all hooks are called before any return statement
 	if (isDragging) {
 		return (
@@ -304,12 +321,19 @@ export default function ColumnContainer(props: {
 									fontWeight: 700,
 									width: "100%",
 								}}
-								value={column.title}
-								onChange={(e) => updateColumn(column.Id, e.target.value)}
+								value={columnName}
+								onChange={(e: any) => setColumnName(e.target.value)}
 								autoFocus
 								onBlur={() => setEditMode(false)}
-								onKeyDown={(e) => {
+								onKeyDown={(e: any) => {
 									if (e.key !== "Enter") return;
+
+									updateColumn(
+										projectId,
+										column.Id,
+										columnName,
+										column.workflowType
+									);
 									setEditMode(false);
 								}}
 							/>

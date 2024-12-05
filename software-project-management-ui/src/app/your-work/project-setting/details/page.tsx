@@ -28,11 +28,7 @@ import PropTypes from "prop-types";
 import { FormEvent } from "react";
 import ProjectDefaultLogo from "@/app/img/icon/ProjectDefaultLogo";
 import { TransitionProps } from "@mui/material/transitions";
-import { TextFields } from "@mui/icons-material";
-import { useSearchParams } from "next/navigation";
-
 import * as projectService from "@/api-services/projectServices";
-import { set } from "react-hook-form";
 
 export default function Page() {
 	interface BootstrapDialogTitleProps {

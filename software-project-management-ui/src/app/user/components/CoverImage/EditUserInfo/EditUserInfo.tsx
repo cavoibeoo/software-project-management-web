@@ -242,13 +242,16 @@ export const EditUserInfo = ({
 							<Typography variant="h6" width="200px">
 								Email:
 							</Typography>
-							<TextField value={myInfo.email} disabled={true} />
+							<TextField value={myInfo.email} contentEditable={false} />
 						</Box>
 						<Box display="flex" alignItems="center" gap="10px">
 							<Typography variant="h6" width="200px">
 								Create Date:
 							</Typography>
-							<TextField value={myInfo.createDate} disabled={true} />
+							<TextField
+								value={new Date(myInfo.createDate).toLocaleDateString()}
+								contentEditable={false}
+							/>
 						</Box>
 						<Box display="flex" alignItems="center" gap="10px">
 							<Typography variant="h6" width="200px">

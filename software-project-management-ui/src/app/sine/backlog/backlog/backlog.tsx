@@ -44,7 +44,6 @@ import {
 	defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 import { arrayMove } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
@@ -78,8 +77,6 @@ export default function Backlog() {
 		string | null
 	>(null);
 
-	const router = useRouter();
-	const searchParams = useSearchParams();
 	const projectId = projectID;
 	if (projectId) {
 		setProjectID(projectId);
