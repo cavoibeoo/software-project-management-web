@@ -163,7 +163,7 @@ export default function Page() {
 
 			setFetchedProject(project);
 			setIssueType(data);
-			setIssueTypeField(data.fields);
+			setIssueTypeField(data?.fields);
 			setDefaultIssueType(data);
 
 			console.log("issue type: ", data);
