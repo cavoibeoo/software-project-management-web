@@ -38,6 +38,29 @@ import { set } from "react-hook-form";
 import * as issueTypeService from "@/api-services/issueTypeService";
 import * as projectService from "@/api-services/projectServices";
 
+type DataType = "String" | "Paragraph" | "Number" | "People" | "Boolean" | "Array" | "Date";
+
+const FieldButton = ({ icon, label, onClick }: { icon: any; label: any; onClick: any }) => (
+    <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Button variant="text" sx={{ width: 100, height: 100 }} onClick={onClick}>
+            <Box
+                className="sidebar-menu-divider"
+                padding={5}
+                width={60}
+                height={60}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                sx={{ textTransform: "none" }}
+            >
+                <span className="material-symbols-outlined">{icon}</span>
+                {label}
+            </Box>
+        </Button>
+    </Grid>
+);
+
 export default function Page() {
     interface BootstrapDialogTitleProps {
         children?: React.ReactNode;
@@ -166,6 +189,30 @@ export default function Page() {
         }
     };
 
+    const fields = [
+        { type: "String", icon: "text_fields", label: "ShortText" },
+        // { type: "Paragraph", icon: "subject", label: "Paragraph" },
+        { type: "Number", icon: "123", label: "Number" },
+        { type: "People", icon: "account_circle", label: "People" },
+        { type: "Boolean", icon: "rule", label: "Boolean" },
+        { type: "Array", icon: "stat_minus_2", label: "Combobox" },
+        { type: "Date", icon: "calendar_month", label: "Date" },
+    ];
+
+    const iconMap = {
+        String: "text_fields",
+        // Paragraph: "subject",
+        Number: "123",
+        People: "account_circle",
+        Boolean: "rule",
+        Array: "stat_minus_2",
+        Date: "calendar_month",
+    };
+    const FieldIcon = (field: string) => {
+        const icon = iconMap[field as keyof typeof iconMap];
+        return icon ? <span className="material-symbols-outlined">{icon}</span> : null;
+    };
+
     // Modal
     const [openNotification, setOpenNotification] = useState(false);
     const handleClickOpenNotification = () => {
@@ -202,7 +249,7 @@ export default function Page() {
                         >
                             <Breadcrumbs separator="›" aria-label="breadcrumb">
                                 <Link className="hover-underlined breadcrumb-link" href="#">
-                                    Sineizabes
+                                    {fetchedProject?.name}
                                 </Link>
                                 <Link
                                     className="hover-underlined breadcrumb-link"
@@ -528,36 +575,10 @@ export default function Page() {
                                                             verticalAlign: "center",
                                                         }}
                                                     >
-                                                        {field?.dataType === "String" && (
-                                                            <span className="material-symbols-outlined">
-                                                                text_fields
-                                                            </span>
-                                                        )}
-                                                        {field?.dataType === "Paragraph" && (
-                                                            <span className="material-symbols-outlined">
-                                                                subject
-                                                            </span>
-                                                        )}
-                                                        {field?.dataType === "Number" && (
-                                                            <span className="material-symbols-outlined">
-                                                                123
-                                                            </span>
-                                                        )}
-                                                        {field?.dataType === "People" && (
-                                                            <span className="material-symbols-outlined">
-                                                                account_circle
-                                                            </span>
-                                                        )}
-                                                        {field?.dataType === "Boolean" && (
-                                                            <span className="material-symbols-outlined">
-                                                                rule
-                                                            </span>
-                                                        )}
-                                                        {field?.dataType === "Combobox" && (
-                                                            <span className="material-symbols-outlined">
-                                                                stat_minus_2
-                                                            </span>
-                                                        )}
+                                                        <span className="material-symbols-outlined">
+                                                            {FieldIcon(field?.dataType)}
+                                                        </span>
+
                                                         {field?.name}
                                                     </Box>
                                                 </Typography>
@@ -706,135 +727,15 @@ export default function Page() {
                                 style={{ marginTop: 10, marginBottom: 10 }}
                             ></div>
                             <Grid container spacing={1}>
-                                <Grid item xs={12} sm={6} md={4} lg={3}>
-                                    <Button
-                                        onClick={() => handleAddField("String")}
-                                        variant="text"
-                                        sx={{ width: 100, height: 100 }}
-                                    >
-                                        <Box
-                                            className="sidebar-menu-divider"
-                                            padding={5}
-                                            paddingBlock={5}
-                                            width={60}
-                                            height={60}
-                                            display="flex"
-                                            flexDirection="column"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            sx={{ textTransform: "none" }}
-                                        >
-                                            <span className="material-symbols-outlined">
-                                                text_fields
-                                            </span>
-                                            ShortText
-                                        </Box>
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={6} md={4} lg={3}>
-                                    <Button variant="text" sx={{ width: 100, height: 100 }}>
-                                        <Box
-                                            className="sidebar-menu-divider"
-                                            padding={5}
-                                            paddingBlock={5}
-                                            width={60}
-                                            height={60}
-                                            display="flex"
-                                            flexDirection="column"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            sx={{ textTransform: "none" }}
-                                        >
-                                            <span className="material-symbols-outlined">
-                                                subject
-                                            </span>
-                                            Paragraph
-                                        </Box>
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={6} md={4} lg={3}>
-                                    <Button variant="text" sx={{ width: 100, height: 100 }}>
-                                        <Box
-                                            onClick={() => handleAddField("Number")}
-                                            className="sidebar-menu-divider"
-                                            padding={5}
-                                            paddingBlock={5}
-                                            width={60}
-                                            height={60}
-                                            display="flex"
-                                            flexDirection="column"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            sx={{ textTransform: "none" }}
-                                        >
-                                            <span className="material-symbols-outlined">123</span>
-                                            Number
-                                        </Box>
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={6} md={4} lg={3}>
-                                    <Button variant="text" sx={{ width: 100, height: 100 }}>
-                                        <Box
-                                            onClick={() => handleAddField("People")}
-                                            className="sidebar-menu-divider"
-                                            padding={5}
-                                            paddingBlock={5}
-                                            width={60}
-                                            height={60}
-                                            display="flex"
-                                            flexDirection="column"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            sx={{ textTransform: "none" }}
-                                        >
-                                            <span className="material-symbols-outlined">
-                                                account_circle
-                                            </span>
-                                            People
-                                        </Box>
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={6} md={4} lg={3}>
-                                    <Button variant="text" sx={{ width: 100, height: 100 }}>
-                                        <Box
-                                            onClick={() => handleAddField("Boolean")}
-                                            className="sidebar-menu-divider"
-                                            padding={5}
-                                            paddingBlock={5}
-                                            width={60}
-                                            height={60}
-                                            display="flex"
-                                            flexDirection="column"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            sx={{ textTransform: "none" }}
-                                        >
-                                            <span className="material-symbols-outlined">rule</span>
-                                            Boolean
-                                        </Box>
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={12} sm={6} md={4} lg={3}>
-                                    <Button variant="text" sx={{ width: 100, height: 100 }}>
-                                        <Box
-                                            onClick={() => handleAddField("Combobox")}
-                                            className="sidebar-menu-divider"
-                                            padding={5}
-                                            paddingBlock={5}
-                                            width={60}
-                                            height={60}
-                                            display="flex"
-                                            flexDirection="column"
-                                            alignItems="center"
-                                            justifyContent="center"
-                                            sx={{ textTransform: "none" }}
-                                        >
-                                            <span className="material-symbols-outlined">
-                                                stat_minus_2
-                                            </span>
-                                            Combobox
-                                        </Box>
-                                    </Button>
+                                <Grid container spacing={1}>
+                                    {fields.map((field) => (
+                                        <FieldButton
+                                            key={field.type}
+                                            icon={field.icon}
+                                            label={field.label}
+                                            onClick={() => handleAddField(field.type)}
+                                        />
+                                    ))}
                                 </Grid>
                             </Grid>
                         </Box>
