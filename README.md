@@ -1,7 +1,6 @@
 <div align="center">
 
 <div align="center">
-![image](https://github.com/user-attachments/assets/6c020e2b-bb33-4761-932f-7d76ed1396a0)
 
 </div>
   <h1>Project Management Web App</h1>
