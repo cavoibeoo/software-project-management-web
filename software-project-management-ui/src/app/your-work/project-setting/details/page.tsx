@@ -387,7 +387,9 @@ export default function Page() {
 					gap: "20px",
 				}}
 			>
-				<ProjectDefaultLogo src={actualImg} />
+				<ProjectDefaultLogo
+					src={actualImg ? actualImg : "/images/projectIcon/cavoibeo.svg"}
+				/>
 				<Button
 					variant="outlined"
 					size="medium"
