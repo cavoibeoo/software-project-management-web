@@ -9,6 +9,9 @@
     An awesome Task management app for all Project Members! 
   </p>
 
+<div align="center">
+  <img src="./software-project-management-ui/public/images/image.png" alt="logo" width="200" height="auto" />
+</div>
 
 <!-- Badges -->
 <p>
@@ -74,9 +77,38 @@
 <!-- About the Project -->
 
 ## :star2: About the Project
+### Installation
+To run the application, the computer must meet the following requirements:
+-	Install a browser
+-	Install npm
+-	Install ReactJS
+-	Install visual studio code
+-	Install NodeJS
+-	Must have Windows terminal or command prompt.
+- Clone or download project from GitHub [link](https://github.com/cavoibeoo/software-project-management-web.git) 
+#### Run Backend
++ Step 1: After cloning the project, open the project with Visual studio code or with a terminal. 
++ Step 2: Type in terminal `cd .\software-project-management-server\`.
++ Step 3: Add new .env file and following script to .env file. 
++ Step 4: Run `npm i`.
++ Step 5: Run `npm run dev`.
++ The back-end server will be runned on localhost://3001
+#### Run front-end: 
++ Open another terminal.
++ run `cd .\software-project-management-ui\`.
++ run `npm I –legacy-peer-deps`.
++ run `npm run dev`.
++ The front-end will be runned on localhost:3000	
+#### Install LLM for running on localhost:
++ Download LM Studio.
++ Pull the model `meta-llama-3.1-8b-instruct` by open on `Search` icon and pull it. 
++ Navigate to developer and Click `Start (Ctrl+R)`. (be sure to set port to the appropriate port and paste it into back-end with `LLM_URL:` )
+
+
+
 
 ### :thought_balloon: Overview
-The objective of “Software Project Management Website” is to develop a user-friendly, efficient, and scalable software project management website. The platform will streamline task planning, assignment, tracking, and collaboration to enhance productivity and organization for teams and individuals. It aims to provide features that support project lifecycle management, including real-time updates, resource management, and progress visualization.
+The objective of `Software Project Management Website` is to develop a user-friendly, efficient, and scalable software project management website. The platform will streamline task planning, assignment, tracking, and collaboration to enhance productivity and organization for teams and individuals. It aims to provide features that support project lifecycle management, including real-time updates, resource management, and progress visualization.
 
 ### :dart: Features
 -	Register
