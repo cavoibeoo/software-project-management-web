@@ -323,6 +323,7 @@ export default function Page() {
                                                         }}
                                                     >
                                                         <ColumnContainer
+                                                            sprints={fetchedSprint}
                                                             workflow={workflows}
                                                             callUpdate={callUpdate}
                                                             projectId={projectId}
@@ -355,6 +356,7 @@ export default function Page() {
                                         <DragOverlay>
                                             {activeColumn && (
                                                 <ColumnContainer
+                                                    sprints={fetchedSprint}
                                                     workflow={workflows}
                                                     project={projectData}
                                                     callUpdate={callUpdate}
@@ -386,6 +388,7 @@ export default function Page() {
                                             )}
                                             {activeBacklog && (
                                                 <BacklogCard
+                                                    sprints={fetchedSprint}
                                                     workflow={workflows}
                                                     backlog={activeBacklog}
                                                     project={projectData}

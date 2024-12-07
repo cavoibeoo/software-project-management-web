@@ -44,6 +44,7 @@ import { toast } from "react-toastify";
 import * as issueService from "@/api-services/issueServices";
 
 export default function ColumnContainer(props: {
+	sprints: any[];
 	workflow: any;
 	callUpdate: () => void;
 	selectedSprint: any;
@@ -66,6 +67,7 @@ export default function ColumnContainer(props: {
 		column,
 		callUpdate,
 		selectedSprint,
+		sprints,
 		tasks,
 		backlogs,
 		deleteColumn,
@@ -476,6 +478,7 @@ export default function ColumnContainer(props: {
 									project={project}
 									callUpdate={callUpdate}
 									workflow={workflow}
+									sprints={sprints}
 								/>
 							))}
 					</Box>

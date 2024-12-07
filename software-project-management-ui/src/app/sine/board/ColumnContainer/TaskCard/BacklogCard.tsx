@@ -26,6 +26,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { deepPurple } from "@mui/material/colors";
 import AssignMemberDialog from "@/app/sine/backlog/Dialogs/AssignMemberDialog/AssignMemberDialog";
 type BacklogCardProps = {
+	sprints: any[];
 	backlog: any;
 	project: any;
 	callUpdate: () => void;
@@ -33,6 +34,7 @@ type BacklogCardProps = {
 };
 
 const BacklogCard = ({
+	sprints,
 	backlog,
 	project,
 	callUpdate,
@@ -148,7 +150,7 @@ const BacklogCard = ({
 									workflows={workflow}
 									issueType={project.issueTypes}
 									callUpdate={callUpdate}
-									sprints={project.sprints}
+									sprints={sprints}
 									project={project}
 								/>
 							</Typography>
