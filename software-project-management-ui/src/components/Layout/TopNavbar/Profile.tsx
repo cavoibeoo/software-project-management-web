@@ -130,7 +130,7 @@ const Profile: React.FC<ProfileProps> = () => {
 			>
 				<MenuItem sx={{ padding: "10px 20px" }}>
 					<Avatar
-						src={user?.avatar || "/images/avt_quang.jpg"}
+						src={user?.avatar || "/images/default-avatar.png"}
 						sx={{
 							width: 31,
 							height: 31,

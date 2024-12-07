@@ -40,6 +40,7 @@ import {
 } from "@mui/material";
 import { moveToTrash } from "@/api-services/projectServices";
 import { toast } from "react-toastify";
+import { useProject } from "@/app/context/ProjectContext";
 
 interface BootstrapDialogTitleProps {
     children?: React.ReactNode;
@@ -92,6 +93,8 @@ export default function FadeMenu({
     projectName: string;
     onDeleteSuccess: () => void;
 }) {
+    const { setProjectID } = useProject();
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -143,6 +146,7 @@ export default function FadeMenu({
                     TransitionComponent={Fade}
                 >
                     <NextLink
+                        onClick={() => setProjectID(_id)}
                         href={{
                             pathname: "/your-work/project-setting/details/",
                             query: { projectId: _id },

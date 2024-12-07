@@ -1,6 +1,6 @@
 import { Task } from "@/type";
 import { Box, Button, DialogTitle, styled } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Typography,
 	IconButton,
@@ -26,12 +26,20 @@ import { CSS } from "@dnd-kit/utilities";
 import { deepPurple } from "@mui/material/colors";
 import AssignMemberDialog from "@/app/sine/backlog/Dialogs/AssignMemberDialog/AssignMemberDialog";
 type BacklogCardProps = {
+	sprints: any[];
 	backlog: any;
 	project: any;
 	callUpdate: () => void;
+	workflow: any;
 };
 
-const BacklogCard = ({ backlog, project, callUpdate }: BacklogCardProps) => {
+const BacklogCard = ({
+	sprints,
+	backlog,
+	project,
+	callUpdate,
+	workflow,
+}: BacklogCardProps) => {
 	// Modal for Delete Confirmation
 	const [openDeleteTaskModal, setOpenDeleteTaskModal] = useState(false);
 	const handleClickOpenDeleteTaskModal = () => {
@@ -136,8 +144,17 @@ const BacklogCard = ({ backlog, project, callUpdate }: BacklogCardProps) => {
 								fontSize="15px"
 								className="text-black"
 							>
-								{backlog.summary}
+								<IssueDetailDialog
+									issue={backlog}
+									projectId={project.id}
+									workflows={workflow}
+									issueType={project.issueTypes}
+									callUpdate={callUpdate}
+									sprints={sprints}
+									project={project}
+								/>
 							</Typography>
+
 							<EditIssueDialog description={backlog.description} />
 						</Box>
 

@@ -46,9 +46,25 @@ const checkIssueFields = async (req, res, next) => {
                 }
 
                 // check if field is correct data type
-                if (typeof req.body.fields[field.name] != field.dataType.toLowerCase()) {
-                    throw new ApiError(400, `Field ${field.name} is not ${field.dataType}`);
+                if (field.dataType == "Object") {
+                    if (field.advanceData == "User" && req.body?.fields[field.name]) {
+                        try {
+                            getObjectId(req.body.fields[field.name]);
+                        } catch (error) {
+                            throw new ApiError(400, `Field ${field.name} is not a valid user`);
+                        }
+                    }
+                } else if (field.dataType == "Array") {
+                    if (
+                        req.body?.fields[field.name] &&
+                        !field.advanceData.includes(req.body.fields[field.name])
+                    ) {
+                        throw new ApiError(400, `Field ${field.name} is invalid`);
+                    }
                 }
+                // else if (typeof req.body.fields[field.name] != field.dataType.toLowerCase()) {
+                //     throw new ApiError(400, `Field ${field.name} is not ${field.dataType}`);
+                // }
                 // add field to input
                 tmpFields[field.name] = req.body.fields[field.name];
             });

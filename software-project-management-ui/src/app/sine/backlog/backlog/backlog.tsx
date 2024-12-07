@@ -103,30 +103,41 @@ export default function Backlog() {
 			const issues = await issueService.fetchIssue(projectId);
 			setIssue(issues);
 
+			setBacklogs(issues);
+			setSprints(sprints);
+
 			const workflow = await workflowService.fetchWorkflow(projectId);
 			setWorkflow(workflow);
 
 			const getIssueType = await issueTypeService.fetchIssueType(projectId);
 			setIssueType(getIssueType);
+
+			const refreshProject = async () => {
+				const result = await projectService.fetchById(projectId);
+				setProject(result);
+				setActors(result.actors);
+			};
+
+			refreshProject();
 		};
 		fetchAPI();
 	}, [update]);
 
-	useEffect(() => {
-		if (fetchedSprint?.length > 0) {
-			const sprintNames = fetchedSprint.map((sprint) => sprint);
-			setSprints(sprintNames);
-		}
-	}, [fetchedSprint]);
+	// useEffect(() => {
+	// 	if (fetchedSprint?.length > 0) {
+	// 		const sprintNames = fetchedSprint.map((sprint) => sprint);
+	// 		setSprints(sprintNames);
+	// 	}
+	// }, [fetchedSprint]);
 
 	const [issueName, setIssueName] = useState("");
 
-	useEffect(() => {
-		if (issue?.length > 0) {
-			const mappedBacklogs = issue.map((item) => item);
-			setBacklogs(mappedBacklogs);
-		}
-	}, [issue]);
+	// useEffect(() => {
+	// 	if (issue?.length > 0) {
+	// 		const mappedBacklogs = issue.map((item) => item);
+	// 		setBacklogs(mappedBacklogs);
+	// 	}
+	// }, [issue, update]);
 
 	const handleDeleteSprint = async (projectId: string) => {
 		let sprintId = currentDeleteSprintId;
@@ -715,15 +726,12 @@ export default function Backlog() {
 											onChange={handleAccordionChange(sprint.name)}
 											className="accordionItem"
 											sx={{
-												backgroundColor:
-													expanded === sprint.name ? "#e9ebee" : "inherit",
-												"&:hover": {
-													backgroundColor: "#e9ebee",
-												},
+												backgroundColor: "#e9ebee",
 												boxShadow: "none",
 												border: "none",
 												padding: { xs: "0px", sm: "0px", lg: "0px" },
 												flexGrow: 1, // Đảm bảo accordion chiếm không gian còn lại
+												mt: "10px",
 											}}
 										>
 											<AccordionSummary
@@ -902,11 +910,7 @@ export default function Backlog() {
 												onChange={handleAccordionChange("panel5")}
 												className="backlogItembg"
 												sx={{
-													backgroundColor:
-														expanded === "panel5" ? "#e9ebee" : "inherit",
-													"&:hover": {
-														backgroundColor: "#e9ebee",
-													},
+													backgroundColor: "#e9ebee",
 													boxShadow: "none",
 													border: "none",
 													padding: { xs: "0px", sm: "0px", lg: "0px" },

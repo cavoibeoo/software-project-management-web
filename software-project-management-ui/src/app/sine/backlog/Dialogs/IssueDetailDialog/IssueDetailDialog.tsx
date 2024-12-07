@@ -24,6 +24,7 @@ import {
 	Typography,
 	Box,
 	Chip,
+	Checkbox,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -39,6 +40,140 @@ import { toast } from "react-toastify";
 
 import { useFetchUser } from "@/api-services/userServices";
 import * as commentServices from "@/api-services/commentServices";
+
+const FieldInput = ({
+	field,
+	issueField,
+	issueId,
+	handleFieldChange,
+	project,
+}: any) => {
+	// Render input component based on `field.dataType`
+	switch (field?.dataType) {
+		case "String":
+		case "Paragraph":
+			return (
+				<TextField
+					onChange={(event) =>
+						handleFieldChange(event.target.value, field.name)
+					}
+					placeholder={"None"}
+					defaultValue={issueField?.[field?.name] || ""}
+					id={`field-${issueId}-${field.name}`}
+					name={field.name}
+					sx={{
+						"& .MuiInputBase-root::before": { border: "none" },
+						"& .MuiInputBase-root:hover::before": { border: "none" },
+					}}
+				/>
+			);
+
+		case "Number":
+			return (
+				<TextField
+					type="number"
+					onChange={(event) =>
+						handleFieldChange(event.target.value, field.name)
+					}
+					placeholder={"None"}
+					defaultValue={issueField?.[field?.name] || ""}
+					id={`field-${issueId}-${field.name}`}
+					name={field.name}
+					sx={{
+						"& .MuiInputBase-root::before": { border: "none" },
+						"& .MuiInputBase-root:hover::before": { border: "none" },
+					}}
+				/>
+			);
+
+		case "Boolean":
+			return (
+				<Checkbox
+					checked={issueField?.[field?.name] || ""}
+					onChange={(e) => handleFieldChange(e.target.checked, field.name)}
+					sx={{
+						color: `#099f9d !important`,
+						"&.Mui-checked": {
+							color: `#099f9d !important`,
+						},
+						maxWidth: "20px",
+					}}
+				/>
+			);
+
+		case "Date":
+			return (
+				<TextField
+					type="date"
+					onChange={(event) =>
+						handleFieldChange(event.target.value, field.name)
+					}
+					defaultValue={issueField?.[field?.name] || ""}
+					id={`field-${issueId}-${field.name}`}
+					name={field.name}
+					sx={{
+						"& .MuiInputBase-root::before": { border: "none" },
+						"& .MuiInputBase-root:hover::before": { border: "none" },
+					}}
+				/>
+			);
+		case "Object":
+			return (
+				<Select
+					labelId="product-type-label"
+					id="product-type"
+					value={issueField?.[field?.name] || ""}
+					onChange={(event) =>
+						handleFieldChange(event.target.value, field.name)
+					}
+					sx={{
+						"& fieldset": {
+							border: "1px solid #D5D9E2",
+							borderRadius: "7px",
+						},
+					}}
+				>
+					<MenuItem value={""}>
+						<Box
+							sx={{
+								display: "flex",
+								flexDirection: "row",
+								alignItems: "center",
+								verticalAlign: "middle",
+							}}
+						>
+							<Avatar key={"Unassigned"} alt="Assignee" />
+							<Typography marginLeft="10px">Unassigned</Typography>
+						</Box>
+					</MenuItem>
+					(field?.advanceData == "User" ?{" "}
+					{project?.actors.map((actor: any) => (
+						<MenuItem value={actor?.user._id}>
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "row",
+									alignItems: "center",
+									verticalAlign: "middle",
+								}}
+							>
+								<Avatar
+									key={actor?.user?._id}
+									src={actor?.user?.avatar}
+									alt="Assignee"
+								/>
+								<Typography marginLeft="10px">{actor?.user?.name}</Typography>
+							</Box>
+						</MenuItem>
+					))}
+					)
+				</Select>
+			);
+
+		default:
+			return null; // Fallback if dataType doesn't match
+	}
+};
 
 const IssueDetailDialog: React.FC<{
 	issue: any;
@@ -230,6 +365,8 @@ const IssueDetailDialog: React.FC<{
 		setSprintValue(event.target.value as string);
 	};
 
+	const [isEditingSummary, setIsEditingSummary] = useState<boolean>(false);
+
 	return (
 		<>
 			<Button
@@ -403,7 +540,32 @@ const IssueDetailDialog: React.FC<{
 						paddingTop: "0px !important",
 					}}
 				>
-					{issue.summary}
+					{isEditingSummary ? (
+						<TextField
+							value={summaryValue}
+							onChange={(e) => setSummaryValue(e.target.value)}
+							onBlur={() => setIsEditingSummary(false)}
+							onKeyDown={(e) => {
+								if (e.key === " ") {
+									e.stopPropagation();
+								}
+							}}
+							sx={{
+								"& .MuiInputBase-input": {
+									fontSize: "20px",
+								},
+							}}
+							fullWidth
+						/>
+					) : (
+						<Typography
+							variant="h5"
+							onClick={() => setIsEditingSummary(true)}
+							sx={{ cursor: "pointer" }}
+						>
+							{summaryValue}
+						</Typography>
+					)}
 				</DialogTitle>
 				<DialogContent sx={{ width: "100%" }}>
 					<strong
@@ -526,9 +688,38 @@ const IssueDetailDialog: React.FC<{
 											},
 										}}
 									>
+										<MenuItem value={""}>
+											<Box
+												sx={{
+													display: "flex",
+													flexDirection: "row",
+													alignItems: "center",
+													verticalAlign: "middle",
+												}}
+											>
+												<Avatar key={"Unassigned"} alt="Assignee" />
+												<Typography marginLeft="10px">Unassigned</Typography>
+											</Box>
+										</MenuItem>
 										{project?.actors.map((actor: any) => (
 											<MenuItem value={actor?.user._id}>
-												{actor?.user.name}
+												<Box
+													sx={{
+														display: "flex",
+														flexDirection: "row",
+														alignItems: "center",
+														verticalAlign: "middle",
+													}}
+												>
+													<Avatar
+														key={actor?.user?._id}
+														src={actor?.user?.avatar}
+														alt="Assignee"
+													/>
+													<Typography marginLeft="10px">
+														{actor?.user?.name}
+													</Typography>
+												</Box>
 											</MenuItem>
 										))}
 									</Select>
@@ -568,6 +759,7 @@ const IssueDetailDialog: React.FC<{
 							</DialogContentText>
 							{issueTypeObject?.fields?.map((field: any, index: number) => (
 								<DialogContentText
+									key={index}
 									sx={{
 										fontWeight: "400",
 										display: "flex",
@@ -585,22 +777,12 @@ const IssueDetailDialog: React.FC<{
 									</strong>
 
 									<FormControl fullWidth>
-										<TextField
-											onChange={(event) =>
-												handleFieldChange(event.target.value, field.name)
-											}
-											placeholder={"None"}
-											defaultValue={issueField?.[field?.name] || null}
-											id={`sprintName-${issue._id}-${field.name}`}
-											name="sprintName"
-											sx={{
-												"& .MuiInputBase-root::before": {
-													border: "none",
-												},
-												"& .MuiInputBase-root:hover::before": {
-													border: "none",
-												},
-											}}
+										<FieldInput
+											field={field}
+											issueField={issueField}
+											issueId={issue._id}
+											handleFieldChange={handleFieldChange}
+											project={project}
 										/>
 									</FormControl>
 								</DialogContentText>
@@ -741,7 +923,10 @@ const IssueDetailDialog: React.FC<{
 													}}
 												>
 													<Button
-														style={{ textTransform: "none", color: "#465265" }}
+														style={{
+															textTransform: "none",
+															color: "#465265",
+														}}
 														size="small"
 														onClick={() => {
 															setIsEditCommentArray((prev) => {
@@ -755,7 +940,10 @@ const IssueDetailDialog: React.FC<{
 														Update
 													</Button>
 													<Button
-														style={{ textTransform: "none", color: "#465265" }}
+														style={{
+															textTransform: "none",
+															color: "#465265",
+														}}
 														size="small"
 														onClick={() => handleDeleteComment(comment._id)}
 													>

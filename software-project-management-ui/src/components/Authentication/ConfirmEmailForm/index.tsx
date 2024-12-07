@@ -119,7 +119,7 @@ const ConfirmEmailForm: React.FC = () => {
 										</Typography>
 									</Box>
 
-									<Link href="/dashboard/ecommerce/">
+									<Link href="/authentication/sign-in/">
 										<Button
 											type="submit"
 											variant="contained"
@@ -135,7 +135,7 @@ const ConfirmEmailForm: React.FC = () => {
 											}}
 										>
 											<i className="material-symbols-outlined mr-5">login</i>
-											Back To Home
+											Login Now
 										</Button>
 									</Link>
 								</Box>

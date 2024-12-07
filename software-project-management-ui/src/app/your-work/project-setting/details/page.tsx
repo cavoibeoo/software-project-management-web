@@ -32,7 +32,6 @@ import * as projectService from "@/api-services/projectServices";
 
 import { useProject } from "@/app/context/ProjectContext";
 
-
 export default function Page() {
 	interface BootstrapDialogTitleProps {
 		children?: React.ReactNode;
@@ -84,7 +83,7 @@ export default function Page() {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-	const {projectID, setProjectID} = useProject();
+	const { projectID, setProjectID, setIssueTypeId } = useProject();
 	const projectId = projectID;
 	const [fetchedProject, setFetchProject] = React.useState<any>();
 	React.useEffect(() => {
@@ -96,6 +95,7 @@ export default function Page() {
 			setKeyInput(result?.key);
 			setSelectedFileName(result?.img);
 			setActualImg(result?.img);
+			setIssueTypeId(result?.issueTypes[0]._id);
 		};
 		fetchProject();
 	}, []);
@@ -387,7 +387,9 @@ export default function Page() {
 					gap: "20px",
 				}}
 			>
-				<ProjectDefaultLogo src={actualImg} />
+				<ProjectDefaultLogo
+					src={actualImg ? actualImg : "/images/projectIcon/cavoibeo.svg"}
+				/>
 				<Button
 					variant="outlined"
 					size="medium"
