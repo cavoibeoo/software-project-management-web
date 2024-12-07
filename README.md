@@ -77,7 +77,7 @@
 <!-- About the Project -->
 
 ## :star2: About the Project
-### Installation
+### ⚙️ Installation \&  Run Locally 🏃
 To run the application, the computer must meet the following requirements:
 -	Install a browser
 -	Install npm
