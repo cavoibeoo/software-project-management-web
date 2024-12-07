@@ -10,9 +10,8 @@
     An awesome Task management app for all Project Members! 
   </p>
 
-<div align="center">
-  <img src="./software-project-management-ui/public/images/image.png" alt="logo" width="100vh" height="auto" />
-</div>
+![image](https://github.com/user-attachments/assets/881f92b5-9105-4d26-9cc4-026a2fcf4ed5)
+
 
 <!-- Badges -->
 <p>
