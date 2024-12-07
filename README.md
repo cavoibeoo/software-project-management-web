@@ -1,7 +1,7 @@
 <div align="center">
 
 <div align="center">
-
+  <img src="https://darvideo.tv/wp-content/uploads/2021/10/Animation-project-management-1.webp" alt="logo" width="200" height="auto" />
 </div>
   <h1>Project Management Web App</h1>
 
