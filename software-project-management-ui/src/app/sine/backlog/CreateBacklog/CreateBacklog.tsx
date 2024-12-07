@@ -163,8 +163,8 @@ export const CreateBacklog: React.FC<{
 												placeholder="Backlog name.."
 												sx={{
 													width: "100%",
-													color: "white",
 												}}
+												className="BacklogInput"
 												aria-label="Name"
 												value={issueName}
 												onChange={(event) => setIssueName(event.target.value)}

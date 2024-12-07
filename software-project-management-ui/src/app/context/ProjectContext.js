@@ -20,8 +20,23 @@ export const ProjectProvider = ({ children }) => {
 		}
 	}, [projectID]);
 
+	const [issueTypeId, setIssueTypeId] = useState(() => {
+		if (typeof window !== "undefined") {
+			return localStorage.getItem("issueTypeId") || "";
+		}
+		return "";
+	});
+
+	useEffect(() => {
+		if (projectID) {
+			localStorage.setItem("issueTypeId", issueTypeId);
+		}
+	}, [issueTypeId]);
+
 	return (
-		<ProjectContext.Provider value={{ projectID, setProjectID }}>
+		<ProjectContext.Provider
+			value={{ projectID, setProjectID, issueTypeId, setIssueTypeId }}
+		>
 			{children}
 		</ProjectContext.Provider>
 	);

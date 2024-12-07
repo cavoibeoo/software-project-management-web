@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -12,6 +12,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { changePassword, updateUserInfo } from "@/api-services/userServices";
 import dayjs from "dayjs";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
+import { ClearIcon } from "@mui/x-date-pickers/icons";
+import { toast } from "react-toastify";
 
 export const EditUserInfo = ({
 	myInfo,
@@ -26,6 +30,9 @@ export const EditUserInfo = ({
 	const [name, setName] = useState(myInfo.name);
 	const [department, setDepartment] = useState(myInfo.department);
 	const [organization, setOrganization] = useState(myInfo.organization);
+
+	const [openChangeAvatarDialog, setOpenChangeAvatarDialog] = useState(false);
+
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -141,6 +148,53 @@ export const EditUserInfo = ({
 		callUpdate();
 	};
 
+	const handleCloseChangeAvatarDialog = () => {
+		setOpenChangeAvatarDialog(false);
+	};
+
+	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		// if (projectInput === projectName) {
+		// 	await moveToTrash(_id, projectName);
+		// 	onDeleteSuccess();
+		// } else {
+		// 	toast.error("Project name does not match!");
+		// }
+	};
+
+	const [selectedFileName, setSelectedFileName] =
+		useState<string>("cavoibeo.svg");
+	const [actualImg, setActualImg] = useState<string>("");
+	const [selectedFile, setSelectedFile] = useState<any>(
+		"/images/uploadImg.png"
+	);
+
+	const handleUpdateImg = async () => {
+		if (!selectedFile) {
+			toast.error("Please select another image");
+			return;
+		}
+		try {
+			let file = selectedFile;
+			if (typeof selectedFile === "string") {
+				const response = await fetch(selectedFile); // Fetch file from public directory
+				if (!response.ok) throw new Error("File not found");
+
+				const blob = await response.blob(); // Get file as a blob
+				file = new File([blob], "viewavatar (3).svg", { type: blob.type });
+			}
+			let result = await updateUserInfo({ avatar: file });
+			if (!result?.error) {
+				setActualImg(result.img);
+			}
+			setOpenChangeAvatarDialog(false);
+		} catch (error) {
+			console.error("Error updating project image:", error);
+			toast.error("Failed to update project image");
+		}
+		callUpdate();
+	};
+
 	return (
 		<>
 			<Box>
@@ -197,6 +251,9 @@ export const EditUserInfo = ({
 					transformOrigin={{ horizontal: "right", vertical: "top" }}
 					anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
 				>
+					<MenuItem onClick={() => setOpenChangeAvatarDialog(true)}>
+						Change Avatar
+					</MenuItem>
 					<MenuItem onClick={() => setOpenDialog(true)}>Edit Info</MenuItem>
 					<MenuItem onClick={() => setOpenChangePasswordDialog(true)}>
 						Change Password
@@ -357,6 +414,165 @@ export const EditUserInfo = ({
 						Save
 					</Button>
 				</DialogActions>
+			</Dialog>
+			<Dialog
+				onClose={handleCloseChangeAvatarDialog}
+				aria-labelledby="customized-dialog-title"
+				open={openChangeAvatarDialog}
+				className="rmu-modal"
+			>
+				<Box>
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "space-between",
+
+							alignItems: "center",
+							padding: { xs: "15px 20px", md: "25px" },
+						}}
+						className="rmu-modal-header"
+					>
+						<Typography
+							id="modal-modal-title"
+							variant="h6"
+							sx={{
+								fontWeight: "600",
+								fontSize: { xs: "16px", md: "18px" },
+								color: "#fff !important",
+							}}
+							className="text-black"
+						>
+							Choose an icon
+						</Typography>
+
+						<IconButton
+							aria-label="remove"
+							size="small"
+							onClick={handleCloseChangeAvatarDialog}
+						>
+							<ClearIcon />
+						</IconButton>
+					</Box>
+
+					<Box className="rmu-modal-content">
+						<Box component="form" noValidate onSubmit={handleSubmit}>
+							<Box
+								sx={{
+									padding: "25px",
+									borderRadius: "8px",
+								}}
+								className="bg-white"
+							>
+								<Grid container alignItems="center" spacing={2}>
+									<Box
+										sx={{
+											display: "flex",
+											flexDirection: "column",
+											justifyContent: "center",
+											alignItems: "center",
+											width: "100%",
+										}}
+									>
+										<Box className="css-1790nmb" gap={"7px"}>
+											<img
+												style={{
+													width: "300px",
+													height: "auto",
+													borderRadius: "50%",
+												}}
+												src={selectedFileName}
+												alt=""
+											/>
+											{/* <Typography style={{ textAlign: "center" }}>
+                                                Drag & Drop Your Image Here..
+                                            </Typography> */}
+										</Box>
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												gap: "5px",
+												flexDirection: "column",
+												marginTop: "5px",
+											}}
+										>
+											<input
+												type="file"
+												id="file-upload"
+												style={{ display: "none" }}
+												onChange={(e) => {
+													const file = e.target.files?.[0];
+													if (file) {
+														setSelectedFileName(URL.createObjectURL(file));
+														setSelectedFile(file);
+													}
+												}}
+											/>
+											<label htmlFor="file-upload">
+												<Button
+													sx={{
+														textTransform: "capitalize",
+													}}
+													variant="outlined"
+													component="span"
+												>
+													Upload a photo
+												</Button>
+											</label>
+										</Box>
+									</Box>
+									<Grid
+										item
+										xs={12}
+										mt={1}
+										display="flex"
+										justifyContent="flex-end"
+									>
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												gap: "10px",
+											}}
+										>
+											<Button
+												onClick={handleCloseChangeAvatarDialog}
+												variant="outlined"
+												size="small"
+												sx={{
+													textTransform: "capitalize",
+													borderRadius: "8px",
+													fontWeight: "500",
+													fontSize: "13px",
+													padding: "5px 15px",
+												}}
+											>
+												Cancel
+											</Button>
+											<Button
+												type="submit"
+												variant="contained"
+												component="button"
+												size="small"
+												sx={{
+													textTransform: "capitalize",
+													borderRadius: "8px",
+													fontWeight: "500",
+													fontSize: "13px",
+													padding: "5px 15px",
+													color: "#fff !important",
+												}}
+												onClick={handleUpdateImg}
+											>
+												Save
+											</Button>
+										</Box>
+									</Grid>
+								</Grid>
+							</Box>
+						</Box>
+					</Box>
+				</Box>
 			</Dialog>
 		</>
 	);

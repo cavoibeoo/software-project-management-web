@@ -22,7 +22,7 @@ const issueTypeCreate = Joi.object({
 
 const issueTypeUpdate = Joi.object({
     name: Joi.string().max(50).trim().strict(),
-    description: Joi.string().max(255).trim().strict(),
+    description: Joi.string().max(255).trim().strict().optional(),
     img: Joi.string().uri().trim().strict(),
     fields: Joi.array()
         .items(
@@ -32,8 +32,9 @@ const issueTypeUpdate = Joi.object({
                     .valid("String", "Number", "Boolean", "Date", "Array", "Object")
                     .trim()
                     .strict(),
-                isRequired: Joi.boolean().strict().default(false),
-                description: Joi.string().max(255).trim().strict(),
+                isRequired: Joi.boolean().strict().default(false).optional(),
+                description: Joi.string().max(255).trim().strict().optional().allow(""),
+                advanceData: Joi.optional().allow(null),
             })
         )
         .strict(),

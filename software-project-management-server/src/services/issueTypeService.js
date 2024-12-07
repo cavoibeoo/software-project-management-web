@@ -1,4 +1,3 @@
-
 "use strict";
 
 import Project from "./../models/project.js";
@@ -84,6 +83,7 @@ const createIssueType = async (project, data) => {
             description: data?.description,
             isDefault: data?.isDefault,
             fields: defaultFields,
+            img: "https://tbphuoc0108ple.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10321",
         };
         result.issueTypes.push(issueType);
         await result.save();
@@ -139,7 +139,6 @@ const updateIssueType = async (project, data) => {
         throw error;
     }
 };
-
 
 const deleteIssueType = async (data, newData) => {
     try {

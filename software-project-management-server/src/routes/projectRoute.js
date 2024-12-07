@@ -35,7 +35,7 @@ router.post(
 router.put(
     "/change-actor-role/:prjId",
     checkStatus,
-    checkPermission(Permission.EDIT_ACTOR_ROLE),
+    checkPermission(Permission.UPDATE_ACTOR_ROLE),
     validation(validationSchema.addMember),
     controller.changeActorRole
 );

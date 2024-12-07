@@ -8,7 +8,8 @@ export const upload = multer({
         if (
             file.mimetype === "image/png" ||
             file.mimetype === "application/pdf" ||
-            file.mimetype === "image/svg+xml"
+            file.mimetype === "image/svg+xml" ||
+            file.mimetype === "image/jpeg"
         ) {
             cb(null, true);
         } else {

@@ -56,6 +56,19 @@ function SimpleDialog({ ...props }: SimpleDialogProps) {
 		<Dialog onClose={handleClose} open={open}>
 			<DialogTitle>Assign For</DialogTitle>
 			<List sx={{ pt: 0 }}>
+			<ListItem disableGutters >
+						<ListItemButton
+							onClick={() => handleListItemClick("")}
+						>
+							<ListItemAvatar>
+								<Avatar
+									className="avatar-hover"
+									sx={{ bgcolor: deepPurple[500] }}
+								></Avatar>
+							</ListItemAvatar>
+							<ListItemText primary={"Unassigned"} />
+						</ListItemButton>
+					</ListItem>
 				{actors?.map((actor: any) => (
 					<ListItem disableGutters key={actor?.user?._id}>
 						<ListItemButton
