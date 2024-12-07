@@ -10,7 +10,7 @@
   </p>
 
 <div align="center">
-  <img src="./software-project-management-ui/public/images/image.png" alt="logo" width="200" height="auto" />
+  <img src="./software-project-management-ui/public/images/image.png" alt="logo" width="100vh" height="auto" />
 </div>
 
 <!-- Badges -->
