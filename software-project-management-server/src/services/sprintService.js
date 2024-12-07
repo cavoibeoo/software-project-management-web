@@ -67,11 +67,24 @@ const getById = async (data) => {
 const createSprint = async (project) => {
     try {
         let findProject = await Project.findById(getObjectId(project.prjId));
-        let findSprint = await Sprint.find({
+        let findSprints = await Sprint.find({
             project: getObjectId(findProject._id),
         });
+
+        // Extract the highest sprint number
+        let maxSprintNumber = 0;
+        findSprints.forEach((sprint) => {
+            const match = sprint.name.match(/Sprint (\d+)$/);
+            if (match) {
+                const sprintNumber = parseInt(match[1], 10);
+                if (sprintNumber > maxSprintNumber) {
+                    maxSprintNumber = sprintNumber;
+                }
+            }
+        });
+
         let newSprint = new Sprint({
-            name: `${findProject.key}-Sprint ${findSprint.length + 1}`,
+            name: `${findProject.key}-Sprint ${maxSprintNumber + 1}`,
             project: getObjectId(findProject._id),
         });
         return await newSprint.save();
