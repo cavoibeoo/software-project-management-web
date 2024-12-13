@@ -62,7 +62,7 @@
         </tr>
         <tr>
             <td>21110793</td>
-            <td>Nguyễn Đức Quang</td>
+            <td>Trần Đức Quang</td>
             <td>Member</td>
         </tr>
                 <tr>
