@@ -96,7 +96,7 @@ To run the application, the computer must meet the following requirements:
 #### Run front-end: 
 + Open another terminal.
 + run `cd .\software-project-management-ui\`.
-+ run `npm I –legacy-peer-deps`.
++ run `npm i -–legacy-peer-deps`.
 + run `npm run dev`.
 + The front-end will be runned on localhost:3000	
 #### Install LLM for running on localhost:
