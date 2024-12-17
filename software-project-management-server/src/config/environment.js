@@ -37,6 +37,7 @@ const config = {
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
+    env: process.env.ENV,
 };
 
 export default config;
