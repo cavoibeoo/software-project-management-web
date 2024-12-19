@@ -425,7 +425,7 @@ const Features: React.FC = () => {
 					<Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
 						<div className="image">
 							<Image
-								src="/images/featureImg/ChatBot.png"
+								src="/images/featureImg/chatbot.png"
 								alt="order-summary-image"
 								width={662}
 								height={807}
