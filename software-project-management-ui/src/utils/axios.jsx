@@ -4,7 +4,7 @@ import {
     getRefreshTokenFromCookie,
 } from "../api-services/CookieServices";
 
-const BASE_URL = "https://spm-server.vercel.app/api";
+const BASE_URL = "http://localhost:3001/api";
 
 const apiClient = axios.create({
     baseURL: BASE_URL,
