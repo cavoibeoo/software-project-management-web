@@ -98,13 +98,17 @@ const refreshToken = async (req, res, next) => {
                 })
                 .send();
         } else {
-            res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: false,
-                maxAge: 7 * 24 * 60 * 60 * 1000, //15 days
-            });
             res.cookie("accessToken", result.accessToken, {
                 httpOnly: false,
-                maxAge: 15 * 60 * 1000, //15 min
+                maxAge: 24 * 60 * 60 * 1000, //15 minutes
+                sameSite: config.env === "production" ? "None" : undefined,
+                secure: config.env === "production",
+            });
+            res.cookie("refreshToken", result.refreshToken, {
+                httpOnly: false,
+                maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
+                sameSite: config.env === "production" ? "None" : undefined,
+                secure: config.env === "production",
             });
             res.status(StatusCodes.OK).json(result).send();
         }
