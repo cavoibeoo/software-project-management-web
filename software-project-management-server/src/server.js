@@ -14,6 +14,7 @@ import passport from "passport";
 
 const START_SERVER = () => {
     const app = express();
+    app.use(cookieParser());
 
     // Configure express-session middleware
     app.use(
@@ -34,7 +35,6 @@ const START_SERVER = () => {
         })
     );
     app.use(express.urlencoded({ extended: true }));
-    app.use(cookieParser());
     app.use(morgan("combined"));
     const port = config.port;
 

@@ -118,34 +118,44 @@ const isLoggedIn = async (data) => {
 
 const refreshTokenService = async (data) => {
     let refreshToken = data?.refreshToken;
+
+    console.log("refreshToken", refreshToken);
+
     if (!refreshToken) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, new Error("No refresh token provided").message);
+        throw new ApiError(StatusCodes.BAD_REQUEST, "No refresh token provided");
     }
 
-    let foundUser = await User.findOne({ refreshToken }).exec();
+    // Find user with the refreshToken inside the array
+    let foundUser = await User.findOne({ refreshToken: { $in: [refreshToken] } });
+
     if (!foundUser) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, new Error("Invalid refresh token").message);
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Loi khong tim thay Invalid refresh token");
     }
 
+    // Remove the old refresh token from the array
     const newRefreshTokenArray = foundUser.refreshToken.filter((rt) => rt !== refreshToken);
+
     try {
         let tokenDetails = await jwtUtil.verifyRefreshToken(refreshToken);
     } catch (err) {
-        foundUser.refreshToken = [...newRefreshTokenArray];
-        const result = await foundUser.save();
+        // If refresh token is invalid, remove it and save changes
+        foundUser.refreshToken = newRefreshTokenArray;
+        await foundUser.save();
         return { error: "Invalid refresh token" };
     }
 
+    // Generate new tokens
     const accessToken = await jwtUtil.generateAccessToken(foundUser);
     const newRefreshToken = await jwtUtil.generateRefreshToken(foundUser);
 
+    // Update user's refreshToken array
     foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
     await foundUser.save();
 
     return {
         refreshToken: newRefreshToken,
         accessToken: accessToken,
-        messages: "Refresh successfully",
+        message: "Refresh successful",
     };
 };
 
