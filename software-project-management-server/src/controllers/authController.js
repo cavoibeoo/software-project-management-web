@@ -31,14 +31,12 @@ const login = async (req, res, next) => {
             maxAge: 24 * 60 * 60 * 1000, //15 minutes
             sameSite: config.env === "production" ? "None" : undefined,
             secure: config.env === "production",
-            domain: config.env === "production" ? ".vercel.app" : undefined,
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
             sameSite: config.env === "production" ? "None" : undefined,
             secure: config.env === "production",
-            domain: config.env === "production" ? ".vercel.app" : undefined,
         });
 
         res.status(StatusCodes.OK).send(result);
@@ -55,14 +53,12 @@ const loginWithGoogle = async (req, res, next) => {
             maxAge: 15 * 60 * 1000, //15 minutes
             sameSite: config.env === "production" ? "None" : undefined,
             secure: config.env === "production",
-            domain: config.env === "production" ? ".vercel.app" : undefined,
         });
         res.cookie("refreshToken", result.refreshToken, {
             httpOnly: false,
             maxAge: 15 * 24 * 60 * 60 * 1000, //15 minutes
             sameSite: config.env === "production" ? "None" : undefined,
             secure: config.env === "production",
-            domain: config.env === "production" ? ".vercel.app" : undefined,
         });
 
         // res.status(StatusCodes.OK).send(result);
@@ -89,13 +85,11 @@ const refreshToken = async (req, res, next) => {
                 httpOnly: false,
                 sameSite: config.env === "production" ? "None" : undefined,
                 secure: config.env === "production",
-                domain: config.env === "production" ? ".vercel.app" : undefined,
             });
             res.clearCookie("accessToken", {
                 httpOnly: false,
                 sameSite: config.env === "production" ? "None" : undefined,
                 secure: config.env === "production",
-                domain: config.env === "production" ? ".vercel.app" : undefined,
             });
             res.status(StatusCodes.BAD_REQUEST)
                 .json({
@@ -127,13 +121,11 @@ const logout = async (req, res, next) => {
                 httpOnly: false,
                 sameSite: config.env === "production" ? "None" : undefined,
                 secure: config.env === "production",
-                domain: config.env === "production" ? ".vercel.app" : undefined,
             });
             res.clearCookie("accessToken", {
                 httpOnly: false,
                 sameSite: config.env === "production" ? "None" : undefined,
                 secure: config.env === "production",
-                domain: config.env === "production" ? ".vercel.app" : undefined,
             });
             res.status(StatusCodes.NO_CONTENT).send(result);
         } else res.status(StatusCodes.NO_CONTENT).send();
