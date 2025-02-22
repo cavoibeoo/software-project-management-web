@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 export const loginGoogle = async () => {
     try {
         // window.location.href = `https://spm-server.vercel.app/api/auth/google`;
-        window.location.href = `http://localhost:3001/api/auth/google`;
+        window.location.href = `https://spm-server.vercel.app/api/auth/google`;
     } catch (error: any) {
         toast.error(error?.message);
         console.log(error);
