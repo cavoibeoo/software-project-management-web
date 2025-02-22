@@ -73,7 +73,7 @@ const Features: React.FC = () => {
 
 					<div className="banner-image text-center">
 						<Image
-							src="/images/Sine_Dark_background.png"
+							src="/images/featureImg/BacklogPage.png"
 							alt="dashboard-image"
 							width={948}
 							height={685}
