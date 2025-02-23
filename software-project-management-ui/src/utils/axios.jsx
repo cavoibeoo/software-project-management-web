@@ -4,7 +4,7 @@ import {
     getRefreshTokenFromCookie,
 } from "../api-services/CookieServices";
 
-const BASE_URL = "https://spm-server.vercel.app/api";
+const BASE_URL = "http://localhost:3001/api";
 
 const apiClient = axios.create({
     baseURL: BASE_URL,
@@ -19,7 +19,7 @@ let failedRequestsQueue = [];
 // Request Interceptor to Attach Access Token
 apiClient.interceptors.request.use(
     async (config) => {
-        const token = getAccessTokenFromCookie();
+        const token = await getAccessTokenFromCookie();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,17 +37,26 @@ apiClient.interceptors.response.use(
         const originalRequest = error.config;
 
         // If token expired and we haven’t already retried
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (
+            error.response?.status === 401 /*|| error.response?.status === "401")*/ &&
+            !originalRequest._retry
+        ) {
             originalRequest._retry = true;
 
             if (!isRefreshing) {
                 isRefreshing = true;
 
                 try {
+                    let token = await getRefreshTokenFromCookie();
+                    console.log(token);
                     // Refresh token and update cookies
-                    const { data } = await axios.get(`${BASE_URL}/auth/refresh`, {
-                        withCredentials: true,
-                    });
+                    const { data } = await axios.post(
+                        `${BASE_URL}/auth/refresh`,
+                        {
+                            refreshToken: token,
+                        },
+                        { withCredentials: true }
+                    );
 
                     // Update Authorization header with new token
                     originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;

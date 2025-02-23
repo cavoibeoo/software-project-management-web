@@ -79,7 +79,7 @@ const isAuthenticated = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
     try {
-        let result = await authService.refreshTokenService(req.cookies);
+        let result = await authService.refreshTokenService(req.body);
         if (result?.error) {
             res.clearCookie("refreshToken", {
                 httpOnly: false,
